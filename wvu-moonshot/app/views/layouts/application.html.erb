@@ -68,7 +68,7 @@
     <footer class="bg-wvu-blue text-white">
       <div class="mx-auto max-w-5xl px-4 py-6 text-sm">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <address class="not-italic">
+          <address class="not-italic pb-4">
             <a href="https://library.wvu.edu/" class="hover:text-wvu-gold"><strong>WVU Libraries</strong></a><br>
             West Virginia University<br>
             1549 University Ave. | P.O. Box 6069<br>
@@ -77,26 +77,49 @@
             Fax: <a href="tel:13042936638" class="hover:text-wvu-gold">1-304-293-6638</a><br>
             Email: <a href="mailto:LibraryDeanOffice@mail.wvu.edu" class="hover:text-wvu-gold">LibraryDeanOffice@mail.wvu.edu</a>
           </address>
-          <div class="flex flex-wrap gap-x-4 gap-y-1">
-            <a class="hover:text-wvu-gold" href="https://www.wvu.edu/SiteIndex/">A-Z Site Index</a>
-            <a class="hover:text-wvu-gold" href="https://campusmap.wvu.edu">Campus Map</a>
-            <a class="hover:text-wvu-gold" href="https://directory.wvu.edu">WVU Directory</a>
-            <a class="hover:text-wvu-gold" href="https://portal.wvu.edu">WVU Portal</a>
+        </div>
+        <div class="mt-6 flex flex-col sm:flex-row gap-8">
+          <!-- Left column: Credits and copyright -->
+          <div class="flex-1">
+            <ul class="flex flex-wrap gap-x-1 gap-y-2 text-sm">
+              <li><a href="https://about.wvu.edu/wvu-facts" class="hover:text-wvu-gold">Accreditations</a></li>
+              <li>|</li>
+              <li><a href="https://webstandards.wvu.edu" class="hover:text-wvu-gold">Web Standards</a></li>
+              <li>|</li>
+              <li><a href="https://www.wvu.edu/privacy" class="hover:text-wvu-gold">Privacy Notice</a></li>
+              <li>|</li>
+              <li><a href="https://www.wvu.edu/contact-us" class="hover:text-wvu-gold">Questions or Comments?</a></li>
+            </ul>
+            <p class="mt-2 text-white/70 text-sm">
+              &copy; <%= Date.current.year %> West Virginia University. West Virginia University is an Equal Opportunity Employer.
+              <span class="block text-xs mt-1">Last updated on <%= Date.current.strftime("%B %d, %Y") %>.</span>
+            </p>
+          </div>
+          
+          <!-- Right column: Navigation links -->
+          <div class="flex-1">
+            <ul class="flex flex-wrap gap-x-1 gap-y-1 justify-end">
+              <li><a class="hover:text-wvu-gold" href="https://www.wvu.edu/SiteIndex/">A-Z Site Index</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://campusmap.wvu.edu">Campus Map</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://careers.wvu.edu/career-opportunities">Career Opportunities</a></li>           
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://directory.wvu.edu">WVU Directory</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://give.wvu.edu/campaign/givewvu/c415566">Give</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://wvu.joinhandshake.com/login">Handshake</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://alert.wvu.edu/">WVU Safety Notification System</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://wvutoday.wvu.edu/">WVU Today</a></li>
+              <li>|</li>
+              <li><a class="hover:text-wvu-gold" href="https://portal.wvu.edu">WVU Portal</a></li>
+            </ul>
           </div>
         </div>
-        <ul class="mt-4 flex flex-wrap gap-x-1 gap-y-2 text-sm">
-          <li><a href="https://about.wvu.edu/wvu-facts" class="hover:text-wvu-gold">Accreditations</a></li>
-          <li>|</li>
-          <li><a href="https://webstandards.wvu.edu" class="hover:text-wvu-gold">Web Standards</a></li>
-          <li>|</li>
-          <li><a href="https://www.wvu.edu/privacy" class="hover:text-wvu-gold">Privacy Notice</a></li>
-          <li>|</li>
-          <li><a href="https://www.wvu.edu/contact-us" class="hover:text-wvu-gold">Questions or Comments?</a></li>
-        </ul>
-        <p class="mt-4 text-white/70 text-sm">
-          &copy; <%= Date.current.year %> West Virginia University. West Virginia University is an Equal Opportunity Employer.
-          <span class="block text-xs mt-1">Last updated on <%= Date.current.strftime("%B %d, %Y") %>.</span>
-        </p>
+
       </div>
     </footer>
   </body>
