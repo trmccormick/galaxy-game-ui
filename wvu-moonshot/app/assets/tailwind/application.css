@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* WVU brand palette — official WVU Design System 2.1 values */
+@theme {
+  --color-wvu-blue: #002855;            /* wvu-blue — masthead */
+  --color-wvu-accent-blue: #0062a3;     /* wvu-accent--blue — links/buttons */
+  --color-wvu-accent-blue-dark: #1c2b39;/* wvu-accent--blue-dark — footer */
+  --color-wvu-accent-blue-light: #9ddae6;
+  --color-wvu-gold: #eaaa00;            /* wvu-gold */
+  --color-wvu-old-gold: #7f6310;        /* wvu-accent--old-gold */
+  --color-wvu-off-white: #f7f7f7;       /* wvu-neutral--off-white */
+  --color-wvu-cream: #f2e6c2;           /* wvu-neutral--cream */
+  --color-wvu-tan: #b3a169;             /* wvu-neutral--tan */
+  --color-wvu-warm-gray-light: #beb7b3; /* wvu-neutral--warm-gray-light — page bg */
+  --color-wvu-warm-gray-medium: #988e8b;
+  --color-wvu-warm-gray-dark: #554741;
+}
+
+/* Subtle Woodburn Hall flavor: warm parchment wash on the content area. */
+.woodburn-hall {
+  background-color: var(--color-wvu-off-white);
+  background-image:
+    radial-gradient(ellipse at top left, rgba(234, 170, 0, 0.05), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(0, 40, 85, 0.04), transparent 55%);
+}

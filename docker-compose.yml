@@ -1,0 +1,70 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - './env/env.production'
+    volumes:
+      - ./wvu-moonshot:/home/moonshot
+      # map node_modules to a persistent volume
+      - ./data/node_modules:/home/moonshot/node_modules
+      # map in various bash scripts
+      - ./scripts:/home/moonshot/scripts
+      # map in various persistent directories in the data folder
+      - ./data/logs:/home/moonshot/log
+      # map in various persistent directories in the tmp folder
+      - ./data/tmp:/home/moonshot/tmp
+      - ./data/imports:/home/moonshot/data
+    command: ["sleep", "infinity"]
+    restart: unless-stopped
+    networks:
+      - moonshot
+
+  web:
+    extends: app
+    container_name: moonshot
+    command: bash -c "bundle install; sh ./scripts/startup.sh"
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - moonshot
+
+  memcached:
+    image: memcached:1.6.22-alpine
+    container_name: memcached
+    command: ["memcached", "-m", "64"]
+    restart: unless-stopped
+    ports:
+      - "11211"
+    networks:
+      - moonshot 
+
+  db:
+    container_name: db
+    image: postgres:16-alpine
+    ports:
+      - "5432"
+    env_file:
+      - './env/env.db'
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - moonshot
+
+networks:
+  moonshot:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-moonshot

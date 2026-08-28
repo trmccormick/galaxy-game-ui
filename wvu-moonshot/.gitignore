@@ -1,0 +1,36 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Ignore storage (uploaded files, etc).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+# Ignore local environment overrides (real credentials).
+/env/env.local
+
+# Ignore application storage (e.g. Active Storage).
+/public/system
+
+# Ignore .env files except the committed templates.
+.env*
+!.env.example
+
+# macOS
+.DS_Store

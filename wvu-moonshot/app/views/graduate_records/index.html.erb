@@ -1,0 +1,59 @@
+<% content_for :title, "Donor Check-In — WVU Libraries Systems" %>
+
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-wvu-blue">Donor Check-In</h1>
+  <p class="text-wvu-warm-gray-medium mt-1">
+    Type the donor's surname to find their record, then confirm their details.
+  </p>
+</div>
+
+<!-- Surname search -->
+<form action="<%= graduate_records_path %>" method="get" class="mb-6">
+  <div class="flex flex-col sm:flex-row gap-3">
+    <input type="text" name="q" value="<%= @query %>" placeholder="Start typing a surname…"
+           aria-label="Search by surname" autofocus
+           class="w-full rounded-lg border border-wvu-warm-gray-light bg-white px-5 py-4 text-lg focus:border-wvu-accent-blue focus:ring-2 focus:ring-wvu-accent-blue/30 outline-none">
+    <button type="submit"
+            class="shrink-0 rounded-lg bg-wvu-accent-blue px-8 py-4 text-lg font-semibold text-white shadow hover:bg-wvu-gold hover:text-wvu-blue transition-colors">
+      Search
+    </button>
+  </div>
+</form>
+
+<% if @query.present? %>
+  <% if @graduate_records.any? %>
+    <p class="mb-3 text-sm text-wvu-warm-gray-medium">
+      <%= @graduate_records.size %> match<%= "es" if @graduate_records.size != 1 %> — tap a donor to open their record.
+    </p>
+    <ul class="space-y-3">
+      <% @graduate_records.each do |record| %>
+        <li>
+          <%= link_to graduate_record_path(record),
+                class: "flex items-center justify-between gap-4 rounded-lg border border-wvu-warm-gray-light bg-white p-5 shadow-sm hover:border-wvu-accent-blue hover:shadow transition-colors" do %>
+            <span class="min-w-0">
+              <span class="block text-lg font-semibold text-wvu-blue truncate"><%= record.display_name %></span>
+              <span class="block text-sm text-wvu-warm-gray-medium truncate">
+                <%= [record.primary_constituency, record.class_year].compact.join(" · ") %>
+              </span>
+            </span>
+            <span class="shrink-0 rounded bg-wvu-accent-blue px-4 py-2.5 text-sm font-semibold text-white">Open →</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="rounded-lg border-2 border-dashed border-wvu-tan bg-white p-10 text-center">
+      <p class="text-lg text-wvu-warm-gray-dark">No donors match “<%= @query %>”.</p>
+      <p class="mt-1 text-wvu-warm-gray-medium">Check the spelling or try the first few letters of the surname.</p>
+    </div>
+  <% end %>
+<% else %>
+  <div class="rounded-lg border border-wvu-warm-gray-light bg-white p-8 text-center shadow-sm">
+    <p class="text-wvu-warm-gray-medium">
+      <%= GraduateRecord.count %> donors are loaded and ready for check-in.
+    </p>
+    <p class="mt-1 text-sm text-wvu-warm-gray-medium/80">
+      Begin by typing a surname above — for example, “Rivers” or “Chase”.
+    </p>
+  </div>
+<% end %>
