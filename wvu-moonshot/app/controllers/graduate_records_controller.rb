@@ -15,18 +15,11 @@ class GraduateRecordsController < ApplicationController
   def show
   end
 
-  # PATCH/PUT /graduate_records/:id
   def update
     if @graduate_record.update(graduate_record_params)
-      respond_to do |format|
-        format.html { redirect_to graduate_records_path, notice: "Donor record saved." }
-        format.turbo_stream # Allows inline row updates without full page reloads
-      end
+      redirect_to graduate_records_path, notice: "Donor record saved for #{@graduate_record.display_name}."
     else
-      respond_to do |format|
-        format.html { render :show, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@graduate_record, partial: "graduate_record", locals: { record: @graduate_record }), status: :unprocessable_entity }
-      end
+      render :show, status: :unprocessable_entity
     end
   end
 
