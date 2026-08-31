@@ -7,15 +7,8 @@
 # be re-run safely (e.g. when the final Foundation dataset arrives). Event data
 # (waiver status, corrections/notes) is preserved on re-runs.
 
-# Create test user for development/staging login
-unless User.exists?(email_address: "admin@wvu.edu")
-  User.create!(
-    email_address: "admin@wvu.edu",
-    password: "Moonshot2026!",
-    password_confirmation: "Moonshot2026!"
-  )
-  puts "Created test user: admin@wvu.edu / Moonshot2026!"
-end
+users = UserCsvLoader.call
+puts "Users CSV loaded: #{users.created} created, #{users.skipped} skipped."
 
 result = DonorCsvLoader.call
 puts "Donor CSV loaded: #{result.created} created, #{result.updated} updated, #{result.skipped} skipped."

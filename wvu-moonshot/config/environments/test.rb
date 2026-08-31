@@ -22,6 +22,10 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.cache_store = :null_store
 
+  # Allow the default test host (www.example.com) so request specs aren't
+  # rejected by host authorization with a 403.
+  config.hosts << "www.example.com"
+
   # Render exception templates for rescuable exceptions and raise for other exceptions.
   config.action_dispatch.show_exceptions = :rescuable
 
