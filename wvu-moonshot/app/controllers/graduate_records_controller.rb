@@ -2,25 +2,31 @@ class GraduateRecordsController < ApplicationController
   before_action :set_graduate_record, only: %i[ show update ]
 
   # GET /graduate_records
-  # Check-in landing page: type a surname, get matches, pick a donor.
   def index
-    @query = params[:q].to_s
-    @graduate_records = @query.present? ? GraduateRecord.search_by_surname(@query) : []
+    @graduate_records = GraduateRecord.order(:surname, :first_name)
+
+    respond_to do |format|
+      format.html # renders index.html.erb with all 300-400 records
+      format.csv  { send_data GraduateRecord.to_csv, filename: "graduate-check-in-#{Date.today}.csv" }
+    end
   end
 
   # GET /graduate_records/:id
-  # Prepopulated donor record/form for confirmation.
   def show
   end
 
   # PATCH/PUT /graduate_records/:id
-  # Record the waiver status and corrections/notes. Everything stays
-  # associated with the donor's CRM identifier for post-event reconciliation.
   def update
     if @graduate_record.update(graduate_record_params)
-      redirect_to @graduate_record, notice: "Donor record saved."
+      respond_to do |format|
+        format.html { redirect_to graduate_records_path, notice: "Donor record saved." }
+        format.turbo_stream # Allows inline row updates without full page reloads
+      end
     else
-      render :show, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :show, status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@graduate_record, partial: "graduate_record", locals: { record: @graduate_record }), status: :unprocessable_entity }
+      end
     end
   end
 
