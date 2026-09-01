@@ -5,22 +5,25 @@ class GraduateRecord < ApplicationRecord
 
   def self.to_csv
     CSV.generate(headers: true) do |csv|
-      headers = ["CRM ID", "First Name", "Surname", "Combined Name", "Waiver Completed", "Notes"]
-      # Add any additional data keys from records (if present)
+      core_headers = ["CRM ID", "First Name", "Surname"]
+      # Add any additional data keys from records (if present) - these are from the CSV
       additional_keys = all.flat_map { |r| r.data&.keys || [] }.uniq.sort
-      csv << (headers + additional_keys)
+      event_headers = ["Waiver Completed", "Notes"]
+      
+      csv << (core_headers + additional_keys + event_headers)
 
       all.order(:surname, :first_name).each do |record|
         row = [
           record.crm_id, 
           record.first_name, 
-          record.surname, 
-          record.combined_name, 
-          record.waiver_completed? ? "Yes" : "No",
-          record.notes
+          record.surname
         ]
-        # Add data values for each additional key
+        # Add data values for each additional key (CSV fields)
         additional_keys.each { |key| row << record.data&.dig(key) }
+        # Add our event-tracking fields at the end
+        row << (record.waiver_completed? ? "Yes" : "No")
+        row << record.notes
+        
         csv << row
       end
     end
