@@ -32,16 +32,6 @@ services:
       db:
         condition: service_healthy
     networks:
-      - moonshot
-
-  memcached:
-    image: memcached:1.6.22-alpine
-    container_name: memcached
-    command: ["memcached", "-m", "64"]
-    restart: unless-stopped
-    ports:
-      - "11211"
-    networks:
       - moonshot 
 
   db:
@@ -55,7 +45,7 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "fcrepo"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 20

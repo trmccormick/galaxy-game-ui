@@ -39,14 +39,14 @@ RSpec.describe GraduateRecord, type: :model do
   end
 
   describe "#combined_name" do
-    it "prefers the stored combined_name" do
-      record = build(:graduate_record, combined_name: "Jordan A. Rivers")
-      expect(record.combined_name).to eq("Jordan A. Rivers")
+    it "returns first name + surname" do
+      record = build(:graduate_record, first_name: "Jordan", surname: "Rivers")
+      expect(record.combined_name).to eq("Jordan Rivers")
     end
 
-    it "falls back to first name + surname" do
-      record = build(:graduate_record, combined_name: nil)
-      expect(record.combined_name).to eq("Jordan Rivers")
+    it "handles nil first name" do
+      record = build(:graduate_record, first_name: nil, surname: "Rivers")
+      expect(record.combined_name).to eq("Rivers")
     end
   end
 
@@ -55,8 +55,8 @@ RSpec.describe GraduateRecord, type: :model do
       expect(build(:graduate_record).display_name).to eq("Jordan Rivers")
     end
 
-    it "falls back to the record id" do
-      record = build(:graduate_record, combined_name: nil, first_name: nil, surname: nil)
+    it "falls back to the record id when name fields are blank" do
+      record = build(:graduate_record, first_name: nil, surname: nil)
       record.id = 42
       expect(record.display_name).to eq("Record #42")
     end

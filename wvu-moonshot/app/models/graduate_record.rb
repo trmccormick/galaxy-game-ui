@@ -5,17 +5,23 @@ class GraduateRecord < ApplicationRecord
 
   def self.to_csv
     CSV.generate(headers: true) do |csv|
-      csv << ["CRM ID", "First Name", "Surname", "Combined Name", "Waiver Signed", "Notes"]
+      headers = ["CRM ID", "First Name", "Surname", "Combined Name", "Waiver Completed", "Notes"]
+      # Add any additional data keys from records (if present)
+      additional_keys = all.flat_map { |r| r.data&.keys || [] }.uniq.sort
+      csv << (headers + additional_keys)
 
       all.order(:surname, :first_name).each do |record|
-        csv << [
+        row = [
           record.crm_id, 
           record.first_name, 
           record.surname, 
           record.combined_name, 
-          record.waiver_signed? ? "Yes" : "No",
-          record.data&.dig("notes")
+          record.waiver_completed? ? "Yes" : "No",
+          record.notes
         ]
+        # Add data values for each additional key
+        additional_keys.each { |key| row << record.data&.dig(key) }
+        csv << row
       end
     end
   end
@@ -24,7 +30,7 @@ class GraduateRecord < ApplicationRecord
     term = term.to_s.strip
     return all.order(:surname, :first_name) if term.blank?
 
-    where("surname ILIKE :q OR combined_name ILIKE :q", q: "%#{sanitize_sql_like(term)}%")
+    where("surname ILIKE :q", q: "%#{sanitize_sql_like(term)}%")
       .order(:surname, :first_name)
       .limit(50)
   end
@@ -36,14 +42,27 @@ class GraduateRecord < ApplicationRecord
   end
 
   def combined_name
-    self[:combined_name].presence || [first_name, surname].compact.join(" ")
+    [first_name, surname].compact.join(" ")
   end
 
   def display_name
     combined_name.presence || "Record ##{id}"
   end
 
-  def waiver_signed?
-    data&.dig("waiver_signed") == true
+  # Convenience methods to access data fields
+  def primary_constituency
+    data&.dig("primary_constituency") || data&.dig("Primary Constituency")
+  end
+
+  def college_code
+    data&.dig("college_code") || data&.dig("Educational/College Code") || data&.dig("College Code")
+  end
+
+  def sub_department_code
+    data&.dig("sub_department_code") || data&.dig("Educational Sub-Department Code") || data&.dig("Sub-Department Code")
+  end
+
+  def class_year
+    data&.dig("class_year") || data&.dig("Class Year")
   end
 end

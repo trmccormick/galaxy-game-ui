@@ -35,7 +35,13 @@ RSpec.configure do |config|
   config.include RequestHelpers, type: :request
   config.include AuthenticationHelpers, type: :request
 
-  # Current.session is thread-local and would leak between request specs, so
-  # reset it before each one to guarantee a clean (unauthenticated) start.
-  config.before(:each, type: :request) { Current.session = nil }
+  # Current.session is thread-local and the signed session cookie persists in
+  # the Rack::Test cookie jar, so both would leak between request specs. Reset
+  # them before each example to guarantee a clean (unauthenticated) start.
+  config.before(:each, type: :request) do
+    Current.session = nil
+    # Clear the session cookie by setting it to nil/blank. This ensures
+    # find_session_by_cookie won't find a valid session.
+    cookies[:session_id] = nil
+  end
 end

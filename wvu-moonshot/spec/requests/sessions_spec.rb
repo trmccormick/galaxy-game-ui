@@ -26,16 +26,21 @@ RSpec.describe "Sessions", type: :request do
         password: "wrong"
       }
       expect(response).to redirect_to(new_session_path)
-      expect(cookies[:session_id]).to be_nil
+      # The session cookie was set to nil in the before hook, so it stays blank.
+      expect(cookies[:session_id]).to be_blank
     end
   end
 
   describe "DELETE /session" do
     it "terminates the session" do
       sign_in(user)
+      expect(cookies[:session_id]).to be_present
+
       delete session_path
       expect(response).to redirect_to(new_session_path)
-      expect(cookies[:session_id]).to be_nil
+      # The session cookie is persistent, so signing out clears it to a blank
+      # value rather than removing the key entirely.
+      expect(cookies[:session_id]).to be_blank
     end
   end
 end

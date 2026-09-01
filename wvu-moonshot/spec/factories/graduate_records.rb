@@ -3,10 +3,14 @@ FactoryBot.define do
     sequence(:crm_id) { |n| "WVU-TEST#{format('%05d', n)}" }
     first_name { "Jordan" }
     surname { "Rivers" }
-    primary_constituency { "Alumni Association" }
-    college_code { "COE" }
-    sub_department_code { "CSC" }
-    class_year { "2015" }
+    data do
+      {
+        "Primary Constituency" => "Alumni Association",
+        "Educational/College Code" => "COE",
+        "Educational Sub-Department Code" => "CSC",
+        "Class Year" => "2015"
+      }
+    end
     waiver_completed { false }
     notes { nil }
 
