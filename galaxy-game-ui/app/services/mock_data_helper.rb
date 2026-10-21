@@ -2,8 +2,8 @@ module MockDataHelper
   # Returns mock system status for dashboard
   def self.system_status
     {
-      system_name: "ANTOLLARE III",
-      player_isk: 15_000_000,
+      system_name: "Luna Settlement Alpha",
+      player_gcc: 15_000_000,
       player_name: "Commander Nova",
       location: "Bay 4, Dock Station A",
       timestamp: "2026-10-20 17:30 UTC"
@@ -40,10 +40,10 @@ module MockDataHelper
   # Returns mock local inventory
   def self.bay_inventory
     [
-      { resource: "Compressed Blue Ice", quantity: 850, max_qty: 1000, unit: "units" },
-      { resource: "Oxygen Isotopes", quantity: 620, max_qty: 800, unit: "units" },
-      { resource: "Heavy Water", quantity: 340, max_qty: 500, unit: "units" },
-      { resource: "Exotic Matter (EM)", quantity: 45, max_qty: 200, unit: "units" }
+      { resource: "Water Ice", quantity: 850, max_qty: 1000, unit: "kg" },
+      { resource: "Oxygen (O2)", quantity: 620, max_qty: 800, unit: "kg" },
+      { resource: "Deuterium", quantity: 340, max_qty: 500, unit: "kg" },
+      { resource: "Regolith", quantity: 4500, max_qty: 5000, unit: "kg" }
     ]
   end
 
@@ -63,9 +63,9 @@ module MockDataHelper
   # Returns mock player ships/units
   def self.player_ships
     [
-      { name: "Heavy Transport Tug Alpha", type: "Transport", status: "Docked", location: "ANTOLLARE III" },
-      { name: "Logistics Hauler Beta", type: "Light Transport", status: "Docked", location: "ANTOLLARE III" },
-      { name: "Scout Vessel Gamma", type: "Scout", status: "In Transit", destination: "Jita Hub", eta: "4h 20m" }
+      { name: "Heavy Transport Tug Alpha", type: "Transport", status: "Docked", location: "Luna Settlement Alpha" },
+      { name: "Logistics Hauler Beta", type: "Light Transport", status: "Docked", location: "Luna Settlement Alpha" },
+      { name: "Scout Vessel Gamma", type: "Scout", status: "In Transit", destination: "Luna Station Prime", eta: "4h 20m" }
     ]
   end
 
@@ -77,9 +77,9 @@ module MockDataHelper
   # Returns mock NPC buy orders
   def self.npc_buy_orders
     [
-      { corporation: "LDC (Lunar Development Corp)", needs: "Compressed Blue Ice", quantity: 500, price_per_unit: 1200, total: 600_000 },
-      { corporation: "AstroLift Logistics", needs: "Oxygen Isotopes", quantity: 300, price_per_unit: 850, total: 255_000 },
-      { corporation: "MDC (Mars Development Corp)", needs: "Heavy Water", quantity: 200, price_per_unit: 2100, total: 420_000 }
+      { corporation: "LDC (Lunar Development Corp)", needs: "Water Ice", quantity: 500, price_per_unit: 1200, total: 600_000 },
+      { corporation: "AstroLift Logistics", needs: "Oxygen (O2)", quantity: 300, price_per_unit: 850, total: 255_000 },
+      { corporation: "MDC (Mars Development Corp)", needs: "Deuterium", quantity: 200, price_per_unit: 2100, total: 420_000 }
     ]
   end
 
@@ -94,17 +94,17 @@ module MockDataHelper
   # Returns mock wormhole network
   def self.wormhole_network
     [
-      { system: "ANTOLLARE III", type: "Natural", stability: "95%", decay_timer: "22 hours", em_potential: "High" },
-      { system: "Enedore", type: "Artificial", stability: "100%", decay_timer: "N/A", em_potential: "Medium" },
-      { system: "Jita Hub", type: "Artificial", stability: "100%", decay_timer: "N/A", em_potential: "None" }
+      { system: "Luna Settlement Alpha", type: "Natural", stability: "95%", decay_timer: "22 hours", em_potential: "High" },
+      { system: "Mars Cycler Station", type: "Artificial", stability: "100%", decay_timer: "N/A", em_potential: "Medium" },
+      { system: "Luna Station Prime", type: "Artificial", stability: "100%", decay_timer: "N/A", em_potential: "None" }
     ]
   end
 
   # Returns mock AstroLift transit routes
   def self.astrolift_routes
     [
-      { route: "ANTOLLARE III → Enedore → Jita Hub", hops: 2, time: "4.5h", price: 50_000, capacity: "5000 m³" },
-      { route: "ANTOLLARE III → Jita Hub (direct)", hops: 1, time: "2h", price: 85_000, capacity: "3000 m³" }
+      { route: "Luna Settlement Alpha → Mars Cycler Station → Luna Station Prime", hops: 2, time: "4.5h", price: 50_000, capacity: "5000 m³" },
+      { route: "Luna Settlement Alpha → Luna Station Prime (direct)", hops: 1, time: "2h", price: 85_000, capacity: "3000 m³" }
     ]
   end
 
@@ -117,8 +117,8 @@ module MockDataHelper
   def self.npc_corporations
     [
       { name: "AstroLift", status: "Operating", current_activity: "Scheduling cycler departures", inventory_value: 2_500_000 },
-      { name: "LDC", status: "Operating", current_activity: "Importing compressed blue ice", inventory_value: 1_800_000 },
-      { name: "MDC", status: "Operating", current_activity: "Harvesting metals", inventory_value: 3_200_000 }
+      { name: "LDC", status: "Operating", current_activity: "Importing water ice from polar mines", inventory_value: 1_800_000 },
+      { name: "MDC", status: "Operating", current_activity: "Harvesting regolith and metals", inventory_value: 3_200_000 }
     ]
   end
 
@@ -145,9 +145,9 @@ module MockDataHelper
   # Returns mock buy order status for admin
   def self.buy_order_status
     [
-      { item: "Compressed Blue Ice", quantity: 500, npc_offering: "LDC", status: "Unfulfilled", escalation_eta: "2h" },
-      { item: "Oxygen Isotopes", quantity: 300, npc_offering: "AstroLift", status: "Mission Posted", reward: 85_000 },
-      { item: "Heavy Water", quantity: 200, npc_offering: "MDC", status: "AI Fulfilling (Harvester)", eta: "3h" }
+      { item: "Water Ice", quantity: 500, npc_offering: "LDC", status: "Unfulfilled", escalation_eta: "2h" },
+      { item: "Oxygen (O2)", quantity: 300, npc_offering: "AstroLift", status: "Mission Posted", reward: 85_000 },
+      { item: "Deuterium", quantity: 200, npc_offering: "MDC", status: "AI Fulfilling (Harvester)", eta: "3h" }
     ]
   end
 

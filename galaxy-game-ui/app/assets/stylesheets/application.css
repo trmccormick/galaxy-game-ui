@@ -1,10 +1,53 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+/* Tailwind v4 CSS — Galaxy Game dark theme */
+@import "tailwindcss";
+@config "./config/tailwind.config.js";
+
+/* Galaxy Game theme variables */
+@theme {
+  --color-galaxy-dark: #0a0a0a;
+  --color-galaxy-panel: #1a1a2e;
+  --color-galaxy-accent: #00d4ff;
+  --color-galaxy-secondary: #9d4edd;
+  --color-galaxy-text: #e0e0e0;
+  --color-galaxy-text-dim: #8892b0;
+  --color-galaxy-success: #06ffa5;
+  --color-galaxy-warning: #ffd60a;
+  --color-galaxy-danger: #ff006e;
+  --color-neon-cyan: #00d9ff;
+  --color-neon-purple: #b366ff;
+  --color-neon-gold: #ffd700;
+}
+
+/* Base layer — Galaxy Game dark theme global styles */
+@layer base {
+  body {
+    @apply bg-galaxy-dark text-galaxy-text;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-galaxy-text font-bold;
+  }
+
+  a {
+    @apply text-galaxy-accent hover:text-neon-cyan transition-colors;
+  }
+
+  button {
+    @apply bg-galaxy-accent text-galaxy-dark font-semibold px-4 py-2 rounded hover:bg-neon-cyan transition-colors;
+  }
+}
+
+/* Component layer — Glassmorphic and card styling */
+@layer components {
+  .glass-panel {
+    @apply bg-galaxy-panel/60 backdrop-blur-md border border-galaxy-accent/20 rounded-lg;
+  }
+
+  .glass-card {
+    @apply bg-galaxy-panel/40 backdrop-blur border border-galaxy-accent/10 rounded p-4;
+  }
+
+  .stat-badge {
+    @apply inline-block px-3 py-1 rounded bg-galaxy-accent/20 text-galaxy-accent text-sm font-mono;
+  }
+}
