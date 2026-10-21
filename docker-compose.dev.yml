@@ -6,25 +6,25 @@ services:
     env_file:
       - './env/env.development'
     volumes:
-      - ./wvu-moonshot:/home/moonshot
+      - ./galaxy-game-ui:/home/galaxy_game
       # map in various bash scripts
-      - ./scripts:/home/moonshot/scripts
+      - ./scripts:/home/galaxy_game/scripts
       # map in various persistent directories in the data folder
-      - ./data/logs:/home/moonshot/log
+      - ./data/logs:/home/galaxy_game/log
       - ./data/bundle:/usr/local/bundle # cache bundle install
-      - ./data/node_modules:/home/moonshot/node_modules
+      - ./data/node_modules:/home/galaxy_game/node_modules
       # map in the imports folder (where CSV seeds are stored)
-      - ./data/imports:/home/moonshot/data
+      - ./data/imports:/home/galaxy_game/data
 
     command: ["sleep", "infinity"]
     restart: unless-stopped
     networks:
-      - moonshot
+      - galaxy_game
 
   web:
     extends: app
-    container_name: moonshot
-    command: bash -c "bundle install; sh ./scripts/startup.sh"
+    container_name: galaxy_game
+    command: bash -c "bundle install && bash scripts/startup.sh"
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -32,7 +32,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - moonshot 
+      - galaxy_game 
 
   db:
     container_name: db
@@ -51,10 +51,10 @@ services:
       retries: 20
       start_period: 30s
     networks:
-      - moonshot
+      - galaxy_game
 
 networks:
-  moonshot:
+  galaxy_game:
     driver: bridge
     driver_opts:
-      com.docker.network.bridge.name: br-moonshot
+      com.docker.network.bridge.name: br-galaxy_game

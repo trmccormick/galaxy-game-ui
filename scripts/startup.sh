@@ -11,6 +11,6 @@ service cron start
 whenever --update-crontab
 
 # remove PID and start the server
-rm -f /home/moonshot/tmp/pids/server.pid
+rm -f /home/galaxy_game/tmp/pids/server.pid
 
 bin/rails s -p 3000 -b '0.0.0.0'

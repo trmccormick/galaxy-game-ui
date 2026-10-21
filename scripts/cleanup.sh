@@ -10,4 +10,4 @@ docker system prune --volumes
 docker image prune
 
 # remove log files
-rm -rf ./wvu-moonshot/log/*.log
+rm -rf ./galaxy-game-ui/log/*.log

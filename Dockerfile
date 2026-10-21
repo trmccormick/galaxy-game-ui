@@ -10,7 +10,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
   nodejs
   # Set the working directory
   # -------------------------------------------------------------------------------------------------
-  WORKDIR /home/moonshot
+  WORKDIR /home/galaxy_game
   
   # Install Bundler
   # -------------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
   
   # Copy the Gemfile and Gemfile.lock into the container
   # -------------------------------------------------------------------------------------------------
-  COPY ./wvu-moonshot/Gemfile ./wvu-moonshot/Gemfile.lock /home/moonshot/
+  COPY ./galaxy-game-ui/Gemfile ./galaxy-game-ui/Gemfile.lock /home/galaxy_game/
   
   # Install gems
   # -------------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
   
   # Copy the rest of the application code into the container
   # -------------------------------------------------------------------------------------------------
-  ADD ./wvu-moonshot /home/moonshot
+  ADD ./galaxy-game-ui /home/galaxy_game
 
   # Expose port 3000 to the Docker host
   EXPOSE 3000
