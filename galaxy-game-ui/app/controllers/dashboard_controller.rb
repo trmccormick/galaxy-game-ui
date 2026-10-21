@@ -3,8 +3,10 @@ class DashboardController < ApplicationController
 
   def index
     @system_status = MockDataHelper.system_status
-    @player_inventory = MockDataHelper.bay_inventory
-    @player_units = MockDataHelper.active_units
-    @market_panel = MockDataHelper.market_quick_panel
+    @bay_items     = MockDataHelper.bay_inventory       # was @player_inventory
+    @ships         = MockDataHelper.player_ships        # for later tasks
+    @orders        = MockDataHelper.npc_buy_orders       # for later tasks
+    @missions      = MockDataHelper.active_missions      # for later tasks
+    @market        = MockDataHelper.market_quick_panel   # existing but renamed
   end
 end
