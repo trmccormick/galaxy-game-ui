@@ -1,0 +1,104 @@
+<div class="blueprint-detail">
+  <div class="detail-header">
+    <div class="detail-image">
+      <% asset = MockDataHelper.asset_map.find { |k, _| k.downcase == @blueprint[:name].downcase }&.last %>
+      <% if asset.present? %>
+        <%= image_tag asset, alt: @blueprint[:name] %>
+      <% else %>
+        <div class="placeholder large tech-<%= @blueprint[:technology_level] %>">
+          <span class="tech-level"><%= @blueprint[:technology_level].upcase %></span>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="detail-info">
+      <h1><%= @blueprint[:name] %></h1>
+      <p class="detail-description"><%= @blueprint[:description] %></p>
+      
+      <div class="detail-stats">
+        <div class="stat-box">
+          <span class="label">Production Time</span>
+          <span class="value"><%= @blueprint[:production_time_hours] %> Hours</span>
+        </div>
+        
+        <div class="stat-box">
+          <span class="label">Output Quantity</span>
+          <span class="value"><%= @blueprint[:output_quantity] %> Unit</span>
+        </div>
+        
+        <div class="stat-box">
+          <span class="label">Material Efficiency</span>
+          <span class="value"><%= (@blueprint[:material_efficiency] * 100).round %>%</span>
+        </div>
+        
+        <div class="stat-box">
+          <span class="label">Time Efficiency</span>
+          <span class="value"><%= (@blueprint[:time_efficiency] * 100).round %>%</span>
+        </div>
+      </div>
+      
+      <% if @blueprint[:licensed_runs_remaining].present? %>
+        <div class="licensed-runs">
+          <p>Licensed Runs Remaining: <strong><%= @blueprint[:licensed_runs_remaining] %></strong></p>
+        </div>
+      <% end %>
+      
+      <div class="total-cost">
+        <p>Total Estimated Cost: <strong><%= number_to_currency(@blueprint[:total_cost]) %></strong></p>
+      </div>
+      
+      <%= link_to "Manufacture Item", "#", class: "btn btn-primary" %>
+    </div>
+  </div>
+  
+  <div class="materials-section">
+    <h2>Materials Required</h2>
+    
+    <table class="materials-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Amount</th>
+          <th>Unit Price</th>
+          <th>Subtotal</th>
+          <th>In Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @blueprint[:materials].each do |material| %>
+          <tr class="material-row">
+            <td class="item-cell">
+              <%= link_to material[:item_name], item_path(material[:item_name]), class: "item-link" %>
+            </td>
+            <td><%= number_with_delimiter(material[:amount]) %> units</td>
+            <td><%= number_to_currency(10) %></td>
+            <td><strong><%= number_to_currency(material[:subtotal] || material[:amount] * 10) %></strong></td>
+            <td>
+              <% in_stock = MockDataHelper.bay_inventory.find { |i| i[:resource].downcase == material[:item_name].downcase }&.dig(:quantity) || 0 %>
+              <span class="stock-indicator <%= in_stock >= material[:amount] ? 'sufficient' : 'insufficient' %>">
+                <%= number_with_delimiter(in_stock) %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="research-section">
+    <h2>Research & Improvements</h2>
+    
+    <div class="research-box">
+      <p>Current Research Level: <strong><%= @blueprint[:research_level] %></strong></p>
+      <p>Required Research Level: <strong><%= @blueprint[:research_level] %></strong></p>
+      
+      <% if @blueprint[:current_research_level].to_i < @blueprint[:research_level].to_i %>
+        <p class="warning">You must reach research level <%= @blueprint[:research_level] %> before manufacturing</p>
+      <% else %>
+        <p class="success">Research requirement met ✓</p>
+      <% end %>
+    </div>
+  </div>
+  
+  <%= link_to "← Back to Blueprints", blueprints_path, class: "btn btn-secondary" %>
+</div>

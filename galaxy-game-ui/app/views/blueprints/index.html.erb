@@ -1,0 +1,70 @@
+<div class="blueprints-container">
+  <div class="topbar-blueprints">
+    <h1>Blueprints Catalog</h1>
+    
+    <div class="search-filter">
+      <%= form_with url: blueprints_path, method: :get, local: true do |f| %>
+        <%= f.text_field :search, placeholder: "Search blueprints...", value: params[:search], class: "search-input" %>
+        
+        <%= f.select :tech_level, 
+            options_for_select([
+              ["All Levels", ""],
+              ["Basic", "basic"],
+              ["Intermediate", "intermediate"],
+              ["Advanced", "advanced"]
+            ], params[:tech_level]),
+            { include_blank: false, class: "filter-select" } %>
+        
+        <%= f.select :sort, 
+            options_for_select([
+              ["Name (A-Z)", "name"],
+              ["Tech Level", "tech_level"],
+              ["Research Required", "research_level"]
+            ], params[:sort] || "name"),
+            { include_blank: false, class: "filter-select" } %>
+        
+        <%= f.submit "Filter", class: "btn btn-primary btn-sm" %>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="blueprints-grid">
+    <% if @blueprints.any? %>
+      <% @blueprints.each do |blueprint| %>
+        <div class="blueprint-card" onclick="window.location='<%= blueprint_path(blueprint[:name]) %>'">
+          <div class="card-image">
+            <% asset = MockDataHelper.asset_map.find { |k, _| k.downcase == blueprint[:name].downcase }&.last %>
+            <% if asset.present? %>
+              <%= image_tag asset, alt: blueprint[:name] %>
+            <% else %>
+              <div class="placeholder tech-<%= blueprint[:technology_level] %>">
+                <span class="tech-level"><%= blueprint[:technology_level].upcase %></span>
+              </div>
+            <% end %>
+          </div>
+          
+          <div class="card-body">
+            <h3><%= blueprint[:name] %></h3>
+            <p class="card-description"><%= truncate(blueprint[:description], length: 80) %></p>
+            
+            <div class="card-stats">
+              <span class="stat">
+                <strong><%= blueprint[:materials].count %></strong> Materials
+              </span>
+              <span class="stat">
+                <strong><%= blueprint[:production_time_hours] %></strong> Hours
+              </span>
+            </div>
+            
+            <div class="card-footer">
+              <span class="research-req">Research: <%= blueprint[:research_level] %></span>
+              <%= link_to "View Details", blueprint_path(blueprint[:name]), class: "btn btn-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="no-results">No blueprints found matching your criteria.</p>
+    <% end %>
+  </div>
+</div>

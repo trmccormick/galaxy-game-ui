@@ -1,26 +1,234 @@
-<!-- Panel H: Location & Character Header -->
-<div class="bg-gradient-to-r from-purple-900/40 to-cyan-900/30 border-b border-cyan-900/30 px-6 py-4 mb-4">
-  <h1 class="text-2xl font-bold text-[#e0e0e0]"><%= @system_status[:player_name] %></h1>
-  <h2 class="text-lg font-semibold text-cyan-400">Location: <%= @system_status[:system_name] %></h2>
-  <p class="text-sm text-gray-500">GCC <%= number_with_delimiter(@system_status[:player_gcc]) %></p>
-  <p class="text-xs text-gray-600"><%= @system_status[:timestamp] %></p>
-</div>
+<!-- Dashboard Container -->
+<div class="dashboard-container">
 
-<!-- Panel 1: Local Bay Inventory -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
-  <div class="bg-[rgba(26,26,46,0.85)] border border-cyan-900/30 rounded-lg p-4 hover:border-cyan-500/50 transition-colors">
-    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Local Bay Inventory</h3>
-    <% @bay_items.each do |item| %>
-      <div class="mb-3">
-        <div class="flex justify-between text-sm mb-1">
-          <span class="text-[#e0e0e0]"><%= item[:resource] %></span>
-          <span class="text-gray-400"><%= number_with_delimiter(item[:quantity]) %>/<%= number_with_delimiter(item[:max_qty]) %> <%= item[:unit] %></span>
+  <!-- Topbar Navigation -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <%= link_to "Galaxy", root_path, class: "topbar-logo" %>
+      <nav class="topbar-nav">
+        <%= link_to "HOME", root_path, class: "topbar-link" %>
+        <%= link_to "LOCATION", wormholes_path, class: "topbar-link" %>
+        <%= link_to "INVENTORY", dashboard_path, class: "topbar-link active" %>
+        <%= link_to "PRODUCTION", blueprints_path, class: "topbar-link" %>
+      </nav>
+    </div>
+    
+    <div class="topbar-right">
+      <!-- System Selector -->
+      <%= form_with url: enter_game_landing_path, method: :get, local: true do |f| %>
+        <div class="system-selector-small">
+          <%= f.select :system, 
+              options_for_select([
+                ["Sol (Home)", "SOL"],
+                ["Eden (Outpost)", "EDEN"],
+                ["System B", "SYS_B"]
+              ], @current_system),
+              { onchange: 'this.form.submit()' } %>
         </div>
-        <div class="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
-          <div class="bg-gradient-to-r from-cyan-600 to-purple-600 h-2 rounded-full" style="width: <%= [item[:quantity].to_f / item[:max_qty] * 100, 100].min %>%"></div>
+      <% end %>
+      
+      <span class="topbar-player"><%= @player_name %></span>
+      <%= link_to "Logout", session_path, method: :delete, class: "btn btn-small" %>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="dashboard-main">
+    
+    <!-- Panel H: Location Header -->
+    <div class="panel-h location-header">
+      <div class="header-left">
+        <div class="player-avatar">🚀</div>
+        <div class="player-info">
+          <h2><%= @player_name %></h2>
+          <p class="location-text"><%= @current_system %> / Sol Settlement Alpha</p>
         </div>
       </div>
-    <% end %>
-  </div>
-  <!-- Panel 2 placeholder for Task 3 -->
-</div>
+      
+      <div class="header-right">
+        <div class="balance-card">
+          <span class="label">Balance</span>
+          <span class="amount"><%= number_with_delimiter(@system_status[:player_gcc]) %> GCC</span>
+        </div>
+        <div class="status-indicator">
+          <span class="dot online"></span>
+          Connected
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 1: Bay Inventory -->
+    <div class="panel panel-1 bay-inventory">
+      <div class="panel-header">
+        <h3>Bay Inventory</h3>
+        <div class="panel-controls">
+          <span class="storage-info">Storage Used: <%= @bay_items.sum { |i| i[:quantity] } / 1000 %> / 5,000 m³</span>
+        </div>
+      </div>
+      
+      <div class="panel-body">
+        <div class="inventory-grid">
+          <% @bay_items.each do |item| %>
+            <div class="inventory-item">
+              <div class="item-info">
+                <p class="item-name"><%= item[:resource] %></p>
+                <p class="item-amount"><%= number_with_delimiter(item[:quantity]) %>/<%= number_with_delimiter(item[:max_qty]) %> <%= item[:unit] %></p>
+              </div>
+              <div class="inventory-bar">
+                <div class="progress-fill" style="width: <%= [item[:quantity].to_f / item[:max_qty] * 100, 100].min %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Fleet Status -->
+    <div class="panel panel-2 fleet-status">
+      <div class="panel-header">
+        <h3>Fleet Status</h3>
+        <span class="ship-count"><%= @ships.count %> Ships</span>
+      </div>
+      
+      <div class="panel-body">
+        <% if @ships.any? %>
+          <div class="ships-list">
+            <% @ships.each do |ship| %>
+              <div class="ship-row">
+                <div class="ship-details">
+                  <p class="ship-name"><%= ship[:name] %></p>
+                  <p class="ship-type"><%= ship[:type] %></p>
+                </div>
+                
+                <div class="ship-status">
+                  <span class="status-badge <%= ship[:status].downcase %>"><%= ship[:status] %></span>
+                </div>
+                
+                <div class="ship-location">
+                  <% if ship[:destination] %>
+                    → <%= ship[:destination] %> (<%= ship[:eta] %>)
+                  <% else %>
+                    <%= ship[:location] %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="empty-state">No ships in fleet</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Panel 3: Production Queue -->
+    <div class="panel panel-3 production-queue">
+      <div class="panel-header">
+        <h3>Production Queue</h3>
+        <span class="queue-count"><%= @production_queue.count %> Active</span>
+      </div>
+      
+      <div class="panel-body">
+        <% if @production_queue.any? %>
+          <div class="queue-list">
+            <% @production_queue.each do |job| %>
+              <div class="queue-item">
+                <div class="job-header">
+                  <p class="job-name"><%= job[:job] %></p>
+                  <span class="job-status <%= job[:status].downcase %>"><%= job[:status] %></span>
+                </div>
+                
+                <div class="job-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: <%= job[:progress] %>%"></div>
+                  </div>
+                  <span class="progress-text"><%= job[:progress] %>% complete</span>
+                </div>
+                
+                <div class="job-time">
+                  <span>ETA: <%= job[:eta] %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="empty-state">No active production jobs</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Panel 4: Wormhole Quick View -->
+    <div class="panel panel-4 wormhole-quick">
+      <div class="panel-header">
+        <h3>Wormhole Connections</h3>
+      </div>
+      
+      <div class="panel-body">
+        <% if @available_wormholes.any? %>
+          <div class="wormholes-list">
+            <% @available_wormholes.each do |wh| %>
+              <div class="wormhole-item <%= wh[:natural] ? 'natural' : 'artificial' %>">
+                <div class="wh-header">
+                  <p class="wh-destination"><%= wh[:system_a] %> ↔ <%= wh[:system_b] %></p>
+                  <span class="wh-type"><%= wh[:natural] ? "Natural" : "Artificial (AWS)" %></span>
+                </div>
+                
+                <div class="stability-bar">
+                  <div class="stability-fill" style="width: <%= (wh[:stability_index] * 100).round %>%; background: <%= stability_color(wh[:stability_index]) %>"></div>
+                </div>
+                
+                <div class="wh-metrics">
+                  <span class="metric">Stability: <%= (wh[:stability_index] * 100).round %>%</span>
+                  <span class="metric">Mass Limit: <%= wh[:mass_limit].round %> tons</span>
+                  <% if wh[:snap_risk_level] %>
+                    <span class="metric risk-<%= wh[:snap_risk_level] %>"><%= wh[:snap_risk_level].upcase %> RISK</span>
+                  <% end %>
+                </div>
+                
+                <%= link_to "Navigate", wormholes_path, class: "btn btn-small" if wh[:snap_risk_level] == "safe" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="empty-state">No wormholes available from <%= @current_system %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Panel 5: EM Economy (Quick View) -->
+    <div class="panel panel-5 em-economy-quick">
+      <div class="panel-header">
+        <h3>EM Economy</h3>
+      </div>
+      
+      <div class="panel-body">
+        <div class="em-stats-grid">
+          <div class="em-stat total">
+            <span class="label">Total Reserves</span>
+            <span class="value"><%= number_with_delimiter(@em_status[:total_em_reserves]) %> EM</span>
+          </div>
+          
+          <div class="em-stat harvest">
+            <span class="label">Daily Harvest</span>
+            <span class="value positive">+<%= number_with_delimiter(@em_status[:daily_harvest_rate]) %></span>
+          </div>
+          
+          <div class="em-stat consumption">
+            <span class="label">Daily Consumption</span>
+            <span class="value negative"><%= number_with_delimiter(@em_status[:daily_consumption]) %></span>
+          </div>
+          
+          <div class="em-stat net-flow <%= @em_status[:net_daily_flow] >= 0 ? 'positive' : 'negative' %>">
+            <span class="label">Net Daily Flow</span>
+            <span class="value"><%= number_with_delimiter(@em_status[:net_daily_flow]) %></span>
+          </div>
+          
+          <div class="em-stat critical <%= @em_status[:days_until_critical] < 30 ? 'critical' : '' %>">
+            <span class="label">Days Until Critical</span>
+            <span class="value"><%= @em_status[:days_until_critical] %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dashboard-main -->
+</div><!-- /dashboard-container -->

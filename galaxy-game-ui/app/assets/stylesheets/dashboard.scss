@@ -1,0 +1,615 @@
+// Dashboard Styles - EVE Dashboard Theme (Galaxy Game)
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+// Topbar Navigation
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--panel);
+  border-bottom: 2px solid var(--line);
+  
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    
+    .topbar-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+    
+    .topbar-nav {
+      display: flex;
+      gap: 16px;
+      
+      .topbar-link {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        
+        &:hover {
+          color: var(--text);
+          background: var(--panel2);
+        }
+        
+        &.active {
+          color: var(--accent);
+          background: rgba(0, 212, 255, 0.1);
+        }
+      }
+    }
+  }
+  
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    
+    .system-selector-small {
+      select {
+        padding: 8px 12px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        color: var(--text);
+        border-radius: 4px;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--accent);
+        }
+      }
+    }
+    
+    .topbar-player {
+      color: var(--text);
+      font-size: 14px;
+    }
+  }
+}
+
+// Main Content Area
+.dashboard-main {
+  padding: 20px;
+  flex: 1;
+}
+
+// Panel H: Location Header
+.panel-h.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .player-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--panel2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border: 2px solid var(--accent);
+    }
+    
+    .player-info {
+      h2 {
+        color: var(--text);
+        margin: 0 0 4px;
+        font-size: 24px;
+      }
+      
+      .location-text {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    
+    .balance-card {
+      padding: 8px 16px;
+      background: var(--bg);
+      border-radius: 4px;
+      
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        display: block;
+        margin-bottom: 4px;
+      }
+      
+      .amount {
+        color: var(--accent);
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 14px;
+      
+      .dot.online {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+      }
+    }
+  }
+}
+
+// Generic Panel Styles
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  margin-bottom: 20px;
+  
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    
+    h3 {
+      color: var(--text);
+      margin: 0;
+      font-size: 18px;
+    }
+    
+    .storage-info,
+    .ship-count,
+    .queue-count {
+      color: var(--muted);
+      font-size: 14px;
+    }
+  }
+  
+  .panel-body {
+    padding: 20px;
+  }
+}
+
+// Panel 1: Bay Inventory
+.panel-1.bay-inventory {
+  .inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    
+    .inventory-item {
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      
+      .item-info {
+        margin-bottom: 8px;
+        
+        .item-name {
+          color: var(--text);
+          margin: 0 0 4px;
+          font-weight: 500;
+        }
+        
+        .item-amount {
+          color: var(--muted);
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+      
+      .inventory-bar {
+        height: 6px;
+        background: var(--panel2);
+        border-radius: 3px;
+        overflow: hidden;
+        
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(to right, var(--accent), #8c4dff);
+        }
+      }
+    }
+  }
+}
+
+// Panel 2: Fleet Status
+.panel-2.fleet-status {
+  .ships-list {
+    display: grid;
+    gap: 16px;
+    
+    .ship-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      
+      .ship-details {
+        flex: 1;
+        
+        .ship-name {
+          color: var(--text);
+          margin: 0 0 4px;
+          font-weight: 500;
+        }
+        
+        .ship-type {
+          color: var(--muted);
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+      
+      .ship-status {
+        .status-badge {
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+          
+          &.docked {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+          }
+          
+          &.in transit {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+          }
+        }
+      }
+      
+      .ship-location {
+        color: var(--muted);
+        font-size: 14px;
+        text-align: right;
+      }
+    }
+  }
+}
+
+// Panel 3: Production Queue
+.panel-3.production-queue {
+  .queue-list {
+    display: grid;
+    gap: 16px;
+    
+    .queue-item {
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      
+      .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        
+        .job-name {
+          color: var(--text);
+          margin: 0;
+          font-weight: 500;
+        }
+        
+        .job-status {
+          padding: 4px 8px;
+          border-radius: 3px;
+          font-size: 12px;
+          
+          &.in progress {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+          }
+          
+          &.queued {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+          }
+        }
+      }
+      
+      .job-progress {
+        margin-bottom: 8px;
+        
+        .progress-bar {
+          height: 8px;
+          background: var(--panel2);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 4px;
+          
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #00ff88, var(--accent));
+          }
+        }
+        
+        .progress-text {
+          color: var(--muted);
+          font-size: 12px;
+        }
+      }
+      
+      .job-time {
+        color: var(--muted);
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Panel 4: Wormhole Quick View
+.panel-4.wormhole-quick {
+  .wormholes-list {
+    display: grid;
+    gap: 16px;
+    
+    .wormhole-item {
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      
+      &.natural {
+        border-left: 3px solid var(--green);
+      }
+      
+      &.artificial {
+        border-left: 3px solid var(--accent);
+      }
+      
+      .wh-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        
+        .wh-destination {
+          color: var(--text);
+          margin: 0;
+          font-weight: 500;
+        }
+        
+        .wh-type {
+          padding: 4px 8px;
+          background: var(--panel2);
+          border-radius: 3px;
+          font-size: 12px;
+          color: var(--muted);
+        }
+      }
+      
+      .stability-bar {
+        height: 6px;
+        background: var(--panel2);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        
+        .stability-fill {
+          height: 100%;
+          transition: width 0.3s ease;
+        }
+      }
+      
+      .wh-metrics {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        
+        .metric {
+          color: var(--muted);
+          font-size: 14px;
+          
+          &.risk-safe {
+            color: var(--green);
+          }
+          
+          &.risk-caution {
+            color: #ffa500;
+          }
+          
+          &.risk-danger {
+            color: var(--red);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Panel 5: EM Economy Quick View
+.panel-5.em-economy-quick {
+  .em-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    
+    .em-stat {
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 4px;
+      text-align: center;
+      border: 1px solid var(--line);
+      
+      &.positive {
+        border-color: rgba(0, 255, 0, 0.3);
+      }
+      
+      &.negative {
+        border-color: rgba(255, 0, 0, 0.3);
+      }
+      
+      &.critical {
+        animation: pulse-critical 2s infinite;
+      }
+      
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+        display: block;
+        margin-bottom: 8px;
+      }
+      
+      .value {
+        font-size: 20px;
+        font-weight: bold;
+        
+        &.positive {
+          color: var(--green);
+        }
+        
+        &.negative {
+          color: var(--red);
+        }
+        
+        &.critical {
+          color: var(--red);
+        }
+      }
+    }
+  }
+}
+
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    gap: 12px;
+    
+    .topbar-left,
+    .topbar-right {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .panel-h.location-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    
+    .header-left,
+    .header-right {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .panel-body {
+    padding: 12px !important;
+  }
+  
+  .inventory-grid,
+  .ships-list,
+  .queue-list {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .em-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .topbar-nav {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+  
+  .panel-h.location-header {
+    padding: 12px !important;
+    
+    .player-avatar {
+      width: 40px !important;
+      height: 40px !important;
+      font-size: 16px !important;
+    }
+  }
+  
+  .em-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-main {
+    padding: 30px;
+  }
+  
+  .inventory-grid,
+  .ships-list,
+  .queue-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .em-stats-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+}
+
+@media (min-width: 1600px) {
+  .dashboard-main {
+    padding: 40px;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  
+  .inventory-grid,
+  .ships-list,
+  .queue-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .em-stats-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+}

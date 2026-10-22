@@ -1,0 +1,207 @@
+// EVE Dashboard CSS Variables - Galaxy Game Theme (Post-Snap MVP)
+:root {
+  // Primary colors
+  --bg: #0a0e27;           // Deep space blue
+  --panel: #0f1419;        // Slightly lighter for panels
+  --panel2: #151a2d;       // Hover state
+  
+  // Text
+  --text: #c0c0c0;         // Light gray
+  --muted: #666666;        // Secondary text
+  
+  // Accent/State colors
+  --accent: #00d4ff;       // Cyan (links, highlights, AWS)
+  --green: #00ff00;        // Success (natural WH, stable)
+  --red: #ff0000;          // Danger (snap risk, errors)
+  
+  // Borders
+  --line: #222233;         // Borders/dividers
+}
+
+// Global Reset & Base Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+// Button Styles (EVE Dashboard)
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  
+  &.btn-primary {
+    background: var(--accent);
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #00b8d4;
+    }
+  }
+  
+  &.btn-danger {
+    background: var(--red);
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #cc0000;
+    }
+  }
+  
+  &.btn-secondary {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--line);
+    
+    &:hover {
+      background: var(--panel);
+    }
+  }
+  
+  &.btn-sm, &.btn-small {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  &.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+  
+  &:disabled, &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Form Elements
+.form-input, .select-input {
+  padding: 8px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 4px;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}
+
+// Progress Bars (gradient from --red → #ffaa00 → --green)
+.progress-bar, .stability-bar, .priority-bar {
+  background: var(--panel2);
+  border-radius: 4px;
+  overflow: hidden;
+  
+  .fill, .progress-fill, .stability-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+    
+    // Gradient based on percentage handled inline in ERB
+  }
+}
+
+// Stock Indicators
+.stock-indicator {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-weight: bold;
+  
+  &.sufficient {
+    background: rgba(0, 255, 0, 0.2);
+    color: var(--green);
+  }
+  
+  &.insufficient {
+    background: rgba(255, 0, 0, 0.2);
+    color: var(--red);
+  }
+}
+
+// Badges
+.badge {
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  
+  &.type {
+    background: var(--panel2);
+    color: var(--text);
+  }
+  
+  &.rarity {
+    &.common { border-color: var(--green); color: var(--green); }
+    &.uncommon { border-color: #ffa500; color: #ffa500; }
+    &.rare { border-color: #6464ff; color: #6464ff; }
+  }
+}
+
+// Responsive Breakpoints Helper Classes
+@media (max-width: 375px) {
+  .hide-mobile-xs { display: none !important; }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  
+  .mobile-hide-tablet { display: none !important; }
+}
+
+@media (min-width: 1200px) {
+  .show-desktop {
+    display: block !important;
+  }
+  
+  .desktop-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 1600px) {
+  .wide-container {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  
+  .wide-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+}
+
+// Animation Classes
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.critical-pulse {
+  animation: pulse-critical 2s infinite;
+}
+
+// Utility Classes
+.text-positive { color: var(--green) !important; }
+.text-negative, .text-danger { color: var(--red) !important; }
+.text-warning { color: #ffa500 !important; }
+.text-muted { color: var(--muted) !important; }
+
+.bg-panel { background: var(--panel) !important; }
+.bg-panel2 { background: var(--panel2) !important; }
+.border-line { border-color: var(--line) !important; }

@@ -1,4 +1,196 @@
-<div class="space-y-6">
-  <h1 class="text-3xl font-bold text-neon-gold">Admin Telemetry & Control Panel</h1>
-  <p class="text-gray-300">Admin feature — Views will be populated in next task.</p>
+<div class="admin-dashboard">
+  <!-- Page Header -->
+  <div class="admin-header">
+    <h1>Admin Dashboard — Post-Snap Sol System</h1>
+    <p class="snap-context">Snap Event: <%= @post_snap_status[:snap_event_date]&.to_time&.strftime("%B %d, %Y") %> | AWS Reconstruction: <%= @post_snap_status[:aws_reconstruction_date]&.to_time&.strftime("%B %d, %Y") %></p>
+  </div>
+
+  <!-- System Overview Cards -->
+  <section class="system-cards-section">
+    <h2>System Status</h2>
+    <div class="system-cards">
+      <% MockDataHelper.systems.each do |system| %>
+        <div class="system-card <%= system[:id].downcase %>">
+          <h3><%= system[:name] %></h3>
+          <p><strong>Mass:</strong> <%= number_with_delimiter(system[:system_mass]) %> tons</p>
+          <p><strong>Stability:</strong> <%= (system[:stability_index_base] * 100).round %>%</p>
+          <div class="stability-bar">
+            <div class="stability-fill" style="width: <%= system[:stability_index_base] * 100 %>%"></div>
+          </div>
+          <% if system[:id] == "SOL" %>
+            <p><strong>Connections:</strong> 2 Wormholes</p>
+            <p class="status-stable">Status: Stable</p>
+          <% elsif system[:id] == "EDEN" %>
+            <p><strong>Status:</strong> Reconnected via AWS</p>
+            <p><strong>AWS Location:</strong> L3 Lagrange Point</p>
+            <p class="status-stable">Status: Operational</p>
+          <% else %>
+            <p><strong>Status:</strong> Natural WH Access</p>
+            <p class="status-warning"><%= (MockDataHelper.wormholes.find { |w| w[:system_b] == system[:name] }&.dig(:stability_index) || 0.68) * 100 %>% Stability</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Wormhole Monitoring Table -->
+  <section class="wormhole-monitoring">
+    <h2>Wormhole Monitoring</h2>
+    <table class="wormhole-table">
+      <thead>
+        <tr>
+          <th>Connection</th>
+          <th>Type</th>
+          <th>Stability</th>
+          <th>Mass Limit</th>
+          <th>EM Reserves</th>
+          <th>Harvest</th>
+          <th>Snap Risk</th>
+          <th>AWS Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% MockDataHelper.wormholes.each do |wh| %>
+          <tr class="<%= wh[:natural] ? 'natural' : 'artificial' %>">
+            <td><%= wh[:system_a] %> ↔ <%= wh[:system_b] %></td>
+            <td><%= wh[:natural] ? "Natural" : "Artificial (AWS)" %></td>
+            <td>
+              <div class="stability-bar">
+                <span style="width: <%= wh[:stability_index] * 100 %>%; background: <%= wh[:stability_index] >= 0.8 ? 'var(--green)' : (wh[:stability_index] >= 0.5 ? '#ffa500' : 'var(--red)') %>; height: 8px; display: block;"></span>
+                <span class="stability-text"><%= (wh[:stability_index] * 100).round %>%</span>
+              </div>
+            </td>
+            <td><%= wh[:mass_limit].round %> tons</td>
+            <td><%= number_with_delimiter(wh[:em_reserves]) %> EM</td>
+            <td class="<%= wh[:em_harvest_rate] > 0 ? 'positive' : 'neutral' %>"><%= wh[:em_harvest_rate] > 0 ? "+" + wh[:em_harvest_rate].to_s : "—" %></td>
+            <td><span class="risk-<%= wh[:snap_risk_level] %>"><%= wh[:snap_risk_level].upcase %></span></td>
+            <td><%= wh[:aws_operational] ? 'Operational (2 stabilizers)' : '—' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- EM Economy Dashboard -->
+  <section class="em-economy-section">
+    <h2>EM Economy</h2>
+    <div class="em-dashboard-grid">
+      <div class="em-card total">
+        <h3>Total Reserves</h3>
+        <p class="value"><%= number_with_delimiter(@em_status[:total_em_reserves]) %> EM</p>
+      </div>
+      <div class="em-card harvest">
+        <h3>Daily Harvest</h3>
+        <p class="value positive">+<%= number_with_delimiter(@em_status[:daily_harvest_rate]) %></p>
+      </div>
+      <div class="em-card consumption">
+        <h3>Daily Consumption</h3>
+        <p class="value negative"><%= number_with_delimiter(@em_status[:daily_consumption]) %></p>
+      </div>
+      <div class="em-card net-flow <%= @em_status[:net_daily_flow] >= 0 ? 'positive' : 'negative' %>">
+        <h3>Net Daily Flow</h3>
+        <p class="value"><%= number_with_delimiter(@em_status[:net_daily_flow]) %></p>
+      </div>
+      <div class="em-card critical <%= @em_status[:days_until_critical] < 30 ? 'critical' : '' %>">
+        <h3>Days Until Critical</h3>
+        <p class="value"><%= @em_status[:days_until_critical] %></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Manager Control Panel -->
+  <section class="ai-manager-section">
+    <h2>AI Manager Status</h2>
+    <div class="ai-dashboard">
+      <div class="directives-list">
+        <h3>Active Directives</h3>
+        <% @ai_manager[:directives].each do |directive| %>
+          <div class="directive-card">
+            <p><strong><%= directive[:directive] %></strong></p>
+            <span class="status-<%= directive[:status].downcase %>"><%= directive[:status] %> - <%= directive[:progress] %></span>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="ai-priorities">
+        <h3>Priorities</h3>
+        <div class="priority-bars">
+          <div class="priority-item">
+            <span>Harvester: <%= @ai_manager[:priorities][:harvester] %>%</span>
+            <div class="progress-bar"><div class="fill" style="width: <%= @ai_manager[:priorities][:harvester] %>%"></div></div>
+          </div>
+          <div class="priority-item">
+            <span>Market Import: <%= @ai_manager[:priorities][:market_import] %>%</span>
+            <div class="progress-bar"><div class="fill" style="width: <%= @ai_manager[:priorities][:market_import] %>%"></div></div>
+          </div>
+          <div class="priority-item">
+            <span>Expansion: <%= @ai_manager[:priorities][:expansion] %>%</span>
+            <div class="progress-bar"><div class="fill" style="width: <%= @ai_manager[:priorities][:expansion] %>%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hammer Protocol (Admin Only) -->
+  <% if session[:admin] %>
+  <section class="hammer-protocol-section">
+    <h2 class="danger-header">Hammer Protocol — Emergency Controls</h2>
+    <div class="hammer-panel">
+      <p><strong>Natural WH Snap Status:</strong></p>
+      <ul>
+        <li>Mass Limit: 37 tons</li>
+        <li>Current Transit: 12 tons</li>
+        <li>Snap Trigger Threshold: 35 tons (94%)</li>
+        <li><span class="<%= session[:admin] ? 'success' : 'danger' %>"><%= session[:admin] ? 'Ready for trigger' : 'Not ready' %></span></li>
+      </ul>
+      <%= button_to "⚠️ TRIGGER SNAP", trigger_snap_wormholes_path(wormhole_id: 1), method: :post, form: { data: { turbo_confirm: "This will destroy the natural wormhole. Continue?" } }, class: "btn btn-danger btn-lg disabled" %>
+    </div>
+  </section>
+  <% end %>
+
+  <!-- Economic Indices -->
+  <section class="economic-section">
+    <h2>Economic Indices</h2>
+    <div class="indices-grid">
+      <div class="index-card">
+        <h3>PvE Index</h3>
+        <p class="value"><%= @economic_indices[:pve_index] %> (Stable)</p>
+      </div>
+      <div class="index-card">
+        <h3>Energy Trade</h3>
+        <p class="value positive"><%= @economic_indices[:energy_trade_index] %> (Strong)</p>
+      </div>
+      <div class="index-card">
+        <h3>EAP Index</h3>
+        <p class="value"><%= number_with_delimiter(@economic_indices[:eap_index]) %></p>
+      </div>
+      <div class="index-card">
+        <h3>EM Trade Value</h3>
+        <p class="value positive"><%= @economic_indices[:em_trade_value] %> (Up 0.3)</p>
+      </div>
+    </div>
+  </section>
 </div>
+
+<style>
+.admin-dashboard { background: var(--bg); min-height: 100vh; padding: 20px; }
+.admin-header { background: var(--panel); padding: 24px; margin-bottom: 30px; border-radius: 4px; h1 { color: var(--text); margin-bottom: 8px; } .snap-context { color: var(--muted); font-size: 14px; } }
+.system-cards-section, .wormhole-monitoring, .em-economy-section, .ai-manager-section, .hammer-protocol-section, .economic-section { background: var(--panel); padding: 30px; margin-bottom: 30px; border-radius: 4px; h2 { color: var(--text); margin-bottom: 16px; } }
+.system-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.system-card { background: var(--bg); padding: 20px; border-radius: 4px; border-left: 4px solid var(--accent); h3 { color: var(--text); margin-bottom: 8px; } p { color: var(--muted); margin: 4px 0; } .status-stable { color: var(--green); font-weight: bold; } .status-warning { color: #ffa500; font-weight: bold; } }
+.wormhole-table { width: 100%; border-collapse: collapse; th { background: var(--bg); color: var(--text); padding: 12px; text-align: left; border-bottom: 2px solid var(--line); } td { padding: 12px; border-bottom: 1px solid var(--line); color: var(--text); } tr.natural { border-left: 3px solid #ffa500; } tr.artificial { border-left: 3px solid var(--accent); } .stability-bar { width: 100%; height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-bottom: 4px; .stability-text { font-size: 12px; color: var(--muted); display: block; } } .positive { color: var(--green) !important; } .risk-safe { color: var(--green); } .risk-caution { color: #ffa500; } .risk-danger { color: var(--red); } }
+.em-dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.em-card { background: var(--bg); padding: 20px; border-radius: 4px; text-align: center; h3 { color: var(--muted); font-size: 14px; margin-bottom: 8px; } .value { font-size: 24px; font-weight: bold; &.positive { color: var(--green); } &.negative, &.critical { color: var(--red); animation: pulse-critical 2s infinite; } } }
+.ai-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.directives-list .directive-card { background: var(--bg); padding: 16px; margin-bottom: 8px; border-radius: 4px; p { color: var(--text); margin: 0 0 8px; } .status-active { color: var(--accent); font-weight: bold; } }
+.priority-bars .priority-item { margin-bottom: 12px; span { color: var(--text); display: block; margin-bottom: 4px; } .progress-bar { width: 100%; height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; .fill { height: 100%; transition: width 0.3s ease; } } }
+.hammer-panel { background: rgba(255, 0, 0, 0.1); border: 2px solid var(--red); padding: 24px; ul { list-style: none; padding: 0; li { color: var(--text); margin-bottom: 8px; } .success { color: var(--green); font-weight: bold; } .danger { color: var(--red); font-weight: bold; } } .btn-danger { background: var(--red); color: white; border: none; padding: 15px 30px; font-size: 16px; &:hover:not(:disabled) { background: #cc0000; } } }
+.indices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.index-card { background: var(--bg); padding: 20px; border-radius: 4px; text-align: center; h3 { color: var(--muted); font-size: 14px; margin-bottom: 8px; } .value { font-size: 24px; font-weight: bold; &.positive { color: var(--green); } } }
+.danger-header { color: var(--red) !important; }
+@keyframes pulse-critical { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+@media (max-width: 768px) { .system-cards, .em-dashboard-grid, .indices-grid, .ai-dashboard { grid-template-columns: 1fr !important; } .wormhole-table { font-size: 14px; } }
+@media (max-width: 375px) { .admin-header h1 { font-size: 24px; } .system-cards-section, .wormhole-monitoring, .em-economy-section, .ai-manager-section, .hammer-protocol-section, .economic-section { padding: 16px !important; } }
+@media (min-width: 1200px) { .system-cards, .em-dashboard-grid, .indices-grid, .ai-dashboard { grid-template-columns: repeat(4, 1fr) !important; } }
+</style>
