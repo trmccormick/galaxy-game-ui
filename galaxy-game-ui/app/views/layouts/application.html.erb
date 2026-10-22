@@ -12,10 +12,16 @@
   <body class="bg-galaxy-dark text-galaxy-text">
     <!-- Navigation -->
     <nav class="border-b border-galaxy-accent/30 bg-galaxy-panel">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex gap-6">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex gap-6 items-center">
         <%= link_to "Dashboard", dashboard_path, class: "hover:text-galaxy-accent" %>
         <%= link_to "Wormholes", wormholes_path, class: "hover:text-galaxy-accent" %>
         <%= link_to "Admin", admin_path, class: "hover:text-galaxy-accent" %>
+        <span class="flex-1"></span>
+        <% if authenticated? %>
+          <%= button_to "Sign Out", session_path, method: :delete, class: "text-sm text-galaxy-text-secondary hover:text-galaxy-accent" %>
+        <% else %>
+          <%= link_to "Sign In", new_session_path, class: "text-sm bg-wvu-accent-blue text-white px-4 py-2 rounded hover:bg-wvu-gold hover:text-wvu-blue transition-colors font-semibold" %>
+        <% end %>
       </div>
     </nav>
 
