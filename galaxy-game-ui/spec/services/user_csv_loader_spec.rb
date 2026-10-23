@@ -21,7 +21,7 @@ RSpec.describe UserCsvLoader do
         expect(result.created).to eq(1)
 
         user = User.find_by!(email_address: "admin@wvu.edu")
-        expect(User.authenticate_by(email_address: "admin@wvu.edu", password: "galaxy_game2026!")).to eq(user)
+        expect(User.authenticate_by(email_address: "admin@wvu.edu", password: "Moonshot2026!")).to eq(user)
       end
     end
 
