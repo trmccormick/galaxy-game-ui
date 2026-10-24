@@ -1,4 +1,42 @@
-<div>
-  <h1 class="font-bold text-4xl">Landing#index</h1>
-  <p>Find me in app/views/landing/index.html.erb</p>
+<div class="landing-page">
+  <section class="hero-section">
+    <div class="hero-content">
+      <%# only if the file exists under app/assets/images #%>
+      <%#= image_tag "GalaxyGame.png", alt: "Galaxy Game", class: "logo-large" %>
+
+      <h1 class="hero-title">Galaxy Game</h1>
+      <p class="hero-subtitle">
+        Guide the AI Manager and expand humanity across the stars.
+      </p>
+      <p class="hero-description">
+        Strategic decisions. Automated logistics. Cooperative expansion.
+      </p>
+
+      <div class="hero-actions">
+        <%= link_to "Sign In", new_session_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </section>
+
+  <%# Optional placeholder status — no controller ivars required #%>
+  <section class="status-section">
+    <h2 class="section-title">Galaxy Status</h2>
+    <div class="status-grid">
+      <div class="status-card">
+        <h3>AI Manager</h3>
+        <p class="stat-large">—</p>
+        <p class="stat-label">Footholds online</p>
+      </div>
+      <div class="status-card">
+        <h3>Logistics</h3>
+        <p class="stat-large">—</p>
+        <p class="stat-label">Ships in transit</p>
+      </div>
+      <div class="status-card">
+        <h3>Network</h3>
+        <p class="stat-large">—</p>
+        <p class="stat-label">Linked systems</p>
+      </div>
+    </div>
+  </section>
 </div>
