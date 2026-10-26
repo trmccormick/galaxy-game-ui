@@ -1,6 +1,26 @@
 @import "tailwindcss";
 
-/* WVU brand palette — official WVU Design System 2.1 values */
+/* Galaxy Game tokens — EVE Dashboard-inspired palette (exposed via @theme for Tailwind v4) */
+@theme static {
+  /* Galaxy Game: shared CSS custom properties (usable outside utility classes) */
+  --bg: #0e1114;           /* background (page, containers) */
+  --panel: #161b21;         /* panel/cards/tables */
+  --panel2: #1d242c;        /* secondary panels/hover states */
+  --line: #2a333d;          /* borders/dividers */
+  --text: #d8dee6;          /* primary text */
+  --muted: #8a97a6;         /* muted/secondary text */
+  --accent: #4aa8ff;        /* links/focus/highlights (pending human choice) */
+  --green: #3fb950;         /* success/warnings where green needed */
+  --red: #f85149;           /* errors/destructive actions */
+  --gold: #e3b341;          /* highlights/accent calls-to-action */
+
+  /* Galaxy Game body theme */
+  --color-gg-bg: var(--bg);
+  --color-gg-text: var(--text);
+}
+
+
+/* WVU brand palette — official WVU Design System 2.1 values (kept for login/session views) */
 @theme {
   --color-wvu-blue: #002855;            /* wvu-blue — masthead */
   --color-wvu-accent-blue: #0062a3;     /* wvu-accent--blue — links/buttons */
