@@ -5,5 +5,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "dashboard", to: "dashboard#index", as: :dashboard
-  root "landing#index"
+  get   "about",     to: "landing#about"
+  root  "landing#index"
 end
