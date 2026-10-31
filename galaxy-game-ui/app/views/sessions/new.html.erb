@@ -1,33 +1,36 @@
-<% content_for :title, "Sign in — WVU Libraries Systems" %>
+<% content_for :title, "Sign in — Galaxy Game" %>
 
 <div class="mx-auto max-w-md">
-  <div class="rounded-lg border border-wvu-warm-gray-light bg-white p-8 shadow-sm">
-    <h1 class="text-2xl font-bold text-wvu-blue">Sign in</h1>
-    <p class="mt-1 mb-6 text-sm text-wvu-warm-gray-medium">
-      WVU Libraries Systems — Donor Check-In
+  <div class="rounded-lg border border-galaxy-accent/30 bg-galaxy-panel p-8 shadow-sm">
+    <h1 class="text-2xl font-bold text-galaxy-text">Sign in</h1>
+    <p class="mt-1 mb-6 text-sm text-galaxy-text-dim">
+      Sign in to continue
     </p>
 
     <%= form_with url: session_path do |form| %>
       <div class="space-y-4">
         <div>
-          <%= form.label :email_address, class: "mb-1.5 block text-sm font-semibold text-wvu-warm-gray-dark" %>
+          <%= form.label :email_address, class: "mb-1.5 block text-sm font-semibold text-galaxy-text" %>
           <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username",
                 placeholder: "Enter your email address", value: params[:email_address],
-                class: "w-full rounded-lg border border-wvu-warm-gray-light px-4 py-3.5 text-base focus:border-wvu-accent-blue focus:ring-2 focus:ring-wvu-accent-blue/30 outline-none" %>
+                class: "w-full rounded-lg border border-galaxy-accent/30 bg-galaxy-dark px-4 py-3.5 text-base text-galaxy-text placeholder:text-galaxy-text-dim focus:border-galaxy-accent focus:ring-2 focus:ring-galaxy-accent/30 outline-none" %>
         </div>
+
         <div>
-          <%= form.label :password, class: "mb-1.5 block text-sm font-semibold text-wvu-warm-gray-dark" %>
+          <%= form.label :password, class: "mb-1.5 block text-sm font-semibold text-galaxy-text" %>
           <%= form.password_field :password, required: true, autocomplete: "current-password",
                 placeholder: "Enter your password", maxlength: 72,
-                class: "w-full rounded-lg border border-wvu-warm-gray-light px-4 py-3.5 text-base focus:border-wvu-accent-blue focus:ring-2 focus:ring-wvu-accent-blue/30 outline-none" %>
+                class: "w-full rounded-lg border border-galaxy-accent/30 bg-galaxy-dark px-4 py-3.5 text-base text-galaxy-text placeholder:text-galaxy-text-dim focus:border-galaxy-accent focus:ring-2 focus:ring-galaxy-accent/30 outline-none" %>
         </div>
+
         <%= form.submit "Sign in",
-              class: "w-full rounded-lg bg-wvu-accent-blue px-6 py-3.5 text-base font-semibold text-white shadow hover:bg-wvu-gold hover:text-wvu-blue transition-colors" %>
+              class: "w-full rounded-lg bg-galaxy-accent px-6 py-3.5 text-base font-semibold text-galaxy-dark shadow transition-colors hover:brightness-110" %>
       </div>
     <% end %>
 
     <div class="mt-5 text-center">
-      <%= link_to "Forgot password?", new_password_path, class: "text-sm font-medium text-wvu-accent-blue hover:underline" %>
+      <%= link_to "Forgot password?", new_password_path,
+            class: "text-sm font-medium text-galaxy-accent hover:underline" %>
     </div>
   </div>
 </div>
