@@ -1,0 +1,72 @@
+/* Dashboard-specific styles (extends tokens.css) */
+
+/* Dashboard content area background */
+.gg-grid-panel {
+  background: var(--gg-bg-panel);
+  border: var(--gg-border-width) solid rgba(0, 212, 255, 0.4);
+  border-radius: var(--gg-radius-lg);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.15);
+  padding: var(--gg-spacing-md) var(--gg-spacing-lg);
+  transition: box-shadow var(--gg-transition-normal), transform var(--gg-transition-fast);
+}
+
+.gg-grid-panel:hover {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+/* Section title (smaller than landing page section-title) */
+.gg-section-title {
+  color: var(--gg-primary);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+  font-size: var(--gg-font-h3);
+  margin-bottom: var(--gg-spacing-sm);
+  font-weight: 700;
+}
+
+/* Account overview header */
+.gg-overview-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gg-spacing-lg);
+  padding-bottom: var(--gg-spacing-md);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+  margin-bottom: var(--gg-spacing-lg);
+}
+
+.gg-overview-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--gg-radius-md);
+  border: 2px solid var(--gg-primary);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--gg-bg-surface);
+}
+
+.gg-overview-meta h2 {
+  color: var(--gg-primary);
+  font-size: var(--gg-font-h3);
+  margin: 0 0 var(--gg-spacing-xs) 0;
+}
+
+.gg-overview-meta .role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--gg-radius-sm);
+  font-size: var(--gg-font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-badge.player {
+  background: rgba(6, 255, 165, 0.15);
+  color: var(--gg-accent-success);
+}
+
+.role-badge.admin {
+  background: rgba(255, 0, 110, 0.15);
+  color: var(--gg-accent-danger);
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "Galaxy Game" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+
+    <!-- Shared application styles (tokens + landing) -->
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <!-- Dashboard-specific panel styling -->
+    <%= stylesheet_link_tag 'pages/dashboard', "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-[var(--gg-bg-dark)] text-[var(--gg-text-primary)]">
+
+    <!-- ===== Topbar (compact, full-width) ===== -->
+    <header class="border-b border-[rgba(0,212,255,0.2)] h-12 flex items-center justify-between px-4 shrink-0" style="background: var(--gg-bg-surface);">
+      <div class="flex items-center gap-3">
+        <!-- Galaxy Game logo (scaled proportionally) -->
+        <%= link_to root_path do %>
+          <%= image_tag 'GalaxyGame.png', alt: 'Galaxy Game', class: 'h-8 w-auto' %>
+        <% end %>
+        <span class="hidden sm:inline text-[var(--gg-text-dim)] text-xs">|</span>
+        <span class="text-[var(--gg-primary)] font-semibold text-sm hidden sm:inline" style="text-shadow: 0 0 10px rgba(0,212,255,0.3);">Galaxy Game</span>
+      </div>
+
+      <nav class="flex items-center gap-3 text-xs">
+        <%= link_to "Dashboard", dashboard_path,
+              class: "rounded px-2 py-1 hover:bg-[rgba(0,212,255,0.1)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
+        <% if Current.user&.role_admin? %>
+          <%= link_to "Admin", admin_path,
+                class: "rounded px-2 py-1 hover:bg-[rgba(0,212,255,0.1)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
+        <% end %>
+        <span class="text-[var(--gg-text-dim)] hidden sm:inline"><%= Current.user&.email_address %></span>
+        <%= button_to "Sign out", session_path, method: :delete,
+              class: "rounded px-2 py-1 bg-[rgba(0,212,255,0.08)] hover:bg-[rgba(0,212,255,0.15)] transition-colors text-[var(--gg-text-dim)] hover:text-[var(--gg-primary)]" %>
+      </nav>
+    </header>
+
+    <!-- ===== Dashboard Shell (sidebar + main) ===== -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Sidebar -->
+      <aside class="w-56 border-r border-[rgba(0,212,255,0.1)] shrink-0 overflow-y-auto" style="background: var(--gg-bg-dark); padding: var(--gg-spacing-md) 0;">
+        <nav>
+          <!-- Account section (always visible) -->
+          <ul class="gg-nav-list">
+            <li><strong class="px-4 text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Account</strong></li>
+            <li><%= link_to dashboard_path, class: "gg-nav-link active" do %>
+              <span>&#x1F464;</span> Overview
+            <% end %></li>
+          </ul>
+
+          <!-- Galaxy section -->
+          <ul class="gg-nav-list mt-4">
+            <li><strong class="px-4 text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Galaxy</strong></li>
+            <li><%= link_to '#galaxy', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x1F30C;</span> Galaxy
+            <% end %></li>
+            <li><%= link_to '#systems', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x2609;&#xFE0F;</span> Star Systems
+            <% end %></li>
+            <li><%= link_to '#settlements', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x1F3DA;&#xFE0F;</span> Settlements
+            <% end %></li>
+          </ul>
+
+          <!-- Operations section -->
+          <ul class="gg-nav-list mt-4">
+            <li><strong class="px-4 text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Operations</strong></li>
+            <li><%= link_to '#economy', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x1F4B0;</span> Economy
+            <% end %></li>
+            <li><%= link_to '#research', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x1F52C;</span> Research
+            <% end %></li>
+            <li><%= link_to '#missions', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
+              <span>&#x1F6E1;&#xFE0F;</span> Missions
+            <% end %></li>
+          </ul>
+
+          <!-- Admin section (conditional) -->
+          <% if Current.user&.role_admin? %>
+            <ul class="gg-nav-list mt-4">
+              <li><strong class="px-4 text-[var(--gg-accent-danger)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Admin</strong></li>
+              <li><%= link_to '#users', class: "gg-nav-link" do %>
+                <span>&#x2699;&#xFE0F;</span> Users
+              <% end %></li>
+              <li><%= link_to '#systems-admin', class: "gg-nav-link" do %>
+                <span>&#x1F5A4;&#xFE0F;</span> Systems
+              <% end %></li>
+            </ul>
+          <% end %>
+        </nav>
+      </aside>
+
+      <!-- Main content area -->
+      <main class="flex-1 overflow-y-auto p-6">
+        <!-- Flash messages -->
+        <% if notice.present? %>
+          <div class="mb-5 rounded-l border-l-4" style="border-color: var(--gg-accent-success); background-color: rgba(6,255,165,0.08); color: var(--gg-accent-success); padding: 0.75rem 1rem; font-size: var(--gg-font-sm);">
+            <%= notice %>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="mb-5 rounded-l border-l-4" style="border-color: var(--gg-accent-danger); background-color: rgba(255,0,110,0.08); color: var(--gg-accent-danger); padding: 0.75rem 1rem; font-size: var(--gg-font-sm);">
+            <%= alert %>
+          </div>
+        <% end %>
+
+        <div class="max-w-6xl mx-auto">
+          <%= yield %>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer (compact) -->
+    <footer class="border-t border-[rgba(0,212,255,0.1)] py-2 px-4 text-center text-[10px] shrink-0" style="color: var(--gg-text-dim); background: var(--gg-bg-surface);">
+      Galaxy Game UI prototype — mock data for demonstration purposes only
+    </footer>
+  </body>
+</html>

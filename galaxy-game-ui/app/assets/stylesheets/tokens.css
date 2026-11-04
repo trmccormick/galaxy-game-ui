@@ -1,0 +1,193 @@
+/*
+ * Global design tokens for Galaxy Game UI.
+ * Shared across landing page and authenticated dashboard.
+ * Plain CSS for Tailwind v4 + Propshaft compatibility.
+ */
+
+/* ===== Core Palette (ported from original _variables.scss) ===== */
+
+:root {
+  /* Background surfaces — dark blue-gray family */
+  --gg-bg-dark:    #0a0a0a;
+  --gg-bg-surface: #1a1a2e;
+  --gg-bg-panel:   #16213e;
+  --gg-bg-light:   #1e2d50;
+
+  /* Primary accent — neon cyan from logo */
+  --gg-primary:    #00d4ff;
+  --gg-primary-dark: #0099cc;
+
+  /* Text hierarchy */
+  --gg-text-primary:   #e0e0e0;
+  --gg-text-secondary: #8892b0;
+  --gg-text-dim:       #64748b;
+  --gg-text-highlight: var(--gg-primary);
+
+  /* Status & semantic accents */
+  --gg-accent-cyan:    #00fff9;
+  --gg-accent-purple:  #9d4edd;
+  --gg-accent-warning: #ffd60a;
+  --gg-accent-danger:  #ff006e;
+  --gg-accent-success: #06ffa5;
+
+  /* Glow effects — restrained */
+  --gg-glow-soft: rgba(0, 212, 255, 0.3);
+  --gg-glow-strong: rgba(0, 212, 255, 0.6);
+
+  /* Typography scale (px → rem) */
+  --gg-font-hero:   2.5rem;
+  --gg-font-h2:     1.75rem;
+  --gg-font-h3:     1.25rem;
+  --gg-font-large:  1.125rem;
+  --gg-font-base:   1rem;
+  --gg-font-sm:     0.875rem;
+  --gg-font-xs:     0.75rem;
+
+  /* Spacing scale */
+  --gg-spacing-xs: 0.25rem;
+  --gg-spacing-sm: 0.5rem;
+  --gg-spacing-md: 1rem;
+  --gg-spacing-lg: 1.5rem;
+  --gg-spacing-xl: 2rem;
+  --gg-spacing-xxl: 3rem;
+
+  /* Border radius */
+  --gg-radius-sm: 4px;
+  --gg-radius-md: 6px;
+  --gg-radius-lg: 8px;
+
+  /* Panel border width (EVE-inspired thin lines) */
+  --gg-border-width: 1px;
+
+  /* Transitions */
+  --gg-transition-fast: 0.15s ease;
+  --gg-transition-normal: 0.2s ease;
+}
+
+/* ===== Reusable Component Classes ===== */
+
+/* Panel/card base — EVE-inspired surface with cyan accent border */
+.gg-panel {
+  background: var(--gg-bg-panel);
+  border: var(--gg-border-width) solid var(--gg-primary);
+  border-radius: var(--gg-radius-lg);
+  box-shadow: 0 0 10px var(--gg-glow-soft);
+  padding: var(--gg-spacing-md);
+  transition: box-shadow var(--gg-transition-normal), transform var(--gg-transition-fast);
+}
+
+.gg-panel:hover {
+  box-shadow: 0 0 20px var(--gg-primary);
+}
+
+/* Metric number — large, glowing cyan */
+.gg-metric {
+  font-size: var(--gg-font-h3);
+  font-weight: 700;
+  color: var(--gg-primary);
+  text-shadow: 0 0 10px var(--gg-glow-soft);
+}
+
+/* Stat row — label + value inline pattern */
+.gg-stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--gg-font-sm);
+  padding: var(--gg-spacing-xs) 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+.gg-stat-row:last-child {
+  border-bottom: none;
+}
+
+.gg-stat-label {
+  color: var(--gg-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--gg-font-xs);
+}
+
+.gg-stat-value {
+  color: var(--gg-text-primary);
+  font-weight: 600;
+}
+
+/* Panel section header */
+.gg-panel-title {
+  color: var(--gg-primary);
+  text-shadow: 0 0 10px var(--gg-glow-soft);
+  font-size: var(--gg-font-h2);
+  margin-bottom: var(--gg-spacing-md);
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Dashboard-specific grid layout */
+.gg-grid {
+  display: grid;
+  gap: var(--gg-spacing-lg);
+}
+
+@media (min-width: 1024px) {
+  .gg-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gg-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gg-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Activity feed item — shared with landing page pattern */
+.gg-activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gg-spacing-sm);
+  padding: var(--gg-spacing-sm) var(--gg-spacing-md);
+  background: var(--gg-bg-surface);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: var(--gg-radius-md);
+  margin-bottom: var(--gg-spacing-sm);
+}
+
+/* Navigation list — sidebar style */
+.gg-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gg-nav-list li {
+  margin-bottom: var(--gg-spacing-xs);
+}
+
+.gg-nav-link {
+  display: block;
+  padding: var(--gg-spacing-sm) var(--gg-spacing-md);
+  color: var(--gg-text-secondary);
+  text-decoration: none;
+  border-radius: var(--gg-radius-md);
+  font-size: var(--gg-font-sm);
+  transition: color var(--gg-transition-fast), background-color var(--gg-transition-fast);
+}
+
+.gg-nav-link:hover,
+.gg-nav-link.active {
+  color: var(--gg-primary);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+/* Badge — small status indicator */
+.gg-badge {
+  display: inline-block;
+  font-size: var(--gg-font-xs);
+  padding: 1px 6px;
+  border-radius: var(--gg-radius-sm);
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--gg-primary);
+}
