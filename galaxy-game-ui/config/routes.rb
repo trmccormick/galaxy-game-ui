@@ -7,4 +7,8 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#index", as: :dashboard
   get   "about",     to: "landing#about"
   root  "landing#index"
+
+  namespace :admin do
+    get "dashboard", to: "dashboard#index", as: :dashboard
+  end
 end

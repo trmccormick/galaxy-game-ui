@@ -19,19 +19,14 @@
     <!-- ===== Topbar (compact, full-width) ===== -->
     <header class="border-b border-[rgba(0,212,255,0.2)] h-12 flex items-center justify-between px-4 shrink-0" style="background: var(--gg-bg-surface);">
       <div class="flex items-center gap-3">
-        <!-- Galaxy Game logo (scaled proportionally) -->
-        <%= link_to root_path do %>
-          <%= image_tag 'GalaxyGame.png', alt: 'Galaxy Game', class: 'h-8 w-auto' %>
-        <% end %>
-        <span class="hidden sm:inline text-[var(--gg-text-dim)] text-xs">|</span>
-        <span class="text-[var(--gg-primary)] font-semibold text-sm hidden sm:inline" style="text-shadow: 0 0 10px rgba(0,212,255,0.3);">Galaxy Game</span>
+        <%= render 'shared/branding' %>
       </div>
 
       <nav class="flex items-center gap-3 text-xs">
         <%= link_to "Dashboard", dashboard_path,
               class: "rounded px-2 py-1 hover:bg-[rgba(0,212,255,0.1)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
         <% if Current.user&.role_admin? %>
-          <%= link_to "Admin", admin_path,
+          <%= link_to "Admin", admin_dashboard_path,
                 class: "rounded px-2 py-1 hover:bg-[rgba(0,212,255,0.1)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
         <% end %>
         <span class="text-[var(--gg-text-dim)] hidden sm:inline"><%= Current.user&.email_address %></span>
@@ -86,11 +81,8 @@
           <% if Current.user&.role_admin? %>
             <ul class="gg-nav-list mt-4">
               <li><strong class="px-4 text-[var(--gg-accent-danger)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Admin</strong></li>
-              <li><%= link_to '#users', class: "gg-nav-link" do %>
-                <span>&#x2699;&#xFE0F;</span> Users
-              <% end %></li>
-              <li><%= link_to '#systems-admin', class: "gg-nav-link" do %>
-                <span>&#x1F5A4;&#xFE0F;</span> Systems
+              <li><%= link_to admin_dashboard_path, class: "gg-nav-link" do %>
+                <span>&#x1F3A1;</span> Admin Console
               <% end %></li>
             </ul>
           <% end %>

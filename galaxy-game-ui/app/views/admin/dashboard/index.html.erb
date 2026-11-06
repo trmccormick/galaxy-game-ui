@@ -1,0 +1,52 @@
+<h1 class="gg-section-title">Admin Console</h1>
+
+<!-- Account Overview Header -->
+<div class="gg-overview-header">
+  <div class="gg-overview-avatar">&#x1F3A1;</div>
+  <div class="gg-overview-meta">
+    <h2><%= @account[:email] %></h2>
+    <span class="role-badge admin">&#x1F3A1; Administrator</span>
+    <div class="text-[var(--gg-text-dim)] text-xs mt-1">
+      Member since <%= @account[:member_since] %>
+    </div>
+  </div>
+</div>
+
+<!-- Admin KPI Row -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @user_count %></div>
+    <div class="gg-stat-label mt-1">Users</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @system_count %></div>
+    <div class="gg-stat-label mt-1">Star Systems</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-warning);"><%= @pending_approvals %></div>
+    <div class="gg-stat-label mt-1">Pending Approvals</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-success);"><%= @active_settlements %></div>
+    <div class="gg-stat-label mt-1">Active Settlements</div>
+  </div>
+</div>
+
+<!-- Admin Actions Panel -->
+<div class="gg-grid-panel">
+  <h2 class="gg-section-title">Quick Actions</h2>
+  <div class="space-y-2">
+    <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+      <span class="text-sm">Manage Users</span>
+      <span class="text-xs text-[var(--gg-text-dim)]">Prototype — no user management yet</span>
+    </div>
+    <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+      <span class="text-sm">Star System Configuration</span>
+      <span class="text-xs text-[var(--gg-text-dim)]">Prototype — no system config yet</span>
+    </div>
+    <div class="flex items-center justify-between py-2">
+      <span class="text-sm">Settlement Oversight</span>
+      <span class="text-xs text-[var(--gg-text-dim)]">Prototype — no settlement management yet</span>
+    </div>
+  </div>
+</div>
