@@ -9,5 +9,46 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-/* Landing page styles (ported from original Galaxy Game) */
-@import "./pages/landing.css";
+/* ===== Tailwind v4 theme tokens (MUST be at root, before @import tailwindcss) ===== */
+@theme {
+  --color-gg-bg-dark:    #0a0a0a;
+  --color-gg-bg-surface: #1a1a2e;
+  --color-gg-bg-panel:   #16213e;
+  --color-gg-bg-light:   #1e2d50;
+
+  --color-gg-primary:      #00d4ff;
+  --color-gg-primary-dark: #0099cc;
+
+  --color-gg-text-primary:   #e0e0e0;
+  --color-gg-text-secondary: #8892b0;
+  --color-gg-text-dim:       #64748b;
+
+  --color-gg-accent-cyan:    #00fff9;
+  --color-gg-accent-purple:  #9d4edd;
+  --color-gg-accent-warning: #ffd60a;
+  --color-gg-accent-danger:  #ff006e;
+  --color-gg-accent-success: #06ffa5;
+
+  --text-gg-hero:   2.5rem;
+  --text-gg-h2:     1.75rem;
+  --text-gg-h3:     1.25rem;
+  --text-gg-large:  1.125rem;
+
+  --spacing-gg-xs:  0.25rem;
+  --spacing-gg-sm:  0.5rem;
+  --spacing-gg-md:  1rem;
+  --spacing-gg-lg:  1.5rem;
+  --spacing-gg-xl:  2rem;
+  --spacing-gg-xxl: 3rem;
+
+  --radius-gg-sm:  4px;
+  --radius-gg-md:  6px;
+  --radius-gg-lg:  8px;
+}
+
+/* Tailwind framework — utility classes, base styles, components */
+@import "tailwindcss";
+
+/* Tell Tailwind v4 where to scan for utility class references */
+@source "../../app/views/**/*.erb";
+@source "../../app/helpers/**/*.rb";

@@ -1,6 +1,8 @@
 require "ostruct"
 
 class LandingController < ApplicationController
+  allow_unauthenticated_access only: :index
+
   def index
     # Mock data for UI prototype — no live backend integration
     @ai_decisions_today = 147

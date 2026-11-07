@@ -14,11 +14,6 @@ whenever --update-crontab 2>/dev/null || true
 # remove PID
 rm -f /home/galaxy_game/tmp/pids/server.pid
 
-# Build Tailwind CSS explicitly
-echo "Building Tailwind CSS..."
-cd /home/galaxy_game
-bundle exec tailwindcss -c config/tailwind.config.js -i app/assets/stylesheets/application.css -o public/assets/application-tailwind-compiled.css
-
 # Clear asset manifest to force recompile
 rm -f public/assets/.manifest.json
 rm -f public/packs/manifest.json

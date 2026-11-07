@@ -32,5 +32,11 @@
 .env*
 !.env.example
 
+# Generated Tailwind CSS output (runtime artifacts, regenerated on each Rails start)
+app/assets/builds/tailwind.css
+public/assets/application-tailwind-compiled.css
+public/assets/tailwind-debug.css
+public/assets/tailwind-out.css
+
 # macOS
 .DS_Store

@@ -21,24 +21,24 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)]">
+  <body class="min-h-screen flex flex-col bg-[var(--gg-bg-dark)] text-[var(--gg-text-primary)]">
     <!-- Galaxy Game topbar -->
-    <header class="border-b border-[var(--line)]">
-      <div class="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between gap-4">
-        <a href="<%= root_path %>" class="text-lg font-semibold" style="color: var(--gold);">Galaxy Game</a>
-        <nav class="flex items-center gap-3 text-sm">
-          <% if authenticated? %>
-            <%= link_to "Dashboard", dashboard_path,
-                  class: "rounded px-3 py-1.5 hover:bg-[var(--panel2)] transition-colors" %>
-            <span class="hidden sm:inline" style="color: var(--muted);"><%= Current.user&.email_address %></span>
-            <%= button_to "Sign out", session_path, method: :delete,
-                  class: "rounded px-3 py-1.5 bg-[var(--panel2)] hover:bg-[var(--line)] transition-colors" %>
-          <% else %>
-            <%= link_to "Sign in", new_session_path,
-                  class: "rounded px-3 py-1.5 border border-[var(--line)] hover:border-[var(--accent)] transition-colors" %>
-          <% end %>
-        </nav>
+    <header class="border-b border-[rgba(0,212,255,0.2)] h-12 flex items-center justify-between px-4 shrink-0" style="background: var(--gg-bg-surface);">
+      <div class="flex items-center gap-3">
+        <%= render 'shared/branding' %>
       </div>
+      <nav class="flex items-center gap-3 text-xs">
+        <% if authenticated? %>
+          <%= link_to "Dashboard", dashboard_path,
+                class: "rounded px-2 py-1 hover:bg-[rgba(0,212,255,0.1)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
+          <span class="hidden sm:inline text-[var(--gg-text-dim)]"><%= Current.user&.email_address %></span>
+          <%= button_to "Sign out", session_path, method: :delete,
+                class: "rounded px-2 py-1 bg-[rgba(0,212,255,0.08)] hover:bg-[rgba(0,212,255,0.15)] transition-colors text-[var(--gg-text-dim)] hover:text-[var(--gg-primary)]" %>
+        <% else %>
+          <%= link_to "Sign in", new_session_path,
+                class: "rounded px-2 py-1 border border-[rgba(0,212,255,0.3)] hover:border-[rgba(0,212,255,0.6)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)]" %>
+        <% end %>
+      </nav>
     </header>
 
     <!-- Main content -->
@@ -46,12 +46,12 @@
       <div class="mx-auto max-w-5xl px-4 py-6 sm:py-8">
         <!-- Flash messages -->
         <% if notice.present? %>
-          <div class="mb-5 rounded border-l-4" style="border-color: var(--accent); background-color: var(--panel); color: var(--text); padding: 1rem;">
+          <div class="mb-5 rounded border-l-4" style="border-color: var(--gg-accent-success); background-color: rgba(6,255,165,0.08); color: var(--gg-accent-success); padding: 0.75rem 1rem; font-size: var(--gg-font-sm);">
             <%= notice %>
           </div>
         <% end %>
         <% if alert.present? %>
-          <div class="mb-5 rounded border-l-4" style="border-color: var(--red); background-color: var(--panel); color: var(--text); padding: 1rem;">
+          <div class="mb-5 rounded border-l-4" style="border-color: var(--gg-accent-danger); background-color: rgba(255,0,110,0.08); color: var(--gg-accent-danger); padding: 0.75rem 1rem; font-size: var(--gg-font-sm);">
             <%= alert %>
           </div>
         <% end %>
@@ -61,7 +61,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-[var(--line)] py-4 text-center text-sm" style="color: var(--muted);">
+    <footer class="border-t border-[rgba(0,212,255,0.1)] py-4 text-center text-sm" style="color: var(--gg-text-dim);">
       Galaxy Game UI prototype
     </footer>
   </body>

@@ -1,4 +1,133 @@
-<div>
-  <h1 class="font-bold text-4xl">Dashboard#index</h1>
-  <p>Find me in app/views/dashboard/index.html.erb</p>
+<!-- Dashboard Title -->
+<h1 class="gg-section-title">Command Center</h1>
+
+<!-- Account Overview Header -->
+<div class="gg-overview-header">
+  <div class="gg-overview-avatar">&#x1F464;</div>
+  <div class="gg-overview-meta">
+    <h2><%= @account[:email] %></h2>
+    <% if @account[:role] == 'admin' %>
+      <span class="role-badge admin">&#x1F3A1; Administrator</span>
+    <% else %>
+      <span class="role-badge player">&#x1F6E1;&#xFE0F; Player</span>
+    <% end %>
+    <div class="text-[var(--gg-text-dim)] text-xs mt-1">
+      Member since <%= @account[:member_since] %>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Row (4 compact metrics) -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @account[:settlements_count] %></div>
+    <div class="gg-stat-label mt-1">Settlements</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @account[:systems_visited] %></div>
+    <div class="gg-stat-label mt-1">Systems Visited</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @account[:missions_completed] %></div>
+    <div class="gg-stat-label mt-1">Missions Done</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-cyan);"><%= @assets[0][:value].split(' ')[0] %></div>
+    <div class="gg-stat-label mt-1">GCC Balance</div>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Left Column (2/3 width on large screens) -->
+
+  <!-- Assets Panel -->
+  <div class="gg-grid-panel col-span-1 lg:col-span-2">
+    <h2 class="gg-section-title">Assets & Resources</h2>
+    <div class="space-y-1">
+      <% @assets.each do |asset| %>
+        <div class="gg-stat-row">
+          <span class="gg-stat-label"><%= asset[:name] %></span>
+          <span class="gg-stat-value"><%= asset[:value] %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recent Activity Panel -->
+  <div class="gg-grid-panel">
+    <h2 class="gg-section-title">Recent Activity</h2>
+    <% @recent_activity.each do |activity| %>
+      <div class="gg-activity-item">
+        <span class="text-lg" style="font-size: 1.25rem;">&#x<%= activity[:icon].delete('&#x').delete(';') %></span>
+        <div>
+          <div class="gg-stat-value"><%= activity[:title] %></div>
+          <div class="text-xs text-[var(--gg-text-secondary)] mt-0.5"><%= activity[:desc] %></div>
+          <div class="text-[10px] text-[var(--gg-text-dim)] mt-1"><%= activity[:time] %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Full-width Settlements Panel -->
+  <div class="gg-grid-panel col-span-1 lg:col-span-3">
+    <h2 class="gg-section-title">Settlements</h2>
+    <table class="w-full text-sm" style="border-collapse: separate; border-spacing: 0;">
+      <thead>
+        <tr class="text-[var(--gg-text-dim)] text-xs uppercase tracking-wider" style="border-bottom: 1px solid rgba(0,212,255,0.2);">
+          <th class="text-left py-2 px-3 font-semibold">Name</th>
+          <th class="text-left py-2 px-3 font-semibold">Celestial Body</th>
+          <th class="text-left py-2 px-3 font-semibold">System</th>
+          <th class="text-center py-2 px-3 font-semibold">Population</th>
+          <th class="text-right py-2 px-3 font-semibold">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @settlements.each do |settlement| %>
+          <tr style="border-bottom: 1px solid rgba(0,212,255,0.08);">
+            <td class="py-2 px-3 text-[var(--gg-text-primary)]"><%= settlement[:name] %></td>
+            <td class="py-2 px-3 text-[var(--gg-text-secondary)]"><%= settlement[:celestial_body] %></td>
+            <td class="py-2 px-3 text-[var(--gg-text-secondary)]"><%= settlement[:system] %></td>
+            <td class="py-2 px-3 text-center text-[var(--gg-primary)] font-semibold"><%= number_with_delimiter(settlement[:population]) %></td>
+            <td class="py-2 px-3 text-right">
+              <% status_color = settlement[:status] == 'active' ? 'var(--gg-accent-success)' : 'var(--gg-accent-cyan)' %>
+              <span class="gg-badge" style="background: <%= status_color %>15; color: <%= status_color %>;">
+                <%= settlement[:status].capitalize %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Navigation Panel (bottom) -->
+<div class="gg-grid-panel mt-6">
+  <h2 class="gg-section-title">Navigation</h2>
+  <div class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+    <% @nav_sections.each do |section, items| %>
+      <div>
+        <div class="text-[10px] uppercase tracking-widest mb-1" style="color: var(--gg-text-dim); letter-spacing: 0.1em;">
+          <%= section.to_s.titleize %>
+        </div>
+        <ul class="list-none">
+          <% items.each do |item| %>
+            <li>
+              <span class="text-[var(--gg-primary)] hover:text-[var(--gg-accent-cyan)] cursor-pointer" style="transition: color 0.15s ease;">
+                → <%= item %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="mt-6 text-center text-[10px] text-[var(--gg-text-dim)]">
+  Dashboard is using mock data for demonstration purposes only. All values shown are illustrative and do not represent live application state.
 </div>
