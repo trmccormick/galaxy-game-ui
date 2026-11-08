@@ -22,6 +22,7 @@ This repository's project wiki records the architecture, interface direction, de
 - [Prototype roadmap](docs/wiki/prototype-roadmap.md) — proposed planning stages before implementation tasks.
 - [Screen concepts and wireframes](docs/wiki/screen-concepts-and-wireframes.md) — proposed player/admin workspaces and low-fidelity screen sketches.
 - [JavaScript reuse and porting plan](docs/wiki/javascript-reuse-and-porting-plan.md) — EVE JS references to adapt, Galaxy Game modules to create, and suggested sequencing.
+- [Visual reference and screenshot plan](docs/wiki/visual-reference-and-screenshot-plan.md) — screenshot capture standards, current UI evidence, and EVE Dashboard reference documentation.
 
 ## Related repositories
 
