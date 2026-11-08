@@ -17,6 +17,8 @@ This repository's project wiki records the architecture, interface direction, de
 - [Interface and workflows](docs/wiki/interface-and-workflows.md) — player/admin responsibilities, navigation and contextual UI.
 - [Data integration and migration](docs/wiki/data-integration-and-migration.md) — JSON reader, Rails API, JavaScript and progressive backend migration.
 - [First-attempt reconciliation](docs/wiki/first-attempt-reconciliation.md) — reusable work and superseded assumptions.
+- [Legacy task reconciliation](docs/wiki/legacy-task-reconciliation.md) — how older task proposals map to the current plan.
+- [Interface pattern references](docs/wiki/interface-pattern-references.md) — reusable presentation and JavaScript patterns.
 - [Prototype roadmap](docs/wiki/prototype-roadmap.md) — proposed planning stages before implementation tasks.
 
 ## Related repositories
