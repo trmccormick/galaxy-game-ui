@@ -86,7 +86,15 @@ Possible domains include systems and celestial bodies, assets/inventory, economy
 
 Revisit whether this repository becomes the complete application or remains the frontend/API while some game logic stays in the main app. Make this decision from operational needs and migration evidence, not in advance of the first working integration.
 
-## 4. Candidate first vertical slice
+## 4. Screen and JavaScript planning references
+
+The screen concepts and wireframes are maintained in [Screen Concepts and Low-Fidelity Wireframes](screen-concepts-and-wireframes.md). They describe candidate player home, contextual selectors, system map, celestial-body inspection, assets, market, research/industry, settlement/logistics, and Admin Console workspaces. These are proposals; the first workflow and final layouts remain OPEN.
+
+The JavaScript reuse plan is maintained in [JavaScript Reuse, Porting, and Module Plan](javascript-reuse-and-porting-plan.md). It maps fleet_map.js, market.js, chain.js, assets.js, wealth.js, and structures.js to candidate reuse/adaptation, and identifies application context, API client, data adapters, and celestial-body interaction as Galaxy Game-specific responsibilities. Existing prototype copies must be recovered before any port is started.
+
+These pages are intended to become the design references that future agent-tasks work orders link to. Do not duplicate their rationale in task files.
+
+## 5. Candidate first vertical slice
 
 A candidate foundation is a small read-only flow involving basic game data. Galaxy → SolarSystem → CelestialBody is one possible model sequence. Blueprint and unit lookup services are another candidate if the first selected workflow needs them.
 
@@ -97,7 +105,7 @@ No candidate is approved yet. Selection criteria:
 4. it can be tested end to end;
 5. it avoids locking unresolved game rules into the interface.
 
-## 5. Decisions to settle before task drafting
+## 6. Decisions to settle before task drafting
 
 | Decision | Current state |
 |---|---|
@@ -113,7 +121,7 @@ No candidate is approved yet. Selection criteria:
 | Long-term complete-app vs frontend/API boundary | OPEN |
 | Migration sequence beyond first slice | OPEN |
 
-## 6. Task readiness gate
+## 7. Task readiness gate
 
 Only draft an implementation task after:
 - the target outcome is agreed;
@@ -127,7 +135,7 @@ Only draft an implementation task after:
 
 A task should contain one objective, point to the relevant wiki pages, specify concrete acceptance criteria and avoid duplicating the rationale here. Use `status: draft` under the current agent-tasks conventions. Do not add dispatch instructions to a draft.
 
-## 7. What this roadmap does not decide
+## 8. What this roadmap does not decide
 
 This roadmap does not approve:
 - a final navigation/menu structure;
