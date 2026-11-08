@@ -94,6 +94,8 @@ The JavaScript reuse plan is maintained in [JavaScript Reuse, Porting, and Modul
 
 These pages are intended to become the design references that future agent-tasks work orders link to. Do not duplicate their rationale in task files.
 
+The [Visual Reference and Screenshot Documentation Plan](visual-reference-and-screenshot-plan.md) defines how Qwen should capture the current prototype, document EVE Dashboard navigation/workspaces and the six supplied JS references, and connect evidence back to the screen and porting plans. Screenshots are evidence, not automatic design approval.
+
 ## 5. Candidate first vertical slice
 
 A candidate foundation is a small read-only flow involving basic game data. Galaxy → SolarSystem → CelestialBody is one possible model sequence. Blueprint and unit lookup services are another candidate if the first selected workflow needs them.
