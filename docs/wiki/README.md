@@ -15,7 +15,7 @@ The three documentation homes have different responsibilities:
 
 | Location | Responsibility |
 |---|---|
-| `galaxy-game-ui/docs/wiki/` | This application's purpose, UI and application architecture, API/JavaScript direction, interface decisions, migration strategy, implementation progress, and rationale |
+| `docs/wiki/` at the repository root | This application's purpose, UI and application architecture, API/JavaScript direction, interface decisions, migration strategy, implementation progress, and rationale |
 | `galaxyGame/docs/wiki/` | Galaxy Game domain, simulation behavior, game mechanics, established gameplay intent, and authoritative game-data meaning |
 | `agent-tasks/projects/galaxy-game-ui/` | Slim actionable tasks, review items, status bookkeeping, and session handoffs; these point back to this wiki rather than becoming a parallel design specification |
 
@@ -107,7 +107,7 @@ The long-term application boundary is still open: the prototype may ultimately b
 
 ## 4. Existing implementation baseline
 
-The following is a repository-read snapshot of the `review/qwen-ui-prototype` branch on 2026-11-08. It describes what was inspected, not a guarantee about uncommitted local work or later branch changes.
+The following is a repository-read snapshot of the clean prototype line as inspected on 2026-11-08. That line has since been renamed to the repository's active `main` branch. It describes what was inspected at that snapshot, not a guarantee about uncommitted local work or later changes.
 
 ### Verified application foundation
 
@@ -231,7 +231,18 @@ The following are intentionally unresolved. This wiki records them so future ses
 
 When a decision is made, update this wiki with the date, decision, and scope. If a proposal is not approved, keep it labelled as a proposal or OPEN.
 
-## 9. Working rules for future changes
+## 9. Detailed planning pages
+
+The following pages expand the initial direction without turning it into implementation tasks:
+
+- [Interface and workflow direction](interface-and-workflows.md) — player/admin distinction, navigation principles, context, world-inspection capabilities and data age.
+- [Data integration and backend migration](data-integration-and-migration.md) — JSON reader, lookup-service port, Rails API, JavaScript integration and progressive migration.
+- [First-attempt reconciliation](first-attempt-reconciliation.md) — what can be reused, what is superseded, and lessons from the earlier task sequence.
+- [Prototype roadmap](prototype-roadmap.md) — proposed planning stages and the gate to pass before task drafting.
+
+These are working proposals and reference documents. They do not authorize implementation or dispatch; open questions remain open until Tracy confirms them.
+
+## 10. Working rules for future changes
 
 - **Code and data define current implementation.** This wiki records intended direction and decisions; it must not claim a feature exists merely because it is planned.
 - **Owner-confirmed intent controls design.** If current code conflicts with an established decision, report the gap rather than silently changing the design to match the code.
@@ -247,3 +258,4 @@ When a decision is made, update this wiki with the date, decision, and scope. If
 ## Change history
 
 - **2026-11-08** — Initial project wiki created. Records the owner-confirmed shift from an appearance-only prototype to the foundation of the new Galaxy Game interface, with JavaScript as the primary presentation layer and Rails as the API/application backend.
+- **2026-11-08** — Added interface/workflow, data integration/migration, first-attempt reconciliation and prototype roadmap pages after reviewing the earlier UI task plans and first-attempt guidance. These pages are proposals for review, not implementation authorization.
