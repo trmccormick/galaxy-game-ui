@@ -238,6 +238,8 @@ The following pages expand the initial direction without turning it into impleme
 - [Interface and workflow direction](interface-and-workflows.md) — player/admin distinction, navigation principles, context, world-inspection capabilities and data age.
 - [Data integration and backend migration](data-integration-and-migration.md) — JSON reader, lookup-service port, Rails API, JavaScript integration and progressive migration.
 - [First-attempt reconciliation](first-attempt-reconciliation.md) — what can be reused, what is superseded, and lessons from the earlier task sequence.
+- [Legacy task reconciliation](legacy-task-reconciliation.md) — maps older `agent-tasks` proposals to the current prototype direction.
+- [Interface pattern references](interface-pattern-references.md) — EVE Dashboard, EVE Tycoon, EVEpraisal and reusable JavaScript interaction patterns.
 - [Prototype roadmap](prototype-roadmap.md) — proposed planning stages and the gate to pass before task drafting.
 
 These are working proposals and reference documents. They do not authorize implementation or dispatch; open questions remain open until Tracy confirms them.
@@ -259,3 +261,4 @@ These are working proposals and reference documents. They do not authorize imple
 
 - **2026-11-08** — Initial project wiki created. Records the owner-confirmed shift from an appearance-only prototype to the foundation of the new Galaxy Game interface, with JavaScript as the primary presentation layer and Rails as the API/application backend.
 - **2026-11-08** — Added interface/workflow, data integration/migration, first-attempt reconciliation and prototype roadmap pages after reviewing the earlier UI task plans and first-attempt guidance. These pages are proposals for review, not implementation authorization.
+- **2026-11-08** — Added a reference-pattern guide and a task-by-task reconciliation of earlier `agent-tasks` proposals. Old task statuses and branch-specific paths remain subject to live verification before any task is drafted.
