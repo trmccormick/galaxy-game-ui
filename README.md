@@ -20,6 +20,8 @@ This repository's project wiki records the architecture, interface direction, de
 - [Legacy task reconciliation](docs/wiki/legacy-task-reconciliation.md) — how older task proposals map to the current plan.
 - [Interface pattern references](docs/wiki/interface-pattern-references.md) — reusable presentation and JavaScript patterns.
 - [Prototype roadmap](docs/wiki/prototype-roadmap.md) — proposed planning stages before implementation tasks.
+- [Screen concepts and wireframes](docs/wiki/screen-concepts-and-wireframes.md) — proposed player/admin workspaces and low-fidelity screen sketches.
+- [JavaScript reuse and porting plan](docs/wiki/javascript-reuse-and-porting-plan.md) — EVE JS references to adapt, Galaxy Game modules to create, and suggested sequencing.
 
 ## Related repositories
 
