@@ -18,6 +18,10 @@ rm -f /home/galaxy_game/tmp/pids/server.pid
 rm -f public/assets/.manifest.json
 rm -f public/packs/manifest.json
 
+# Compile Tailwind CSS (required for compiled utilities)
+echo "Compiling Tailwind CSS..."
+bin/rails tailwindcss:build 2>&1
+
 # Start Rails server
 echo "Starting Rails server..."
 bin/rails s -p 3000 -b '0.0.0.0'

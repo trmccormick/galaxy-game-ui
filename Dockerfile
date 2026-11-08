@@ -28,5 +28,8 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
   # -------------------------------------------------------------------------------------------------
   ADD ./galaxy-game-ui /home/galaxy_game
 
+  # Compile Tailwind CSS (required for compiled utilities)
+  RUN bin/rails tailwindcss:build
+
   # Expose port 3000 to the Docker host
   EXPOSE 3000
