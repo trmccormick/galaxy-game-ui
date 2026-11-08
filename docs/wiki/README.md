@@ -241,6 +241,8 @@ The following pages expand the initial direction without turning it into impleme
 - [Legacy task reconciliation](legacy-task-reconciliation.md) — maps older `agent-tasks` proposals to the current prototype direction.
 - [Interface pattern references](interface-pattern-references.md) — EVE Dashboard, EVE Tycoon, EVEpraisal and reusable JavaScript interaction patterns.
 - [Prototype roadmap](prototype-roadmap.md) — proposed planning stages and the gate to pass before task drafting.
+- [Screen concepts and wireframes](screen-concepts-and-wireframes.md) — proposed player/admin workspaces, low-fidelity screen sketches, shared interaction requirements, and open design decisions.
+- [JavaScript reuse and porting plan](javascript-reuse-and-porting-plan.md) — which shown EVE JS files may be adapted, what should be newly built, and a proposed module/porting sequence.
 
 These are working proposals and reference documents. They do not authorize implementation or dispatch; open questions remain open until Tracy confirms them.
 
@@ -262,3 +264,4 @@ These are working proposals and reference documents. They do not authorize imple
 - **2026-11-08** — Initial project wiki created. Records the owner-confirmed shift from an appearance-only prototype to the foundation of the new Galaxy Game interface, with JavaScript as the primary presentation layer and Rails as the API/application backend.
 - **2026-11-08** — Added interface/workflow, data integration/migration, first-attempt reconciliation and prototype roadmap pages after reviewing the earlier UI task plans and first-attempt guidance. These pages are proposals for review, not implementation authorization.
 - **2026-11-08** — Added a reference-pattern guide and a task-by-task reconciliation of earlier `agent-tasks` proposals. Old task statuses and branch-specific paths remain subject to live verification before any task is drafted.
+- **2026-11-08** — Added low-fidelity player/admin screen concepts and a JavaScript reuse/porting plan. Wireframes and module sequence are proposals, not final UI or implementation authorization.
