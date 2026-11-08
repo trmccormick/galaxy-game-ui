@@ -15,7 +15,20 @@ This is a planning map for the prototype. It is deliberately not a set of implem
 - Build one vertical slice at a time and review it before expanding.
 - No implementation task should imply approval to dispatch, commit or push.
 
-## 2. Proposed planning stages
+## 2. Existing near-term proposals to reconcile
+
+The 2026-11-04 `agent-tasks/projects/galaxy-game-ui/tasks/drafts/README.md` identifies several small prototype work candidates. Their current completion state must be checked against the live `main` branch before any task is rewritten or dispatched:
+
+| Candidate | Earlier proposal | Planning treatment now |
+|---|---|---|
+| Waypoint JavaScript recovery | Read-only audit of current prototype, first-attempt history and local backup | Retain as a candidate audit if the work has not already been completed. Inspect existing copied/adapted EVE JS before building a replacement. |
+| Sign-in branding/presentation | Finish Galaxy Game branding while preserving Rails authentication | Re-check current sign-in page and authentication behavior; do not assume the October 30 task still describes the current defect. |
+| Landing logo | Replace/align the landing logo with the selected Galaxy Game asset | Confirm current asset usage and user-approved logo direction before proposing a change. |
+| Waypoint navigation | Conditional port after the audit and owner approval | Only proceed if the existing code is useful and the Galaxy Game workflow for it is understood. |
+
+These are candidate cleanup/recovery items, not a dispatch queue. They should be reconciled with current Qwen work and the live app before becoming tasks.
+
+## 3. Proposed planning stages
 
 ### Stage A — Reconcile the current prototype baseline
 
@@ -73,7 +86,7 @@ Possible domains include systems and celestial bodies, assets/inventory, economy
 
 Revisit whether this repository becomes the complete application or remains the frontend/API while some game logic stays in the main app. Make this decision from operational needs and migration evidence, not in advance of the first working integration.
 
-## 3. Candidate first vertical slice
+## 4. Candidate first vertical slice
 
 A candidate foundation is a small read-only flow involving basic game data. Galaxy → SolarSystem → CelestialBody is one possible model sequence. Blueprint and unit lookup services are another candidate if the first selected workflow needs them.
 
@@ -84,7 +97,7 @@ No candidate is approved yet. Selection criteria:
 4. it can be tested end to end;
 5. it avoids locking unresolved game rules into the interface.
 
-## 4. Decisions to settle before task drafting
+## 5. Decisions to settle before task drafting
 
 | Decision | Current state |
 |---|---|
@@ -100,7 +113,7 @@ No candidate is approved yet. Selection criteria:
 | Long-term complete-app vs frontend/API boundary | OPEN |
 | Migration sequence beyond first slice | OPEN |
 
-## 5. Task readiness gate
+## 6. Task readiness gate
 
 Only draft an implementation task after:
 - the target outcome is agreed;
@@ -114,7 +127,7 @@ Only draft an implementation task after:
 
 A task should contain one objective, point to the relevant wiki pages, specify concrete acceptance criteria and avoid duplicating the rationale here. Use `status: draft` under the current agent-tasks conventions. Do not add dispatch instructions to a draft.
 
-## 6. What this roadmap does not decide
+## 7. What this roadmap does not decide
 
 This roadmap does not approve:
 - a final navigation/menu structure;
