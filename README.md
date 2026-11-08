@@ -13,7 +13,11 @@ This repository's project wiki records the architecture, interface direction, de
 
 ## Project documentation
 
-- [Project wiki](docs/wiki/README.md) — current direction, architecture, implementation baseline, interface principles, migration strategy, and open decisions.
+- [Project wiki](docs/wiki/README.md) — project direction, architecture and current baseline.
+- [Interface and workflows](docs/wiki/interface-and-workflows.md) — player/admin responsibilities, navigation and contextual UI.
+- [Data integration and migration](docs/wiki/data-integration-and-migration.md) — JSON reader, Rails API, JavaScript and progressive backend migration.
+- [First-attempt reconciliation](docs/wiki/first-attempt-reconciliation.md) — reusable work and superseded assumptions.
+- [Prototype roadmap](docs/wiki/prototype-roadmap.md) — proposed planning stages before implementation tasks.
 
 ## Related repositories
 
