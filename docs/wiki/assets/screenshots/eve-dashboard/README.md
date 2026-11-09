@@ -40,6 +40,8 @@ These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact
 ### Navigation and Wayfinding
 **What EVE does:** Global navigation bar with workspace-specific secondary navigation. Context selectors for fleet/singleton views. Breadcrumb-style location indicators.
 
+*Note: These navigation observations are general knowledge of EVE Online's established interface conventions, not findings derived from the six JavaScript files.*
+
 **Why it appears useful:** Players can always see their current workspace and return to common destinations without losing context.
 
 **Galaxy Game adaptation:** The sidebar pattern observed in the current Galaxy Game prototype (Account/Galaxy/Operations/Admin sections) aligns with this approach. Whether EVE's global bar or Galaxy Game's sidebar better serves the game's information architecture is an open question.
@@ -90,7 +92,7 @@ These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact
 
 1. **If live access becomes available:** Capture genuine screenshots of the EVE Dashboard navigation, map workspace, market window, asset manager, and wealth/transaction views. Document each with viewport, interaction tested, and relevant source context.
 
-2. **Verify code-derived observations:** Compare the previously examined JavaScript files against any current EVE Online client to confirm patterns are still applicable.
+2. **Verify code-derived observations:** Compare the previously examined JavaScript files against the source of that same EVE-related dashboard application to confirm patterns are still applicable.
 
 3. **Connect to Galaxy Game wiki pages:** Each pattern above should be linked to the relevant screen concept in `screen-concepts-and-wireframes.md` and the JS reuse plan in `javascript-reuse-and-porting-plan.md`.
 
@@ -98,7 +100,7 @@ These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact
 
 ## Related Wiki Pages
 
-- [Interface Pattern References](../../interface-pattern-references.md)
-- [JavaScript Reuse, Porting, and Module Plan](../../javascript-reuse-and-porting-plan.md)
-- [Screen Concepts and Wireframes](../../screen-concepts-and-wireframes.md)
-- [Visual Reference and Screenshot Plan](../visual-reference-and-screenshot-plan.md)
+- [Interface Pattern References](../../../interface-pattern-references.md)
+- [JavaScript Reuse, Porting, and Module Plan](../../../javascript-reuse-and-porting-plan.md)
+- [Screen Concepts and Wireframes](../../../screen-concepts-and-wireframes.md)
+- [Visual Reference and Screenshot Plan](../../../visual-reference-and-screenshot-plan.md)

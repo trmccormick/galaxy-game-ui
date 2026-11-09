@@ -61,8 +61,8 @@
 
 ## Related Wiki Pages
 
-- [Visual Reference and Screenshot Plan](../../visual-reference-and-screenshot-plan.md)
-- [Prototype Roadmap](../../prototype-roadmap.md)
-- [Interface and Workflow Direction](../../interface-and-workflows.md)
-- [Screen Concepts and Wireframes](../../screen-concepts-and-wireframes.md)
-- [JavaScript Reuse, Porting, and Module Plan](../../javascript-reuse-and-porting-plan.md)
+- [Visual Reference and Screenshot Plan](../../../visual-reference-and-screenshot-plan.md)
+- [Prototype Roadmap](../../../prototype-roadmap.md)
+- [Interface and Workflow Direction](../../../interface-and-workflows.md)
+- [Screen Concepts and Wireframes](../../../screen-concepts-and-wireframes.md)
+- [JavaScript Reuse, Porting, and Module Plan](../../../javascript-reuse-and-porting-plan.md)
