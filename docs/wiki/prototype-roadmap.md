@@ -19,13 +19,15 @@ This is a planning map for the prototype. It is deliberately not a set of implem
 
 | Stage | Description | Status |
 |-------|-------------|--------|
-| Stage A — Reconcile baseline | Evidence-based snapshot of active main branch with screenshots | ✅ Completed |
+| Stage A — Reconcile baseline | Evidence-based snapshot of active main branch with screenshots | ⚠️ Partially complete |
 | Stage B — Define first workflow | Not yet started (requires owner decision) | ⏳ OPEN |
 | Stage C — Establish API/JS pattern | Not yet started | ⏳ OPEN |
 | Stage D — Grow by workflow | Not yet started | ⏳ OPEN |
 | Stage E — Review boundary | Not yet started | ⏳ OPEN |
 
 **Stage A output:** Screenshot evidence at `docs/wiki/assets/screenshots/galaxy-game-ui/` (5 screens captured). EVE reference documentation at `docs/wiki/assets/screenshots/eve-dashboard/README.md` (code-derived observations). Updated wiki pages linking evidence to screen concepts and porting plans.
+
+**Remaining Stage A work:** Routes/controllers inspection, JavaScript entry points and Stimulus controllers, copied or adapted EVE reference code identification, current dashboard/admin/landing/sign-in state verification, tests and verification commands, remaining placeholder data sources, and comparison with the archived first attempt. These have not been completed.
 
 ---
 
@@ -136,6 +138,10 @@ No candidate is approved yet. Selection criteria:
 | Admin/player application boundary | OPEN in detail; keep purposes distinct |
 | Long-term complete-app vs frontend/API boundary | OPEN |
 | Migration sequence beyond first slice | OPEN |
+| Wireframe navigation labels (illustrative vs proposed) | OPEN — screen-concepts wireframes use illustrative labels; whether they represent proposed navigation is undecided |
+| API response and error conventions | OPEN — no documented contracts yet |
+| API authentication and CSRF behavior | OPEN — existing prototype authentication is present; integration details need design |
+| Standard test and verification commands for the prototype | OPEN — not yet documented |
 
 ## 7. Task readiness gate
 

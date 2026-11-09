@@ -246,6 +246,7 @@ The following pages expand the initial direction without turning it into impleme
 - [Screen concepts and wireframes](screen-concepts-and-wireframes.md) — proposed player/admin workspaces, low-fidelity screen sketches, shared interaction requirements, and open design decisions.
 - [JavaScript reuse and porting plan](javascript-reuse-and-porting-plan.md) — which shown EVE JS files may be adapted, what should be newly built, and a proposed module/porting sequence.
 - [Visual reference and screenshot plan](visual-reference-and-screenshot-plan.md) — Qwen capture guidance, screenshot manifests, Galaxy Game visual baseline, and EVE Dashboard documentation plan.
+- [Prototype baseline audit (2026-11-07)](../audits/audit-report-2026-11-07.md) — earlier prototype baseline audit; consult when reviewing existing implementation and prior recommendations. Do not duplicate findings here.
 
 These are working proposals and reference documents. They do not authorize implementation or dispatch; open questions remain open until Tracy confirms them.
 
@@ -253,7 +254,7 @@ These are working proposals and reference documents. They do not authorize imple
 
 - **Code and data define current implementation.** This wiki records intended direction and decisions; it must not claim a feature exists merely because it is planned.
 - **Owner-confirmed intent controls design.** If current code conflicts with an established decision, report the gap rather than silently changing the design to match the code.
-- **Label evidence.** Use VERIFIED for facts checked against a named branch/commit or inspected source, REPORTED for information supplied by a person or earlier report, DIRECTION for current but revisable direction, and OPEN for undecided matters.
+- **Label evidence.** Use VERIFIED for facts checked against a named branch/commit or inspected source, REPORTED for information supplied by a person or earlier report, VISUAL ONLY for appearance observed without interaction testing, DIRECTION for current but revisable direction, and OPEN for undecided matters.
 - **Keep tasks thin.** Each task should point to the relevant wiki section, state one objective, and define acceptance criteria. Put design rationale here, not in a duplicate task specification.
 - **Preserve behavior before refactoring.** Port existing behavior and prove parity before optimizing or redesigning it.
 - **Review rendered results.** Interface changes require checking the running application, not just reading ERB or CSS.

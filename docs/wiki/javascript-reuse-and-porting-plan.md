@@ -32,14 +32,14 @@ This page records which JavaScript patterns from the EVE-related files Tracy pre
 
 The following files were reviewed in earlier sessions and are the known reference set.
 
-| Reference file | Existing pattern | Reuse assessment | Galaxy Game adaptation |
-|---|---|---|---|
-| fleet_map.js | SVG map, pan/zoom, markers, routes, tooltips, context menus, shortest-path interaction | **Adapt selectively** | Map canvas and interaction controller for star-system/spatial views. Replace EVE objects, route semantics, data contracts, and actions with Galaxy Game concepts. |
-| market.js | Searchable/filterable table, sorting, summary metrics, refresh | **Strong candidate to adapt** | Generic table/search/filter/sort pattern for market and other data-heavy workspaces. Keep market-specific columns and transaction behavior separate. |
-| chain.js | Interactive network graph, editing, pan/zoom, links, contextual details | **Adapt selectively** | Possible infrastructure/logistics/network visualization. Do not assume EVE chain topology maps directly to Galaxy Game networks. |
-| assets.js | Multi-select filters, select all/none, indeterminate state, typeahead | **Strong candidate to adapt** | Reusable filter/selection controller for assets, inventories, and other bulk-selection interfaces. |
-| wealth.js | Analytics chart, grouping, filters, shared selection, transaction drill-down | **Adapt selectively** | Possible economy/finance analytics after authoritative transaction and history data are available. |
-| structures.js | Delegated clipboard actions and feedback | **Small reusable pattern** | Shared clipboard utility/controller for identifiers, coordinates, or other copyable values. |
+| Reference file | Existing pattern | Evidence | Reuse assessment | Galaxy Game adaptation |
+|---|---|---|---|---|
+| fleet_map.js | SVG map, pan/zoom, markers, routes, tooltips, context menus, shortest-path interaction | VISUAL ONLY (code-derived from previously examined JS file) | **Adapt selectively** | Map canvas and interaction controller for star-system/spatial views. Replace EVE objects, route semantics, data contracts, and actions with Galaxy Game concepts. |
+| market.js | Searchable/filterable table, sorting, summary metrics, refresh | VISUAL ONLY (code-derived from previously examined JS file) | **Strong candidate to adapt** | Generic table/search/filter/sort pattern for market and other data-heavy workspaces. Keep market-specific columns and transaction behavior separate. |
+| chain.js | Interactive network graph, editing, pan/zoom, links, contextual details | VISUAL ONLY (code-derived from previously examined JS file) | **Adapt selectively** | Possible infrastructure/logistics/network visualization. Do not assume EVE chain topology maps directly to Galaxy Game networks. |
+| assets.js | Multi-select filters, select all/none, indeterminate state, typeahead | VISUAL ONLY (code-derived from previously examined JS file) | **Strong candidate to adapt** | Reusable filter/selection controller for assets, inventories, and other bulk-selection interfaces. |
+| wealth.js | Analytics chart, grouping, filters, shared selection, transaction drill-down | VISUAL ONLY (code-derived from previously examined JS file) | **Adapt selectively** | Possible economy/finance analytics after authoritative transaction and history data are available. |
+| structures.js | Delegated clipboard actions and feedback | VISUAL ONLY (code-derived from previously examined JS file) | **Small reusable pattern** | Shared clipboard utility/controller for identifiers, coordinates, or other copyable values. |
 
 The table identifies patterns, not verified current prototype file paths. Exact source locations, licensing/provenance, dependencies, and whether copies already exist must be checked in the current repository before a task is drafted.
 

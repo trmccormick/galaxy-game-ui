@@ -4,7 +4,7 @@
 **Branch:** `docs/initial-ui-wiki`  
 **Commit:** `5665dc3` (merge of `origin/main` including audit report)  
 **Application state:** Signed in as `admin@galaxygame.local` (role: admin) unless noted otherwise  
-**Viewport:** Desktop (~1440×900, browser default)
+**Viewport:** 1024×768 (browser default)
 
 ---
 
@@ -13,7 +13,7 @@
 | Image | Screen / State | Interaction tested | Notes |
 |-------|---------------|-------------------|-------|
 | `landing-page-signed-in-desktop-2026-11-08.png` | Landing page (signed in) | Visual only — no clicks tested | Shows top nav with Dashboard/Admin links, user email, sign-out. Galaxy Status cards and Active Star Systems panels rendered with mock data. Tailwind CSS failed to load (404 on `/assets/tailwindcss`) but the page renders correctly via Propshaft-compiled CSS. |
-| `sign-in-page-desktop-2026-11-08.png` | Sign-in page | Submitted form with admin credentials — login succeeded | Styled card with email/password fields, cyan submit button, "Forgot password?" link. The sign-in button showed a disabled/loading state briefly after submission (Turbo/JS). Tailwind CSS 404 errors present but do not affect the form styling. |
+| `sign-in-page-desktop-2026-11-08.png` | Sign-in page (empty form) | Visual only — the screenshot shows an empty sign-in form under a signed-in header; it does not demonstrate a verified signed-out state or successful login. Styled card with email/password fields, cyan submit button, "Forgot password?" link. Tailwind CSS 404 errors present but do not affect the form styling. |
 | `player-dashboard-desktop-2026-11-08.png` | Player dashboard (Command Center) | Visual only — navigation links clicked to verify routing | Full layout: top nav, left sidebar (Account/Galaxy/Operations/Admin sections), main content with user header, 4 metric cards (Settlements/Systems/Missions/Balance), Assets & Resources panel, Recent Activity cards, Settlements table, Navigation summary. Footer shows "mock data for demonstration purposes only." All data is placeholder/mock. |
 | `admin-console-desktop-2026-11-08.png` | Admin Console | Visual only — verified admin-only access (player role would be blocked) | Same layout shell as player dashboard but with admin-specific content: 4 metric cards (Users/Star Systems/Pending Approvals/Active Settlements), Quick Actions panel with "Prototype" annotations for all three actions. Footer shows mock data disclaimer. |
 | `about-page-signed-in-desktop-2026-11-08.png` | About page (signed in) | Visual only | **Unstyled** — plain text content with no Tailwind or custom CSS applied. Three bullet points and a "Back to Home" link. This is a verified gap: the about page does not inherit the application's visual design system. |
@@ -24,13 +24,12 @@
 
 ### What works (VERIFIED)
 - Landing page renders with branding, Galaxy Status cards, Active Star Systems panels, and Recent AI Activity section.
-- Sign-in form accepts credentials and authenticates successfully.
-- Player dashboard displays full layout with sidebar navigation, metrics, assets, activity, and settlements table.
+- Sign-in form accepts credentials and authenticates successfully (observed during application testing, not in the screenshot).
+- Player dashboard displays full layout with sidebar navigation, metrics, assets, activity, and navigation summary (verified during application testing; some elements such as the settlements table and mock-data footer were confirmed via DOM inspection rather than visible in the captured screenshot).
 - Admin Console is accessible to admin users; uses the same layout shell with admin-specific content.
 - Top navigation correctly shows Dashboard/Admin links when signed in, and user email/sign-out.
-- Sidebar navigation groups items into Account/Galaxy/Operations/Admin sections.
-- Settlements table on the dashboard renders with proper column headers and mock data rows.
-- Footer disclaimer "mock data for demonstration purposes only" appears on authenticated pages.
+- Sidebar navigation groups items into Account/Galaxy/Operations/Admin sections (navigation observed in the current prototype; not established or approved).
+- Footer disclaimer "mock data for demonstration purposes only" appears on authenticated pages (verified via DOM inspection).
 
 ### Visual-only observations (VISUAL ONLY)
 - All metric values, activity entries, and settlement data are mock/placeholder — not connected to any live data source.

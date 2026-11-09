@@ -20,14 +20,14 @@ Galaxy Game's current code, JSON data and established domain documentation remai
 
 The following existing JavaScript examples have been examined as interaction references. Before creating a new implementation, inspect the current prototype and any first-attempt copies/adaptations to determine whether a useful version already exists.
 
-| Example | Reusable interaction pattern | Galaxy Game adaptation boundary |
-|---|---|---|
-| `fleet_map.js` | Interactive SVG map, pan/zoom, routes, markers, tooltips, context menus and shortest-path visualization | Reuse map interaction mechanics only. Route meaning, availability and any path calculation must come from Galaxy Game data and rules. |
-| `market.js` | Searchable/filterable market table, sorting, summary metrics and refresh interaction | Reuse table/filter patterns. Market data, order semantics, prices and refresh behavior must be supplied by Galaxy Game services. |
-| `chain.js` | Interactive network map, node/link editing, zoom/pan and contextual information | Reuse graph interaction patterns. Galaxy Game wormhole topology and edit permissions must come from its own domain rules. |
-| `assets.js` | Multi-select filters, select all/none, indeterminate state and typeahead | Reuse generic filter controls. Asset categories and permissions must use Galaxy Game's own data. |
-| `wealth.js` | Analytics chart, grouping, filters and transaction drill-down | Reuse analytics presentation. Currency/account semantics and calculations must be backend-authoritative. |
-| `structures.js` | Delegated clipboard action and user feedback | Reuse generic clipboard/feedback behavior where useful. |
+| Example | Reusable interaction pattern | Evidence | Galaxy Game adaptation boundary |
+|---|---|---|---|
+| `fleet_map.js` | Interactive SVG map, pan/zoom, routes, markers, tooltips, context menus and shortest-path visualization | VISUAL ONLY (code-derived from previously examined JS file) | Reuse map interaction mechanics only. Route meaning, availability and any path calculation must come from Galaxy Game data and rules. |
+| `market.js` | Searchable/filterable market table, sorting, summary metrics and refresh interaction | VISUAL ONLY (code-derived from previously examined JS file) | Reuse table/filter patterns. Market data, order semantics, prices and refresh behavior must be supplied by Galaxy Game services. |
+| `chain.js` | Interactive network map, node/link editing, zoom/pan and contextual information | VISUAL ONLY (code-derived from previously examined JS file) | Reuse graph interaction patterns. Galaxy Game wormhole topology and edit permissions must come from its own domain rules. |
+| `assets.js` | Multi-select filters, select all/none, indeterminate state and typeahead | VISUAL ONLY (code-derived from previously examined JS file) | Reuse generic filter controls. Asset categories and permissions must use Galaxy Game's own data. |
+| `wealth.js` | Analytics chart, grouping, filters and transaction drill-down | VISUAL ONLY (code-derived from previously examined JS file) | Reuse analytics presentation. Currency/account semantics and calculations must be backend-authoritative. |
+| `structures.js` | Delegated clipboard action and user feedback | VISUAL ONLY (code-derived from previously examined JS file) | Reuse generic clipboard/feedback behavior where useful. |
 
 These are references already identified in prior review, not proof that each file is present in the active prototype. Confirm exact source paths and current copies before implementation.
 

@@ -24,12 +24,12 @@ The following JavaScript files were previously examined as interaction reference
 
 | File | Source context | What was documented |
 |------|---------------|---------------------|
-| `fleet_map.js` | EVE Online fleet management | SVG map interactions, pan/zoom, markers, routes, tooltips, context menus, shortest-path logic |
-| `market.js` | EVE market window | Searchable/filterable table, sorting, summary metrics, refresh behavior |
-| `chain.js` | EVE wormhole chain visualization | Interactive network graph, node/link editing, zoom/pan, contextual details |
-| `assets.js` | EVE asset manager | Multi-select filters, select-all/none, indeterminate state, typeahead |
-| `wealth.js` | EVE wallet/transaction history | Analytics chart, grouping, filters, shared selection, transaction drill-down |
-| `structures.js` | EVE structure management | Delegated clipboard actions and feedback |
+| `fleet_map.js` | JavaScript from a previously examined EVE-related dashboard application (fleet management) | SVG map interactions, pan/zoom, markers, routes, tooltips, context menus, shortest-path logic |
+| `market.js` | JavaScript from a previously examined EVE-related dashboard application (market window) | Searchable/filterable table, sorting, summary metrics, refresh behavior |
+| `chain.js` | JavaScript from a previously examined EVE-related dashboard application (wormhole chain visualization) | Interactive network graph, node/link editing, zoom/pan, contextual details |
+| `assets.js` | JavaScript from a previously examined EVE-related dashboard application (asset manager) | Multi-select filters, select-all/none, indeterminate state, typeahead |
+| `wealth.js` | JavaScript from a previously examined EVE-related dashboard application (wallet/transaction history) | Analytics chart, grouping, filters, shared selection, transaction drill-down |
+| `structures.js` | JavaScript from a previously examined EVE-related dashboard application (structure management) | Delegated clipboard actions and feedback |
 
 These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact source paths, versions, and current state in any repository should be re-verified before use.
 
@@ -42,7 +42,7 @@ These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact
 
 **Why it appears useful:** Players can always see their current workspace and return to common destinations without losing context.
 
-**Galaxy Game adaptation:** The sidebar pattern already established in the Galaxy Game prototype (Account/Galaxy/Operations/Admin sections) aligns well with this approach. The key question is whether EVE's global bar or Galaxy Game's sidebar better serves the game's information architecture.
+**Galaxy Game adaptation:** The sidebar pattern observed in the current Galaxy Game prototype (Account/Galaxy/Operations/Admin sections) aligns with this approach. Whether EVE's global bar or Galaxy Game's sidebar better serves the game's information architecture is an open question.
 
 ### Map Interactions
 **What EVE does:** SVG-based map with pan/zoom, marker selection, hover tooltips, route overlays, and layer toggles. Selected objects show detail panels alongside the map.
