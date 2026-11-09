@@ -111,4 +111,6 @@ If an important dependency is only DIRECTION or OPEN, identify it explicitly. Do
 - [Project overview and architecture](README.md)
 - [Data integration and migration direction](data-integration-and-migration.md)
 - [First-attempt reconciliation](first-attempt-reconciliation.md)
+- [Screenshot evidence](assets/screenshots/galaxy-game-ui/README.md) — captured 2026-11-08
+- [EVE Dashboard reference](assets/screenshots/eve-dashboard/README.md) — code-derived observations
 - Main game's UI/domain wiki: `galaxyGame/docs/wiki/` (consult the current repository version; do not duplicate its domain definitions here).

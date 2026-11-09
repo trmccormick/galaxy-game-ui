@@ -137,5 +137,6 @@ These are baseline observations from the inspected branch and date, not permanen
 - [Project overview and architecture](README.md)
 - [Interface and workflow direction](interface-and-workflows.md)
 - [First-attempt reconciliation](first-attempt-reconciliation.md)
+- [Screenshot evidence](assets/screenshots/galaxy-game-ui/README.md) — captured 2026-11-08
 - Main-game lookup services: `galaxyGame/galaxy_game/app/services/lookup/`
 - Main-game data path initializer: `galaxyGame/galaxy_game/config/initializers/game_data_paths.rb`

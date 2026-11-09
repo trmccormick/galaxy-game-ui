@@ -65,6 +65,11 @@ These are references already identified in prior review, not proof that each fil
 
 The prototype's dark blue/gray surfaces and cyan accent are a working direction from recent UI work, not a frozen design system. Use the existing token names and actual current CSS as the baseline; do not add a second color system or hard-code a new palette in views.
 
+**Screenshot evidence:** Actual rendered pages are captured at [galaxy-game-ui/README.md](assets/screenshots/galaxy-game-ui/README.md). Key findings:
+- Landing page, sign-in, dashboard, and admin console all render with the dark blue/gray + cyan theme.
+- The About page is **unstyled** — plain text with no Tailwind or custom CSS applied. This is a verified gap.
+- Tailwind CSS asset fails to load (404 on `/assets/tailwindcss`) but Propshaft serves compiled CSS correctly.
+
 Earlier first-attempt notes contain several different visual suggestions, including a terminal-green game view, a glassmorphic EVE-inspired treatment and cyan/purple accents. These were exploratory references, not all approved choices. The current working prototype appearance and later owner feedback take precedence.
 
 Do not wholesale-import the first-attempt EVE stylesheet. Select individual patterns and adapt them to the current Tailwind v4/Propshaft asset setup after inspecting the live branch.

@@ -15,6 +15,20 @@ This is a planning map for the prototype. It is deliberately not a set of implem
 - Build one vertical slice at a time and review it before expanding.
 - No implementation task should imply approval to dispatch, commit or push.
 
+## Completion Status (2026-11-08)
+
+| Stage | Description | Status |
+|-------|-------------|--------|
+| Stage A — Reconcile baseline | Evidence-based snapshot of active main branch with screenshots | ✅ Completed |
+| Stage B — Define first workflow | Not yet started (requires owner decision) | ⏳ OPEN |
+| Stage C — Establish API/JS pattern | Not yet started | ⏳ OPEN |
+| Stage D — Grow by workflow | Not yet started | ⏳ OPEN |
+| Stage E — Review boundary | Not yet started | ⏳ OPEN |
+
+**Stage A output:** Screenshot evidence at `docs/wiki/assets/screenshots/galaxy-game-ui/` (5 screens captured). EVE reference documentation at `docs/wiki/assets/screenshots/eve-dashboard/README.md` (code-derived observations). Updated wiki pages linking evidence to screen concepts and porting plans.
+
+---
+
 ## 2. Existing near-term proposals to reconcile
 
 The 2026-11-04 `agent-tasks/projects/galaxy-game-ui/tasks/drafts/README.md` identifies several small prototype work candidates. Their current completion state must be checked against the live `main` branch before any task is rewritten or dispatched:

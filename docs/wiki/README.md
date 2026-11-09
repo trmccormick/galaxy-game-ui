@@ -130,6 +130,8 @@ The presence of Active Record and PostgreSQL dependencies does not, by itself, e
 
 The repository has a working visual foundation and is being developed as a prototype. Branding, CSS/Tailwind setup, layout shell, landing/sign-in work, and dashboard work have been handled in earlier implementation sessions. Treat the current checked-out branch and rendered application as the evidence for what is actually complete; older status notes and task checklists may be stale.
 
+**Screenshot evidence:** Visual documentation of the current prototype is available at `assets/screenshots/galaxy-game-ui/README.md`. Five screens were captured on 2026-11-08 from the running application: landing page (signed-in), sign-in page, player dashboard, admin console, and about page. All data shown is mock/placeholder.
+
 The current page structure, component choices, and visual design remain subject to review. The architecture direction in this wiki does not freeze a final navigation scheme, page layout, visual system, or frontend framework.
 
 ## 5. Game-data reader and lookup-service port

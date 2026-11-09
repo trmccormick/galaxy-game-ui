@@ -102,6 +102,12 @@ These are candidates for a separate evidence pass, not assumptions:
 - whether any first-attempt UI behavior is already present on current `main`;
 - which old admin-console concepts correspond to actual current administrative workflows.
 
+**Screenshot evidence (2026-11-08):** Five screens were captured from the running application at `assets/screenshots/galaxy-game-ui/README.md`. These confirm:
+- The dashboard and admin console use the same layout shell with sidebar navigation.
+- All displayed data is mock/placeholder — no live game integration exists.
+- The About page is unstyled (a gap not present in the first attempt, which had more complete styling).
+- No EVE-derived JavaScript files were found in the active prototype; all six reference files exist only as external references.
+
 The 2026-11-07 audit report is a read-only investigation and should be treated as a source of leads. Its recommendations are not owner-approved design decisions. In particular, recommendations that mirror the domain hierarchy into nested sidebar navigation conflict with the established navigation direction and must not be adopted without explicit review.
 
 ## 7. Source records

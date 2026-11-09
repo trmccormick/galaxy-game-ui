@@ -191,6 +191,8 @@ This is a workflow candidate, not approval for a settlement-only global menu or 
 
 Candidate areas include user/account administration and access control; application health and operational status; data/reader diagnostics; administrative audit/history; and controlled configuration/support tools.
 
+**Screenshot evidence:** The actual admin console is captured at [admin-console-desktop-2026-11-08.png](assets/screenshots/galaxy-game-ui/admin-console-desktop-2026-11-08.png). It shows the same layout shell as the player dashboard with admin-specific metrics (Users/Star Systems/Pending Approvals/Active Settlements) and Quick Actions panel annotated as "Prototype" for all three actions.
+
 ```text
 ┌──────────────────────────────────────────────────────────────────────┐
 │ GALAXY GAME ADMIN       Overview  Users  Operations  Data  Audit    │
