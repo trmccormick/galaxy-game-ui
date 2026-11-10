@@ -46,7 +46,7 @@ Candidate mission inputs include:
 - Constraints, safety requirements, and required capabilities.
 - Optional milestones or evaluation criteria.
 
-Do not make the operator specify every harvest, processing run, print job, construction step, or deployment order. Those are part of the AI Manager's planning and execution responsibilities.
+Do not make the operator specify every harvest, processing run, print job, construction step, or deployment order. Those are part of the AI Manager's planning and execution responsibilities. Existing settlement patterns and prior missions may inform the plan, but should not be presented as fixed scripts; the AI Manager must adapt its approach to the target location and current conditions.
 
 ### Run, inspect, intervene, and resume
 
