@@ -39,6 +39,8 @@ The admin experience should let an operator define **mission objectives**, not a
 
 Keep strategic selection separate from execution: the `missions_v2` / `tasks` layer describes how a selected deployment or activity is performed. It does not decide whether that activity is appropriate, where it is needed, when it should happen, or how it ranks against other needs. The AI Manager makes those decisions from the world state and mission objectives, then invokes suitable mission/task procedures to execute the chosen work. The interface should make both the strategic decision and the selected execution procedure visible without confusing one for the other.
 
+During development, Rake tasks are used as mission profiles to test candidate settlement approaches. They are examples and validated options available to inform the AI Manager, not exhaustive choices or fixed deployment scripts. The intended AI Manager should evaluate a location's properties and the mission objective, then draft a suitable cargo manifest and deployment plan—choosing the equipment, supplies, materials, spares, and quantities that make sense for that situation. It may adapt or combine tested approaches, or choose another approach when the available profiles do not fit. The admin UI should expose the resulting manifest and the decisions behind it, rather than imply that the operator selected a predetermined profile for literal replay.
+
 ### Mission setup
 
 Candidate mission inputs include:
