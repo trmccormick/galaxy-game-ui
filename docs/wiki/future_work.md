@@ -33,7 +33,50 @@ The interface should expose the AI Manager's actual reasoning records and operat
 
 This is an observability tool, not a control panel that silently takes authority away from the AI Manager. Any future administrative override or intervention controls require separate design decisions.
 
-## 2. Communications and network visibility
+## 2. Mission planning, simulation supervision, and AI evaluation
+
+The admin experience should let an operator define **mission objectives**, not author a fixed sequence of construction steps. The main game's AI Manager is responsible for evaluating a location, choosing priorities, planning a path to the objective, allocating resources, and adapting to conditions. The UI should make those decisions observable and reviewable.
+
+### Mission setup
+
+Candidate mission inputs include:
+- Desired outcome (for example, establish a usable Luna lava-tube foothold).
+- Target world / location and starting conditions.
+- Available equipment, resources, and funding.
+- Constraints, safety requirements, and required capabilities.
+- Optional milestones or evaluation criteria.
+
+Do not make the operator specify every harvest, processing run, print job, construction step, or deployment order. Those are part of the AI Manager's planning and execution responsibilities.
+
+### Run, inspect, intervene, and resume
+
+The admin interface should support the pre-player buildout workflow:
+
+1. Assign a mission and let the AI Manager plan and execute it.
+2. Observe at a selected simulation speed, or accelerate through routine activity.
+3. Pause at a checkpoint or when a problem is detected.
+4. Inspect progress, inventories (including stored volatiles), resource consumption, construction results, equipment condition, maintenance, failures, unexpected events, and the AI Manager's decisions and responses.
+5. Correct conditions or mission inputs, then resume and evaluate the result.
+
+Accelerated simulation and manual buildout time jumps must still execute all intervening simulation activity and consequences. The UI must not imply that time jumps skip work or merely alter the displayed date. Pause and manual time jumps are pre-player operator controls; individual players do not control the shared universe clock or its rate.
+
+### Evaluation and training records
+
+The inspector should help compare the AI Manager's chosen path with the mission objective and actual outcome. Useful records include the initial conditions, objective and constraints, decisions and rationale where available, alternatives considered where genuinely recorded, task/activity history, resource use, blockers, failures, recovery actions, and final results.
+
+The purpose is to evaluate whether the AI Manager can independently discover and execute a good settlement path—not whether it can replay a developer-authored script. Do not fabricate reasoning or training data that the game does not actually provide; distinguish live records, harvested records, and mock prototype data.
+
+### Player expansion after AI-established access
+
+The UI should also eventually support the player-facing consequences of the settlement model:
+- Players and player corporations can establish their own bases and settlements once a world is accessible.
+- Players / corporations may lease suitable space at NPC settlements for portal endpoints or pairs, subject to the game's portal constraints.
+- Portal connections can support convenient movement of eligible payloads and imports / exports; do not present portals as unrestricted bulk-freight replacements.
+- NPC settlements continue providing services and may expand capacity while player-owned operations grow alongside them.
+
+The game wiki is authoritative for settlement rules, portal constraints, simulation behavior, and economic mechanics. The UI should present those capabilities without inventing additional rules.
+
+## 3. Communications and network visibility
 
 The communications interface should make delayed command delivery understandable without implying faster-than-light messaging.
 
@@ -100,7 +143,7 @@ The routing service remains authoritative. The UI visualizes the route and statu
 - Route history may be useful for diagnostics, but the UI should not require permanent storage of every possible route.
 - Use mock data for early layout and interaction work; label it clearly.
 
-## 3. Candidate implementation sequence
+## 4. Candidate implementation sequence
 
 These are suggested work packages, not fixed milestones. Reorder them as prototype learning and available game data dictate.
 
@@ -114,7 +157,7 @@ These are suggested work packages, not fixed milestones. Reorder them as prototy
 
 Tasks should remain narrow and independently testable. Start with static or mock data where that lets the interface be evaluated before backend integration is available.
 
-## 4. Prototype and integration boundaries
+## 5. Prototype and integration boundaries
 
 - Reuse existing prototype components and useful code from the main game where practical; adapt or replace them when the prototype shows a better approach.
 - Favor working screens and realistic interaction over premature framework or service design.
@@ -123,7 +166,7 @@ Tasks should remain narrow and independently testable. Start with static or mock
 - When backend integration becomes relevant, derive the required data from the main game's actual services and models.
 - Admin and player views may share data and components while exposing different detail and permissions.
 
-## 5. Open questions
+## 6. Open questions
 
 - Which AI Manager decision records and activity states are already available to the UI?
 - Which parts of the communications route and lifecycle will the game expose first?
