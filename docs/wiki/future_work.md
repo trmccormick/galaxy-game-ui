@@ -31,7 +31,7 @@ Candidate UI elements:
 
 The interface should expose the AI Manager's actual reasoning records and operational state when available. It must not fabricate explanations or imply that mock data is live simulation output.
 
-This is an observability tool, not a control panel that silently takes authority away from the AI Manager. Any future administrative override or intervention controls require separate design decisions.
+This is an observability and supervisory tool, not a control panel that silently takes authority away from the AI Manager. Pre-player pause, inspection, correction of mission conditions, and resume are part of the intended operator workflow. Directly overriding individual AI decisions or taking over execution remains a separate design question.
 
 ## 2. Mission planning, simulation supervision, and AI evaluation
 
