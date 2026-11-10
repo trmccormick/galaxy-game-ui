@@ -37,6 +37,8 @@ This is an observability and supervisory tool, not a control panel that silently
 
 The admin experience should let an operator define **mission objectives**, not author a fixed sequence of construction steps. The main game's AI Manager is responsible for evaluating a location, choosing priorities, planning a path to the objective, allocating resources, and adapting to conditions. The UI should make those decisions observable and reviewable.
 
+Keep strategic selection separate from execution: the `missions_v2` / `tasks` layer describes how a selected deployment or activity is performed. It does not decide whether that activity is appropriate, where it is needed, when it should happen, or how it ranks against other needs. The AI Manager makes those decisions from the world state and mission objectives, then invokes suitable mission/task procedures to execute the chosen work. The interface should make both the strategic decision and the selected execution procedure visible without confusing one for the other.
+
 ### Mission setup
 
 Candidate mission inputs include:
