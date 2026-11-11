@@ -18,8 +18,10 @@ The main game's current code and authoritative domain documentation govern game 
 
 - The prototype is intended to become the foundation of the new Galaxy Game interface, not remain a disconnected visual mockup.
 - JavaScript is the primary presentation and interaction layer.
-- Rails provides the application backend/API, authentication and authorization, game-data access, validation, domain services, persistence, and authoritative behavior.
-- Begin integration with a controlled JSON reader adapted from the main game's lookup behavior, exposed through application-level API resources.
+- The main GalaxyGame application exposes the authoritative API; this separate prototype UI consumes it.
+- The main application retains game state, domain services, calculations, validation, persistence, authorization, and operations.
+- Reuse the main application's existing lookup/data-access behavior behind deliberate API contracts; do not duplicate its reader or game logic in the prototype.
+- Mock or local JSON data may support visual design, but it must remain clearly separate from live API data and must not be treated as an API contract.
 - Progressively port or integrate existing game models and services in small, tested vertical slices. Preserve behavior before refactoring.
 - The final application boundary, framework choices beyond the current Rails/Hotwire foundation, API contracts, and migration sequence remain open unless explicitly decided.
 
