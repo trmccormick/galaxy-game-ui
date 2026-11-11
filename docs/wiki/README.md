@@ -12,7 +12,7 @@ Keep the three documentation homes distinct:
 | `galaxyGame/docs/wiki/` | Game-domain rules, simulation behavior, authoritative mechanics, game data meaning, and established gameplay intent |
 | `agent-tasks/projects/galaxy-game-ui/` | Actionable work orders, review items, status, and session handoffs |
 
-The main game's current code and authoritative domain documentation govern game behavior. This UI wiki must not create or redefine game mechanics. When a UI decision depends on a game rule, resolve the domain question in the main game source first, then document the resulting interface decision here.
+The main game's current code and authoritative domain documentation govern game behavior and product design intent. This UI wiki must not create or redefine game mechanics or become a competing product-design authority. The canonical UI intent is in `galaxyGame/docs/wiki/ui/`; the canonical organizational/domain intent is in `galaxyGame/docs/wiki/`. When a UI decision depends on a game rule, resolve it in the main game source/wiki first, then record only the prototype-specific implementation implications here.
 
 ## Current application direction
 
@@ -22,6 +22,18 @@ The main game's current code and authoritative domain documentation govern game 
 - Begin integration with a controlled JSON reader adapted from the main game's lookup behavior, exposed through application-level API resources.
 - Progressively port or integrate existing game models and services in small, tested vertical slices. Preserve behavior before refactoring.
 - The final application boundary, framework choices beyond the current Rails/Hotwire foundation, API contracts, and migration sequence remain open unless explicitly decided.
+
+## Current interface principles
+
+The product has three distinct interfaces: **Main Game / Player**, **Admin**, and **AI Manager**. They share a visual language but serve different audiences and workflows. The Player interface's five views (Planetary, Surface, Settlement, Space, Galaxy) are a separate layer of organization; do not confuse the three application interfaces with those five player views.
+
+The current prototype priority is Admin and AI Manager before Player. Mock data and JSON-backed screens are acceptable while the workflows and presentation are developed. Do not imply that mock actions are connected to live simulation services.
+
+The visual direction is dark charcoal/navy with cyan as the primary accent. Green is for success/healthy/operational states rather than the dominant theme; amber and red communicate warnings and errors. Preserve the strongest existing prototype layouts and components, refine typography and information density, and do not revert to the legacy green-on-black appearance.
+
+Use compact catalogs and tables for large collections, then drill down into system assessments and celestial-body analysis. EVE PI Planner is a reference for the list → assessment → detailed analysis interaction pattern, not for Galaxy Game terminology, mechanics, or its Colony model.
+
+Map Studio is an Admin tool within the connected known-world reconstruction / extrasolar generation pipeline feeding the shared planetary Digital Twin. The main game's UI wiki defines the product intent; this repository documents how the prototype represents it.
 
 ## Current interface principles
 
@@ -44,7 +56,7 @@ That page is newer than several supporting planning documents below. Where older
 - [Prototype roadmap](prototype-roadmap.md) — proposed planning stages, decision gates, and task-readiness criteria.
 
 ### Interface and interaction design
-- [Interface and workflow direction](interface-and-workflows.md) — player/admin responsibilities, contextual navigation, location context, and data age.
+- [Interface and workflow direction](interface-and-workflows.md) — three-interface responsibilities, contextual navigation, location context, and data age.
 - [Screen concepts and low-fidelity wireframes](screen-concepts-and-wireframes.md) — candidate workspaces and text wireframes; proposals, not approved screen specifications.
 - [Interface pattern references](interface-pattern-references.md) — EVE and other reference patterns, adaptation boundaries, and accessibility expectations.
 - [JavaScript reuse and porting plan](javascript-reuse-and-porting-plan.md) — candidate reusable scripts, module boundaries, and proposed porting sequence.
