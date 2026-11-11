@@ -5,9 +5,11 @@ This repository is the separate application and interface-development workspace 
 The project is evolving from a visual prototype into the foundation of the new interface:
 
 - **JavaScript** is the primary presentation and interaction layer.
-- **Rails** provides the application backend and API, including authentication, game-data access, validation, domain services, persistence, and authoritative game behavior.
-- **Galaxy Game JSON data** is initially read through a reader built in this application, exposed through Rails API resources, and consumed by the JavaScript interface.
-- Existing Galaxy Game models and services will be progressively ported or integrated as small, tested slices. Preserve existing behavior before refactoring.
+- **This prototype uses Rails 8.x** as its UI application framework.
+- **The existing main GalaxyGame application uses Rails 7.x.**
+- **Proposed, not yet adopted:** the main Rails 7 application would expose the game API, and this Rails 8 prototype would consume it. The main application would retain authoritative game state, domain services, validation, persistence, and simulation behavior; the prototype would focus on presentation and interaction.
+- The two applications would run separately during integrated development. A one-command startup setup and one PostgreSQL server with separate logical databases are options to evaluate; the prototype must not directly access the main application's game tables.
+- Mock data may continue to support screen development, clearly separated from live API data. API endpoints, process orchestration, and database arrangements remain to be designed and approved.
 
 ## Project documentation
 
