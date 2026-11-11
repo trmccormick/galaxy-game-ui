@@ -35,6 +35,8 @@ Use compact catalogs and tables for large collections, then drill down into syst
 
 Map Studio is an Admin tool within the connected known-world reconstruction / extrasolar generation pipeline feeding the shared planetary Digital Twin. The main game's UI wiki defines the product intent; this repository documents how the prototype represents it.
 
+The main application is also a source of substantial existing view work to preserve and improve. Review and port useful Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other specialized views. They are incomplete and inconsistent in places, not disposable. Establish the prototype's consistent presentation first; later evaluate backporting the refined views or consuming main-app capabilities through an API. The main application remains authoritative for simulation behavior and game data.
+
 ## Implementation boundaries
 
 - Keep player-facing workflows distinct from the administrator's operational console.
