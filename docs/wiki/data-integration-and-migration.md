@@ -1,12 +1,12 @@
-# Data Integration and Backend Migration Direction
+# Data Integration and Backend Integration Proposal
 
-**Status:** Established integration direction with endpoint details open  
+**Status:** PROPOSAL — for review; not yet adopted or implemented  
 **Last updated:** 2026-11-11  
 **Scope:** JSON data access, Rails API responsibilities, JavaScript integration and progressive migration from the main game.
 
 ## 1. Target responsibility split
 
-The intended architecture is a **separate UI prototype consuming an API exposed by the main GalaxyGame application**. The prototype establishes the presentation and interaction model; the main application remains the authoritative game backend. The prototype should not independently recreate game rules or become a second source of simulation truth.
+The proposal is to have the **separate UI prototype consume an API exposed by the main GalaxyGame application**. The prototype would establish the presentation and interaction model; the main application would remain the authoritative game backend. This is a proposed arrangement, not an approved implementation decision. The prototype should not independently recreate game rules or become a second source of simulation truth.
 
 ### Prototype UI client
 
@@ -29,7 +29,7 @@ The API should expose resources and workflows designed for the UI, reusing exist
 
 The API surface must be inspected and built incrementally; this document does not claim that the required endpoints already exist.
 
-## 2. Intended data path
+## 2. Proposed data path
 
 ```text
 Main GalaxyGame application
@@ -45,7 +45,7 @@ The main application is the source of truth. Its API should call or adapt existi
 
 For early visual development, the prototype may temporarily use mock fixtures or local JSON. Keep that path explicitly separate from the live API client so that switching to real data does not require rewriting the screen and so mock assumptions do not silently become backend requirements.
 
-This replaces the earlier prototype-owned JSON-reader-first integration sketch as the target architecture. Existing lookup services remain important because they may supply the main application's API implementation; they are not a reason to duplicate a reader in the prototype.
+If adopted, this would replace the earlier prototype-owned JSON-reader-first integration sketch. Existing lookup services remain important because they may supply the main application's API implementation; they are not a reason to duplicate a reader in the prototype.
 
 ## 3. Main-game lookup services: candidate starting point
 
@@ -112,13 +112,54 @@ For each migration:
 
 ## 7. Application/API boundary
 
-The current direction is that the main GalaxyGame application exposes the API and the prototype consumes it. This is the preferred integration model, not an undecided choice between two equal architectures.
+The proposal is that the main GalaxyGame application exposes the API and the prototype consumes it. This has not yet been adopted as the implementation architecture.
 
 The exact API namespace, endpoint inventory, authentication flow, response schemas, versioning strategy, and deployment topology remain OPEN. Start with a small API surface shaped by reviewed UI workflows. Keep domain logic and authoritative state in the main application.
 
-A targeted backport into the main application can still be considered if a particular view or interaction is better served there, but it does not change the default direction: the prototype is intended to consume main-app capabilities through the main-app API.
+A targeted backport into the main application can still be considered if a particular view or interaction is better served there. The choice between API consumption and any targeted backport remains open until the proposal is reviewed.
 
-## 8. Current prototype baseline
+## 8. Proposed local development arrangement
+
+**PROPOSAL — for review; no orchestration or database changes have been made**
+
+The two repositories are separate Rails applications on different Rails generations:
+
+- **Main GalaxyGame application:** Rails 7.x; proposed API provider and owner of authoritative game state.
+- **Galaxy Game UI prototype:** Rails 8.x (the inspected baseline was Rails 8.1); proposed UI/client application.
+
+If the API/client arrangement is adopted, both applications would normally run during integrated local development: the Rails 7 application serves the API, and the Rails 8 application serves the prototype UI. They remain separate processes and separate Git repositories.
+
+A convenient developer experience could start the required processes with one command (for example, a shared Docker Compose or process-orchestration setup). This is only a local startup convenience; it does not merge the applications or their responsibilities. The exact command, ports, environment variables, health checks, and orchestration tool remain OPEN.
+
+### PostgreSQL options
+
+A single local PostgreSQL server/container could host more than one logical database. The important boundary is database ownership, not the number of Postgres containers:
+
+- The main Rails 7 application connects to and owns its existing game database.
+- The Rails 8 prototype must obtain game state through the main application's API; it must not read or write the main application's game tables directly.
+- If the prototype needs persistence for UI-owned concerns (for example, its own user/session or saved UI preferences), it could use a separate logical database on the same PostgreSQL server.
+- If the prototype does not need its own persistent records, it may not need a separate database at all.
+
+Sharing one PostgreSQL server is a possible development setup, not a decision to share one game database or Active Record schema. Production topology may differ and remains out of scope for this proposal.
+
+### Conceptual local process layout
+
+```text
+one developer startup command (proposal)
+  ├─ PostgreSQL service
+  │    ├─ main GalaxyGame database
+  │    └─ optional prototype-owned database
+  ├─ main GalaxyGame Rails 7 process (API provider)
+  └─ Galaxy Game UI Rails 8 process (prototype/client)
+             │
+             └── HTTP requests to main app API
+```
+
+The API URL and credentials should be configured through environment variables rather than hardcoded. Whether browser requests go directly to the API or through a prototype-side proxy/backend remains an implementation question; configure CORS and authentication only after that request path is selected.
+
+This proposal needs review against both repositories' actual Docker/Compose, database, and startup configuration before any setup changes are made.
+
+## 9. Current prototype baseline
 
 The initial repository inspection described:
 - Rails 8.1;
@@ -133,7 +174,7 @@ The initial repository inspection described:
 
 These are baseline observations from the inspected branch and date, not permanent claims. Re-check the live repository before implementation. The presence of Active Record/PostgreSQL does not prove that game-domain persistence has been migrated.
 
-## 9. Related references
+## 10. Related references
 
 - [Project overview and architecture](README.md)
 - [Interface and workflow direction](interface-and-workflows.md)
