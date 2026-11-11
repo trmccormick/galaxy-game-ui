@@ -1,12 +1,32 @@
 # Interface and Workflow Direction
 
-**Status:** Working direction — for owner review  
+**Status:** Prototype guidance aligned to established product intent  
 **Last updated:** 2026-11-08  
 **Scope:** Application interface, player/admin workflows, navigation and screen responsibilities.
 
 This page describes the interface direction for the new Galaxy Game UI. It is not a final screen specification, visual design system, or implementation task list.
 
-## 1. Product distinction: player interface and admin console
+## 1. Three application interfaces
+
+The product has three distinct interfaces. They share a visual language but have different audiences, responsibilities, and workflows.
+
+### Main Game / Player interface
+
+The player interface supports a person operating within the shared game world. It helps the player understand current context, inspect assets and activity, make decisions, and initiate permitted actions. Its five views (Planetary, Surface, Settlement, Space, Galaxy) are defined in the main game's [Player View Architecture](../../../galaxyGame/docs/wiki/ui/02_player_view_architecture.md).
+
+### Admin console
+
+The Admin interface is an operational and administrative workspace for observing, configuring, and validating the game environment. It is not the player's dashboard with extra controls. Its areas include simulation/world-state oversight, infrastructure, system health, data integrity, planetary data, and Map Studio / Digital Twin workflows.
+
+### AI Manager interface
+
+The AI Manager interface is an operator-supervision workspace for missions, plans, decisions and their rationale, resource priorities and shortages, asset deployments, execution progress, warnings, intervention, and retained training/validation evidence. Early main-game views are starting references, not a mature UI to copy wholesale.
+
+**Current prototype priority:** Admin and AI Manager before Player. Mock data is acceptable during UI development, but screens and controls must clearly distinguish mock presentation from operations connected to live services.
+
+The three interfaces should share the design system without being forced into identical layouts or navigation.
+
+## 1A. Product distinction and workflow boundaries
 
 The application may contain more than one audience and workspace. Keep the purposes separate.
 
@@ -33,7 +53,33 @@ Potential concerns include system health, user administration, operational telem
 
 Do not transfer player entry-state assumptions, player asset workflows, or gameplay onboarding directly into the Admin console. Conversely, do not treat an admin telemetry panel as a player-facing game feature.
 
-## 2. Navigation principles
+## 2. Navigation and information architecture
+
+**ESTABLISHED DIRECTION — 2026-11-11**
+
+Use EVE-style desktop navigation and workspace organization as a reference for information architecture and interaction patterns, not as a source of Galaxy Game concepts, rules, or visual styling.
+
+- Make important destinations quick to reach and discoverable.
+- Do not mirror the database or game-domain hierarchy as a deeply nested primary sidebar.
+- Use global destinations for genuinely global workflows.
+- Use contextual selectors, maps, page content, and feature-specific secondary navigation to express relationships.
+- A relationship such as galaxy → star system → celestial body should be navigable in context; it does not automatically require three nested primary-menu levels.
+- Use the right interface pattern for the task: catalog/table, map, dashboard, comparison, detail pane, or operational workspace. Do not force every screen into large cards or one dashboard template.
+- Use compact, information-dense tables and lists where users need to browse or compare many objects. Use selection, drill-down, contextual actions, and detailed analysis for deeper work.
+- Make assumptions, data scope, source, and relevant inputs visible when they affect a result.
+
+### System and celestial-body workflow
+
+A useful contextual progression is:
+
+1. Galaxy/system catalog with compact rows and system-level assessments or counts.
+2. Selected system workspace showing overview, celestial bodies, activity, and relevant assessment.
+3. Selected celestial-body analysis with resources, conditions, comparisons, assumptions, and available operations.
+4. The appropriate body-specific workspace/view for the task.
+
+EVE PI Planner demonstrates a useful list → assessment → detailed planet-analysis pattern. Its terminology and Colony concepts do not map to Galaxy Game and must not be copied.
+
+### Navigation reference pattern
 
 **Established direction:** use EVE Online's dashboard/navigation approach as an information-architecture reference, not as a source of Galaxy Game concepts or rules.
 
@@ -106,7 +152,13 @@ Before a screen becomes an implementation proposal, record:
 
 If an important dependency is only DIRECTION or OPEN, identify it explicitly. Do not silently turn it into an established game rule.
 
-## 7. References
+## 7. Product-domain boundaries
+
+The prototype must preserve the main game's distinctions among Settlements, Colonies, corporations, and players. A Settlement is a physical inhabited/developed place; a Colony is a governing political entity; a corporation or player may own a Settlement that is governed by a Colony. Ownership, governance, operations, maintenance, and funding are separate relationships. Do not represent a Settlement as simply owned by its governing Colony or import EVE PI Planner's Colony model.
+
+The authoritative details, including the corporate-withdrawal control-transfer rule and unresolved asset/liability mechanics, belong in the main game's [Settlement Ownership and Governance](../../../galaxyGame/docs/wiki/player/settlement_ownership_and_governance.md) page.
+
+## 8. References
 
 - [Project overview and architecture](README.md)
 - [Data integration and migration direction](data-integration-and-migration.md)
