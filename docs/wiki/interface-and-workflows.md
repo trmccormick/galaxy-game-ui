@@ -120,7 +120,7 @@ If an important dependency is only DIRECTION or OPEN, identify it explicitly. Do
 
 The prototype must preserve the main game's distinctions among Settlements, Colonies, corporations, and players. A Settlement is a physical inhabited/developed place; a Colony is a governing political entity; a corporation or player may own a Settlement that is governed by a Colony. Ownership, governance, operations, maintenance, and funding are separate relationships. Do not represent a Settlement as simply owned by its governing Colony or import EVE PI Planner's Colony model.
 
-The authoritative details, including the corporate-withdrawal control-transfer rule and unresolved asset/liability mechanics, belong in the main game's [Settlement Ownership and Governance](../../../galaxyGame/docs/wiki/player/settlement_ownership_and_governance.md) page.
+The authoritative details, including the corporate-withdrawal control-transfer rule and unresolved asset/liability mechanics, belong in the main game's `galaxyGame/docs/wiki/player/settlement_ownership_and_governance.md` (canonical domain intent) page.
 
 ## 8. References
 
