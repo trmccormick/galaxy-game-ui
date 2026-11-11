@@ -130,3 +130,37 @@ The authoritative details, including the corporate-withdrawal control-transfer r
 - [Screenshot evidence](assets/screenshots/galaxy-game-ui/README.md) — captured 2026-11-08
 - [EVE Dashboard reference](assets/screenshots/eve-dashboard/README.md) — code-derived observations
 - Main game's UI/domain wiki: `galaxyGame/docs/wiki/` (consult the current repository version; do not duplicate its domain definitions here).
+
+## 9. Existing application views: port and improve, do not start over
+
+**ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
+
+The main Galaxy Game application contains substantial useful interface work. It is unfinished and inconsistent in places, but it is not an empty legacy shell and its existing views are not disposable. The prototype should consolidate and complete this work while establishing a more consistent presentation.
+
+Review and carry forward useful existing view setups and capabilities, including:
+
+- **Planetary / Orbital:** preserve the useful planetary and orbital context, layer/data presentation, map controls, and inspection panels. Verify whether these are separate views or related perspectives before deciding how to organize them.
+- **Surface:** preserve the tile-based surface workspace, terrain/geographic presentation, and useful selection and inspection interactions. Track loading/rendering defects separately from the view's intended design.
+- **Map Studio:** preserve existing map generation, reconstruction, and inspection workflows as an Admin tool feeding the shared planetary Digital Twin.
+- **Monitor and world inspection:** retain useful overview, navigation, selection, and contextual-action patterns.
+- **Resources and infrastructure:** retain operational views that expose meaningful game data and workflows.
+- **Other existing visualizations:** assess each on its merits; do not replace a specialized useful view with a generic dashboard just to make pages look alike.
+
+This is a candidate inventory, not a claim that every view is currently complete or operational. Verify the current code and running behavior, and record the status of each view as working, incomplete, broken, or not yet assessed.
+
+For each view, compare the main-app version with the prototype: what information and behavior already exist, what should be preserved, what is missing or broken, and what visual/interaction changes improve it. Preserve useful functionality and information architecture before refactoring. Standardize typography, spacing, controls, navigation, terminology, and status treatment without forcing every view into the same layout.
+
+The goal is **consolidation, completion, and consistency—not wholesale replacement or reinvention.**
+
+## 10. UI-first review and eventual integration
+
+Use the prototype to establish the visual language, layout conventions, navigation, and interactions for these views. Mock or JSON-backed data is acceptable while the presentation is being reviewed, provided it is clearly distinguished from live game state and actions.
+
+Once the UI is sufficiently settled, evaluate two integration paths:
+
+1. Backport the refined views and shared presentation components into the main application, reusing its existing behavior and services.
+2. Keep the prototype as the UI application and expose suitable main-application capabilities through an API that the prototype consumes.
+
+Do not choose between these paths prematurely. The main application remains authoritative for simulation state, domain rules, calculations, authorization, and operations. Prefer reusing existing services and data access; do not duplicate game logic in the prototype or treat mock data as an API contract.
+
+This review process should document both sides: what the main application already offers and what the prototype should improve. That record will make a later backport/API decision evidence-based rather than requiring the work to be rediscovered.
