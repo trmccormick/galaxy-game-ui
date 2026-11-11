@@ -16,7 +16,7 @@ It requests game data and permitted operations from the main application's API. 
 
 ### Main GalaxyGame application and API
 
-The main application exposes the game capabilities required by the UI through deliberate, documented API endpoints and response contracts. It remains responsible for:
+Under the proposal, the main application would expose the game capabilities required by the UI through deliberate, documented API endpoints and response contracts. It would remain responsible for:
 - authentication and authorization;
 - authoritative game state and controlled data access;
 - application and domain services;
@@ -25,7 +25,7 @@ The main application exposes the game capabilities required by the UI through de
 - calculations and simulation/operations behavior;
 - authorization and execution of state-changing operations.
 
-The API should expose resources and workflows designed for the UI, reusing existing main-app services and data access. It should not merely return arbitrary source JSON files as an unstructured pass-through.
+The proposed API would expose resources and workflows designed for the UI, reusing existing main-app services and data access. It should not merely return arbitrary source JSON files as an unstructured pass-through.
 
 The API surface must be inspected and built incrementally; this document does not claim that the required endpoints already exist.
 
@@ -41,7 +41,7 @@ Main GalaxyGame application
        JavaScript presentation and interaction
 ```
 
-The main application is the source of truth. Its API should call or adapt existing application services and lookup behavior as appropriate, then return stable response contracts for the prototype. The prototype should consume those contracts rather than independently reading the main application's private data tree or copying its domain logic.
+Under this proposal, the main application would remain the source of truth. Its API would call or adapt existing application services and lookup behavior as appropriate, then return stable response contracts for the prototype. The prototype should consume those contracts rather than independently reading the main application's private data tree or copying its domain logic.
 
 For early visual development, the prototype may temporarily use mock fixtures or local JSON. Keep that path explicitly separate from the live API client so that switching to real data does not require rewriting the screen and so mock assumptions do not silently become backend requirements.
 
@@ -75,7 +75,7 @@ Resolve these through code inspection and a small tested implementation, not by 
 
 ## 5. First vertical slice
 
-The first API/JavaScript integration should prove one complete path:
+If the proposal is adopted, the first API/JavaScript integration should prove one complete path:
 
 1. Read a real, relevant game-data source through the prototype reader.
 2. Expose it through one Rails endpoint with a deliberate application-level response contract.
