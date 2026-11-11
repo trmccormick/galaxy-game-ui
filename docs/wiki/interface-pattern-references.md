@@ -121,3 +121,24 @@ These are quality expectations for future work, not a claim that the current pro
 - [Data integration and migration](data-integration-and-migration.md)
 - [First-attempt reconciliation](first-attempt-reconciliation.md)
 - [Prototype roadmap](prototype-roadmap.md)
+
+## 8. Main-application views as a porting source
+
+**ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
+
+The main Galaxy Game application is a source of existing functional capability and specialized view setups, not merely a source of old styling. Its work is substantial but incomplete and inconsistent. The prototype should preserve, complete, and standardize useful work rather than replace it with generic screens.
+
+Review the existing Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other world-inspection/operational views. Confirm their actual implementation and runtime status before describing them as working. For each, identify:
+
+- useful information architecture, domain context, visualizations, controls, and interactions to retain;
+- behavior that is incomplete, broken, or not yet verified;
+- presentation and usability improvements to make in the prototype;
+- data and service dependencies that should remain authoritative in the main application.
+
+A Planetary workspace, Orbital view, Surface workspace, and Map Studio have different purposes. Consistency means coherent navigation, typography, spacing, controls, terminology, and status presentation—not identical page layouts or a universal dashboard template.
+
+## 9. UI-first integration choice
+
+The prototype should first establish and review the look, layout, navigation, and interaction patterns. Mock data may support this work but must not be mistaken for live state or a committed data contract.
+
+When the presentation is ready to integrate, evaluate whether to backport the refined views into the main application or retain the prototype as a separate UI consuming capabilities exposed by a main-application API. This remains an open implementation choice. In either case, the main application owns authoritative simulation behavior, domain rules, calculations, permissions, and operations. Reuse existing services and data access wherever possible; do not recreate game logic in the UI.
