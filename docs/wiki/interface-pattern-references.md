@@ -142,3 +142,16 @@ A Planetary workspace, Orbital view, Surface workspace, and Map Studio have diff
 The prototype should first establish and review the look, layout, navigation, and interaction patterns. Mock data may support this work but must not be mistaken for live state or a committed data contract.
 
 When the presentation is ready to integrate, evaluate whether to backport the refined views into the main application or retain the prototype as a separate UI consuming capabilities exposed by a main-application API. This remains an open implementation choice. In either case, the main application owns authoritative simulation behavior, domain rules, calculations, permissions, and operations. Reuse existing services and data access wherever possible; do not recreate game logic in the UI.
+
+
+## 10. Main application API as the prototype's data source
+
+**ESTABLISHED INTEGRATION DIRECTION — 2026-11-11**
+
+The main GalaxyGame application is intended to expose the authoritative game capabilities through an API, and this prototype is intended to consume that API. The prototype is not intended to become a second implementation of the simulation backend.
+
+For every ported view, identify which existing main-app services, datasets, calculations, and operations it needs. The main application should expose those capabilities through deliberate API contracts; the prototype should focus on presenting them clearly and providing the appropriate interaction.
+
+Mock data is acceptable while refining the UI, but keep it visibly separate from live API responses. Do not let mock schemas dictate the backend contract without review. Do not duplicate game rules, authoritative calculations, persistence, permissions, or simulation behavior in the prototype.
+
+The API should be introduced incrementally around reviewed screens. Its exact endpoints, response schemas, authentication, and deployment details remain open and must be grounded in inspection of the main application's existing code.
