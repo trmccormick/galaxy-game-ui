@@ -1,7 +1,7 @@
 # Interface and Workflow Direction
 
 **Status:** Prototype guidance aligned to established product intent  
-**Last updated:** 2026-11-08  
+**Last updated:** 2026-11-11  
 **Scope:** Application interface, player/admin workflows, navigation and screen responsibilities.
 
 This page describes the interface direction for the new Galaxy Game UI. It is not a final screen specification, visual design system, or implementation task list.
@@ -12,7 +12,7 @@ The product has three distinct interfaces. They share a visual language but have
 
 ### Main Game / Player interface
 
-The player interface supports a person operating within the shared game world. It helps the player understand current context, inspect assets and activity, make decisions, and initiate permitted actions. Its five views (Planetary, Surface, Settlement, Space, Galaxy) are defined in the main game's [Player View Architecture](../../../galaxyGame/docs/wiki/ui/02_player_view_architecture.md).
+The player interface supports a person operating within the shared game world. It helps the player understand current context, inspect assets and activity, make decisions, and initiate permitted actions. Its five views (Planetary, Surface, Settlement, Space, Galaxy) are defined in the main game's `galaxyGame/docs/wiki/ui/02_player_view_architecture.md` (canonical product intent).
 
 ### Admin console
 
@@ -26,32 +26,9 @@ The AI Manager interface is an operator-supervision workspace for missions, plan
 
 The three interfaces should share the design system without being forced into identical layouts or navigation.
 
-## 1A. Product distinction and workflow boundaries
+## 1A. Workflow boundaries
 
-The application may contain more than one audience and workspace. Keep the purposes separate.
-
-### Player-facing experience
-
-The player interface supports a person operating within the game world. It should help the player understand their current context, inspect assets and activity, make decisions, and initiate permitted actions.
-
-Potential workflow areas to explore include:
-- current location and player status;
-- assets, craft, units and inventories;
-- markets, orders and transactions;
-- research and manufacturing;
-- missions, contracts and other opportunities;
-- logistics, routes and transportation;
-- celestial-body inspection and surface operations.
-
-This is a capability inventory, not an approved global navigation list. Each area must be grounded in current game behavior, source data and actual player workflows before a screen is specified.
-
-### Admin console
-
-The admin console is an operational and administrative interface for observing and managing the application/game environment. It is not the player's dashboard with extra controls.
-
-Potential concerns include system health, user administration, operational telemetry, NPC/AI Manager oversight, data integrity and administrative actions. The actual scope and permissions must be verified against the application's authentication/authorization design and game operations.
-
-Do not transfer player entry-state assumptions, player asset workflows, or gameplay onboarding directly into the Admin console. Conversely, do not treat an admin telemetry panel as a player-facing game feature.
+Player workflows, administrative operations, and AI Manager supervision remain distinct. Reuse of a visualization or data source does not merge audiences or grant permissions. The application/backend remains authoritative for access and permitted operations.
 
 ## 2. Navigation and information architecture
 
@@ -81,27 +58,14 @@ EVE PI Planner demonstrates a useful list → assessment → detailed planet-ana
 
 ### Navigation reference pattern
 
-**Established direction:** use EVE Online's dashboard/navigation approach as an information-architecture reference, not as a source of Galaxy Game concepts or rules.
-
-- Make important destinations quick to reach and discoverable.
-- Do not mirror the database or game-domain hierarchy as a deeply nested primary sidebar.
-- Use global destinations for genuinely global workflows.
-- Use contextual selectors, maps, page content and feature-specific secondary navigation to express relationships.
-- A relationship such as galaxy → star system → celestial body should be navigable in context; it does not automatically require three nested primary-menu levels.
-- Preserve useful global destinations when a user is viewing a specific location.
-- Do not assume economy, research or missions are exclusively global or settlement-only. Their placement should follow the actual ownership, scope and workflow in the game.
-- Do not finalize the navigation list from the old first-attempt menu proposals.
-
-### Navigation reference pattern
-
-A useful pattern to evaluate is:
+A useful conceptual pattern is:
 
 1. **Primary navigation:** a small set of broad, frequently used destinations.
-2. **Context selection:** choose or display the current galaxy, system, body, settlement, structure or other relevant scope when the workflow requires it.
-3. **Page-level navigation:** tabs, filters or secondary navigation for the current feature.
-4. **Content workspace:** the main map, table, dashboard, chart, detail view or operational controls.
+2. **Context selection:** choose or display the current galaxy, system, body, settlement, structure, or other relevant scope.
+3. **Page-level navigation:** tabs, filters, or secondary navigation for the current feature.
+4. **Content workspace:** the map, table, comparison, dashboard, chart, detail view, or operational controls appropriate to the task.
 
-This is a conceptual pattern, not a prescribed component tree.
+Preserve useful global destinations while a user is viewing a specific location. Do not assume economy, research, or missions are exclusively global or settlement-only; placement should follow actual ownership, scope, and workflow. The final menu and component tree remain subject to review.
 
 ## 3. Context and location
 
