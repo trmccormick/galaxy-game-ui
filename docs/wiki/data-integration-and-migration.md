@@ -1,49 +1,51 @@
 # Data Integration and Backend Migration Direction
 
-**Status:** Working architecture direction — for owner review  
-**Last updated:** 2026-11-08  
+**Status:** Established integration direction with endpoint details open  
+**Last updated:** 2026-11-11  
 **Scope:** JSON data access, Rails API responsibilities, JavaScript integration and progressive migration from the main game.
 
 ## 1. Target responsibility split
 
-The prototype is becoming the foundation of the new Galaxy Game interface, rather than remaining an appearance-only mockup.
+The intended architecture is a **separate UI prototype consuming an API exposed by the main GalaxyGame application**. The prototype establishes the presentation and interaction model; the main application remains the authoritative game backend. The prototype should not independently recreate game rules or become a second source of simulation truth.
 
-### JavaScript interface
+### Prototype UI client
 
-JavaScript is the primary presentation and interaction layer. It is expected to handle navigation, contextual selection, dashboards, maps, tables, charts, filtering, sorting, search, transient UI state and incremental display updates.
+The prototype is the presentation and interaction layer. It handles navigation, contextual selection, dashboards, maps, tables, charts, filtering, sorting, search, transient UI state and incremental display updates.
 
-The frontend may maintain transient presentation state. It must not become the authority for game rules, validation or durable game state.
+It requests game data and permitted operations from the main application's API. It may use clearly labeled mock data while a screen is being designed, but mocks are not live state or API contracts.
 
-### Rails application backend
+### Main GalaxyGame application and API
 
-Rails provides the application/API boundary and authoritative backend behavior, including:
+The main application exposes the game capabilities required by the UI through deliberate, documented API endpoints and response contracts. It remains responsible for:
 - authentication and authorization;
-- application-level API endpoints and response contracts;
-- controlled access to game data;
+- authoritative game state and controlled data access;
 - application and domain services;
 - validation and enforcement of game rules;
 - persistence and transactions;
-- calculations and future simulation/operations integration.
+- calculations and simulation/operations behavior;
+- authorization and execution of state-changing operations.
 
-The API should expose resources and contracts designed for application workflows. It should not merely return arbitrary source JSON files as an unstructured pass-through.
+The API should expose resources and workflows designed for the UI, reusing existing main-app services and data access. It should not merely return arbitrary source JSON files as an unstructured pass-through.
 
-## 2. Initial data path
+The API surface must be inspected and built incrementally; this document does not claim that the required endpoints already exist.
 
-The initial integration path is:
+## 2. Intended data path
 
 ```text
-Galaxy Game JSON data
-        ↓
-Prototype JSON reader
-        ↓
-Rails API
-        ↓
-JavaScript interface
+Main GalaxyGame application
+  ├─ authoritative models, services, calculations and game data
+  └─ application API (documented resources and operations)
+                 ↓
+       Separate prototype UI client
+                 ↓
+       JavaScript presentation and interaction
 ```
 
-There is no existing JSON reader in the prototype branch inspected for the initial wiki. A reader must be built in this repository. The starting point is to inspect and port/adapt the main game's lookup-service behavior, not to assume a reader already exists.
+The main application is the source of truth. Its API should call or adapt existing application services and lookup behavior as appropriate, then return stable response contracts for the prototype. The prototype should consume those contracts rather than independently reading the main application's private data tree or copying its domain logic.
 
-This is a first integration path, not a permanent restriction that all game data must always come from JSON. As models and services are migrated, the API may use those authoritative application sources behind stable contracts where practical.
+For early visual development, the prototype may temporarily use mock fixtures or local JSON. Keep that path explicitly separate from the live API client so that switching to real data does not require rewriting the screen and so mock assumptions do not silently become backend requirements.
+
+This replaces the earlier prototype-owned JSON-reader-first integration sketch as the target architecture. Existing lookup services remain important because they may supply the main application's API implementation; they are not a reason to duplicate a reader in the prototype.
 
 ## 3. Main-game lookup services: candidate starting point
 
@@ -108,14 +110,13 @@ For each migration:
 - connect the API and UI only after the backend slice is understood;
 - refactor or optimize separately from the behavior-preserving port.
 
-## 7. Application boundary remains OPEN
+## 7. Application/API boundary
 
-The long-term boundary is not decided:
+The current direction is that the main GalaxyGame application exposes the API and the prototype consumes it. This is the preferred integration model, not an undecided choice between two equal architectures.
 
-- the prototype may ultimately become the complete Galaxy Game application; or
-- it may remain the frontend/API application while some game logic continues in the main game.
+The exact API namespace, endpoint inventory, authentication flow, response schemas, versioning strategy, and deployment topology remain OPEN. Start with a small API surface shaped by reviewed UI workflows. Keep domain logic and authoritative state in the main application.
 
-Do not design a large distributed architecture or duplicate services based on an assumed answer. Prefer a small boundary that can evolve as migration decisions become clearer.
+A targeted backport into the main application can still be considered if a particular view or interaction is better served there, but it does not change the default direction: the prototype is intended to consume main-app capabilities through the main-app API.
 
 ## 8. Current prototype baseline
 
