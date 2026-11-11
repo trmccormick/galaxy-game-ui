@@ -33,6 +33,14 @@ These are references already identified in prior review, not proof that each fil
 
 ## 3. Presentation patterns worth evaluating
 
+### Catalogs, assessment, and drill-down
+
+A useful pattern for browsing a large universe is a compact system catalog, followed by a selected system assessment, then detailed analysis of a selected celestial body. Prefer tables/lists for comparable records, with contextual selection and drill-down. Deeper analysis can include comparisons, configurable assumptions, and detail panels. EVE PI Planner is a reference for this interaction pattern only; Galaxy Game's domain concepts remain authoritative.
+
+### Match layout to the task
+
+Do not use a dashboard, card grid, or map by default. Choose the presentation that best serves the work: dense table for comparison, map for spatial relationships, detail pane for selected-object inspection, chart for trends, and focused operational workspace for actions.
+
 ### Information-dense workspaces
 - Clear page title and current scope.
 - Compact summary metrics only where they answer a useful question.
@@ -63,7 +71,17 @@ These are references already identified in prior review, not proof that each fil
 
 ## 4. Current UI foundation and visual direction
 
-The prototype's dark blue/gray surfaces and cyan accent are a working direction from recent UI work, not a frozen design system. Use the existing token names and actual current CSS as the baseline; do not add a second color system or hard-code a new palette in views.
+**ESTABLISHED VISUAL DIRECTION — 2026-11-11**
+
+The shared application direction is dark charcoal/navy surfaces with cyan as the primary accent. Continue and refine the prototype's existing dark blue/gray + cyan work; do not restart the visual design or introduce a second palette.
+
+- Green is reserved primarily for success, healthy, and operational status; it should not dominate the overall interface.
+- Amber communicates warnings; red communicates errors or critical conditions.
+- Use readable, appropriately compact typography and clear spacing between labels, values, descriptions, and actions. Avoid oversized text and crowded text runs.
+- Preserve strong existing prototype layouts and components. The main game is a reference for existing functionality and useful visualizations, not automatically the visual standard.
+- Keep the space-background image prominent on the landing page where it supports the identity. Do not add large atmospheric backgrounds to operational screens where they reduce readability.
+
+Use the existing token names and actual current CSS as the baseline; do not add a second color system or hard-code a new palette in views.
 
 **Screenshot evidence:** Actual rendered pages are captured at [galaxy-game-ui/README.md](assets/screenshots/galaxy-game-ui/README.md). Key findings:
 - Landing page, sign-in, dashboard, and admin console all render with the dark blue/gray + cyan theme.
@@ -74,7 +92,17 @@ Earlier first-attempt notes contain several different visual suggestions, includ
 
 Do not wholesale-import the first-attempt EVE stylesheet. Select individual patterns and adapt them to the current Tailwind v4/Propshaft asset setup after inspecting the live branch.
 
-## 5. Responsive and accessibility expectations
+## 5. Combining the reference sources
+
+Evaluate three sources for different strengths:
+
+1. **Main Galaxy Game application:** existing functionality, simulation concepts, domain meaning, and useful working visualizations.
+2. **Galaxy Game UI prototype:** stronger visual design, newer layouts, dashboards, navigation, and usability improvements.
+3. **EVE and other external references:** useful information architecture and interaction patterns, not their game mechanics, terminology, or branding.
+
+Do not assume one source is the standard for every screen. Preserve the strongest relevant elements from each and adapt them to Galaxy Game's actual workflows.
+
+## 6. Responsive and accessibility expectations
 
 For each implemented interaction:
 - provide keyboard-accessible controls and visible focus;
@@ -87,7 +115,7 @@ For each implemented interaction:
 
 These are quality expectations for future work, not a claim that the current prototype already satisfies them.
 
-## 6. Related planning pages
+## 7. Related planning pages
 
 - [Interface and workflow direction](interface-and-workflows.md)
 - [Data integration and migration](data-integration-and-migration.md)
