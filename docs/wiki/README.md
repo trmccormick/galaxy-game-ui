@@ -18,12 +18,13 @@ The main game's current code and authoritative domain documentation govern game 
 
 - The prototype is intended to become the foundation of the new Galaxy Game interface, not remain a disconnected visual mockup.
 - JavaScript is the primary presentation and interaction layer.
-- The main GalaxyGame application exposes the authoritative API; this separate prototype UI consumes it.
-- The main application retains game state, domain services, calculations, validation, persistence, authorization, and operations.
-- Reuse the main application's existing lookup/data-access behavior behind deliberate API contracts; do not duplicate its reader or game logic in the prototype.
+- **Proposal, not yet adopted:** the main GalaxyGame Rails 7 application would expose the API, and this separate Rails 8 prototype would consume it.
+- Under that proposal, the main application would retain game state, domain services, calculations, validation, persistence, authorization, and operations.
+- The prototype would present the UI and call documented API contracts; it would not directly access the main application's game database or duplicate its game logic.
+- The two Rails applications would run as separate processes. A one-command local startup arrangement and a single PostgreSQL server hosting separate logical databases are options to evaluate, not settled setup decisions.
 - Mock or local JSON data may support visual design, but it must remain clearly separate from live API data and must not be treated as an API contract.
 - Progressively port or integrate existing game models and services in small, tested vertical slices. Preserve behavior before refactoring.
-- The final application boundary, framework choices beyond the current Rails/Hotwire foundation, API contracts, and migration sequence remain open unless explicitly decided.
+- The proposed application boundary, API contracts, local startup/database arrangement, and migration sequence remain open until reviewed and explicitly adopted. The current repositories use different Rails generations: Rails 7.x in the main game and Rails 8.x in the prototype.
 
 ## Current interface principles
 
@@ -37,7 +38,7 @@ Use compact catalogs and tables for large collections, then drill down into syst
 
 Map Studio is an Admin tool within the connected known-world reconstruction / extrasolar generation pipeline feeding the shared planetary Digital Twin. The main game's UI wiki defines the product intent; this repository documents how the prototype represents it.
 
-The main application is also a source of substantial existing view work to preserve and improve. Review and port useful Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other specialized views. They are incomplete and inconsistent in places, not disposable. Establish the prototype's consistent presentation first; later evaluate backporting the refined views or consuming main-app capabilities through an API. The main application remains authoritative for simulation behavior and game data.
+The main application is also a source of substantial existing view work and domain capability to preserve as reference. The prototype should continue building out the useful Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other specialized experiences. The old main-app views do not need to be visually repaired if the prototype becomes their replacement presentation. Under the API proposal, the main application would expose the underlying capabilities while the prototype supplies the new UI. The main application remains authoritative for simulation behavior and game data.
 
 ## Implementation boundaries
 
