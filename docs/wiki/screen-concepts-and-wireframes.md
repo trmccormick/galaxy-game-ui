@@ -185,6 +185,18 @@ Potential regions:
 
 This is a workflow candidate, not approval for a settlement-only global menu or a claim that all economy/research/missions are settlement-scoped. Main-game domain rules and services determine the actual boundaries.
 
+### Settlement visual direction — early exploration
+
+**NOT FINALIZED — visual/gameplay exploration only**
+
+A simplified SimCity-like settlement presentation is a useful starting point. Surviving Mars is a particularly relevant visual reference for habitats, life support, population, and infrastructure; Anno 1800 and Frostpunk may offer useful presentation patterns for economic summaries and high-level settlement conditions. These are references, not mechanics to copy.
+
+The view may eventually need to distinguish NPC settlement infrastructure from player- or corporation-owned units operating alongside it. Early discussion explored the possibility that an outside player/corporation could lease a connection and build its own warehouse, habitat, industrial unit, or other structure, provided the settlement's base can connect it and supply the services it needs—or can expand to do so. Independent player-owned utility generation (for example, solar or fusion power) and supplying surplus power were also brainstormed as possibilities.
+
+**None of these leasing, construction, service, expansion, or utility-market details are finalized gameplay.** Pricing, approval, capacity, ownership boundaries, infrastructure responsibilities, and available interactions remain undecided. The prototype may explore a visual way to communicate these relationships, but must not present speculative mechanics as implemented or approved.
+
+The design should avoid assuming that players directly manage every NPC building, worker, or resident. The appropriate level of player influence is still open.
+
 ## 9. Admin Dashboard workspace
 
 **Purpose:** Operate and administer the GalaxyGame web application and simulation. This is not a second Player Dashboard and must not reuse player-facing views as its primary information architecture.
