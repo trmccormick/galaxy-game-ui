@@ -4,9 +4,27 @@
 **Last updated:** 2026-11-11  
 **Scope:** JSON data access, Rails API responsibilities, JavaScript integration and progressive migration from the main game.
 
-## 1. Target responsibility split
+## 1. Immediate prototype data approach
 
-The proposal is to have the **separate UI prototype consume an API exposed by the main GalaxyGame application**. The prototype would establish the presentation and interaction model; the main application would remain the authoritative game backend. This is a proposed arrangement, not an approved implementation decision. The prototype should not independently recreate game rules or become a second source of simulation truth.
+**CURRENT PROTOTYPE SCOPE — temporary data supply for design and API discovery**
+
+The prototype does not need a production API integration to proceed. First get the existing view JavaScript, renderers, dashboard components, and assets in place. Feed them imported JSON from the main GalaxyGame application where available, or clearly identified mock JSON where necessary.
+
+Both imported and mock data should exercise the same presentation code. Keep the source of each dataset explicit (imported/harvested, mock, or eventually live API). Do not build a new reader or data framework until inspection shows the existing prototype/main-app reader approach cannot serve the immediate purpose.
+
+For each view, record:
+- the existing source files, data files, and assets used;
+- the data shape the JavaScript currently expects;
+- any small adapter or compatibility mapping required;
+- fields or relationships that are absent from the existing data;
+- which values are mocked and why;
+- what a future main-game API would need to supply.
+
+This is evidence gathering for future API design, not an API contract. Mock fields must not silently become requirements or be presented as established game mechanics. The prototype is not expected to implement authoritative simulation operations or production backend behavior.
+
+## 2. Longer-term API direction (still to be designed)
+
+The main GalaxyGame application is expected to remain authoritative for game state, domain behavior, calculations, validation, persistence, authorization, and operations. The prototype can help reveal what information and actions its screens need, but endpoint names, response schemas, authentication, update cadence, and integration approach must be designed later from inspected main-app services and reviewed UI workflows. No production API work is required to make the current prototype useful.
 
 ### Prototype UI client
 
