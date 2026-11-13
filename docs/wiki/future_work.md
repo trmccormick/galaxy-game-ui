@@ -7,7 +7,7 @@ This page records useful future interface capabilities so they can become focuse
 
 ## 1. Immediate priority: AI Manager activity and decision inspector
 
-The first substantial admin experience should make the AI Manager's autonomous work understandable and inspectable.
+The first substantial Admin Dashboard experience should make the AI Manager's autonomous work understandable and inspectable. AI Manager is a dedicated workspace within Admin, not a Player Dashboard view.
 
 The interface should help an administrator answer:
 
@@ -32,6 +32,37 @@ Candidate UI elements:
 The interface should expose the AI Manager's actual reasoning records and operational state when available. It must not fabricate explanations or imply that mock data is live simulation output.
 
 This is an observability and supervisory tool, not a control panel that silently takes authority away from the AI Manager. Pre-player pause, inspection, correction of mission conditions, and resume are part of the intended operator workflow. Directly overriding individual AI decisions or taking over execution remains a separate design question.
+
+### Strategic expansion, wormhole network, and EM economy
+
+AI Manager also directs strategic expansion of the human-operated network. This is not limited to assigning missions: it evaluates when to scout, harvest, stabilize, connect, settle, or move on.
+
+**Natural wormhole monitoring**
+- Track each natural wormhole's relative stability; no natural wormhole is permanently or absolutely stable.
+- Monitor mass throughput, remaining mass-limit capacity, and changing risk.
+- Monitor EM ejected into local space, amount captured/harvested, stored reserves, amount returned for stabilization, and EM expenditure.
+- Account for the relationship between mass pushed through and EM ejection: greater throughput produces greater ejection, and an unstable wormhole ejects much more EM.
+- When stabilization technology is available, capture ejected EM and direct it back toward the wormhole to restore mass-limit capacity and improve relative stability.
+
+**Hammer Protocol scouting and expansion**
+1. Use Sol as the current staging/scouting system to access a candidate system through a natural wormhole.
+2. Survey its celestial bodies, harvestable EM field, other resources, and settlement potential.
+3. Harvest resources while the natural connection remains open, if worthwhile.
+4. Decide whether to continue harvesting, stabilize the natural connection, invest in an AWS pair, establish a settlement, or complete harvesting and hammer the natural exit to force a shift and begin scouting elsewhere.
+5. Do not build an AWS pair automatically just because a system was discovered. Network integration is a strategic investment decision.
+
+Systems discovered and surveyed through this process have a harvestable EM field under the current design. Unvisited systems in the local bubble remain unknown; do not assume their EM field or resources are known before discovery.
+
+**Settlement connection strategy**
+A system selected for settlement will likely receive an AWS pair connected to Sol while the natural wormhole is still open. This provides an initial logistics corridor for personnel, equipment, construction materials, and supplies. Depending on the design and state of the connection, settlement logistics may use a stabilized natural wormhole or an artificial connection. The network connection may be reconsidered or moved later.
+
+**Sol scenario exception**
+For the current human-expansion scenario, Sol's natural wormhole remains present and does not shift or snap; the narrative is also currently planned around its continued existence. It is comparatively more stable because of its placement opposite Jupiter, not absolutely stable. Keep this as a scenario-level rule that can change in future scenarios rather than a permanent limitation on general wormhole simulation.
+
+**AWS placement evaluation**
+Candidate placement must consider gravitational/counterbalance geometry, EM stabilization needs, orbital motion, inner-system/habitable-zone avoidance, ship travel time, fuel, construction, resupply, and maintenance. Current Sol planning treats Jupiter as occupied by the natural wormhole and considers Saturn, Uranus, and Neptune or an outer-system balancing pair; exact locations and pairings remain open. Farther-out locations can increase travel and resupply time, but actual transfer times depend on trajectories, orbital positions, propulsion, and launch windows. Planet Nine is hypothetical and is not part of the current baseline.
+
+The AI Manager's goal is not to maximize connected-system count. It should balance expansion capability, resource access, system value, long-term logistics, and the cost/risk of maintaining connections.
 
 ## 2. Mission planning, simulation supervision, and AI evaluation
 

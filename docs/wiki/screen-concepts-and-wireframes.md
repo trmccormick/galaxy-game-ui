@@ -185,31 +185,44 @@ Potential regions:
 
 This is a workflow candidate, not approval for a settlement-only global menu or a claim that all economy/research/missions are settlement-scoped. Main-game domain rules and services determine the actual boundaries.
 
-## 9. Admin Console workspace
+## 9. Admin Dashboard workspace
 
-**Purpose:** Operate and inspect application administration, not act as a second player dashboard.
+**Purpose:** Operate and administer the GalaxyGame web application and simulation. This is not a second Player Dashboard and must not reuse player-facing views as its primary information architecture.
 
-Candidate areas include user/account administration and access control; application health and operational status; data/reader diagnostics; administrative audit/history; and controlled configuration/support tools.
+The Admin Dashboard is expected to provide an overview and access to focused workspaces. Candidate areas include:
 
-**Screenshot evidence:** The actual admin console is captured at [admin-console-desktop-2026-11-08.png](assets/screenshots/galaxy-game-ui/admin-console-desktop-2026-11-08.png). It shows the same layout shell as the player dashboard with admin-specific metrics (Users/Star Systems/Pending Approvals/Active Settlements) and Quick Actions panel annotated as "Prototype" for all three actions.
+- **AI Manager:** mission/operations supervision, decisions, wormhole network, EM economy, Hammer Protocol scouting/harvesting, and expansion strategy.
+- **Map Studio:** known-world reconstruction, extrasolar map generation, and planetary Digital Twin data workflows.
+- **StarSim Generator:** procedural solar-system generation controls, configuration, run inspection, and generated-system review.
+- **TerraSim:** planetary/environmental simulation controls and status.
+- **Spawning System:** planned administration of small-body populations (asteroids, comets, Kuiper Belt objects, Oort Cloud objects), distributions, composition rules, and spawn behavior. This subsystem is not yet built.
+- **Solar System Management:** export/unload systems to JSON, import/validate prepared systems, manage a prepared-system catalog, and select whether system creation uses a prepared system or StarSim generation.
+- **Blueprint Management:** definitions for units, assets, structures, craft, equipment, and components.
+- **Material Management:** material JSON definitions and their physical, chemical, and resource properties.
+- **Configuration & Operational Data:** UI tools for tuning JSON configuration without requiring manual file edits; specialized editors where useful and schema-aware JSON editing where appropriate.
+- **Template & Version Management:** expose existing template-version-control files and behavior, including compatibility, validation, comparison, and migration status after auditing what is already implemented.
+- **User & Account Management:** account lookup, status/activity review, password-reset workflows, account suspension/restoration, roles, permissions, and administrative audit history.
+- **System administration:** application health, background jobs, data integrity, logs, backup/recovery, and administrative permissions.
 
-```text
-┌──────────────────────────────────────────────────────────────────────┐
-│ GALAXY GAME ADMIN       Overview  Users  Operations  Data  Audit    │
-├──────────────────────────────────────────────────────────────────────┤
-│ ADMIN OVERVIEW                                                       │
-│ ┌────────────────────────────┐  ┌─────────────────────────────────┐ │
-│ │ Application / service state │  │ Items requiring admin attention │ │
-│ └────────────────────────────┘  └─────────────────────────────────┘ │
-│ ┌──────────────────────────────────────────────────────────────────┐ │
-│ │ Recent administrative events / diagnostics                        │ │
-│ └──────────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────┘
-```
+This is a capability inventory, not a finalized navigation tree or one-screen-per-item commitment. We will decide what each screen needs individually. Backend services remain authoritative for simulation, authorization, validation, persistence, and state-changing actions. The UI must never expose or retrieve user passwords.
 
-The admin area should have a clear visual and permission boundary from the player application. Exact sections depend on real administrative responsibilities and existing authorization. Do not expose player/game operations as admin controls merely because they are technically accessible.
+## 10. AI Manager workspace concept
 
-## 10. Shared interaction and state requirements
+AI Manager is a major dedicated workspace inside the Admin Dashboard. It needs more than a mission list or activity feed.
+
+Its candidate areas include:
+- mission objectives, planning, asset deployment, logistics, and execution oversight;
+- wormhole network state, relative stability, mass throughput, mass capacity, EM ejection, harvesting, captured reserves, and stabilization;
+- system discovery and survey through natural wormholes;
+- Hammer Protocol decisions: continue harvesting, stabilize, build an AWS connection, plan settlement, or force a natural exit to shift and scout another system;
+- expansion forecasts that balance EM availability, system value, AWS investment, settlement costs, ship travel time, and resupply;
+- decision records, operator review, intervention, and training evidence.
+
+A discovered system has a harvestable EM field under the current design; unvisited local-bubble systems remain unknown until discovered and surveyed. Discovery does not automatically require an AWS pair. A settlement candidate will likely be connected to Sol by an AWS pair while its natural wormhole remains open, allowing initial settlement logistics through a stabilized natural or artificial connection.
+
+Sol's natural wormhole remains present for the current human-expansion scenario, although it is comparatively—not absolutely—more stable due to its placement opposite Jupiter. The Eden-side snap predates EM stabilization technology. The game-domain wiki is authoritative for these mechanics.
+
+## 11. Shared interaction and state requirements
 
 Across workspaces, plan for:
 - explicit loading, empty, error, stale, and permission-denied states;
@@ -221,7 +234,7 @@ Across workspaces, plan for:
 - backend-authoritative validation and permission checks;
 - data freshness/source labels where the user could otherwise misinterpret age or authority.
 
-## 11. Screen inventory and design priority
+## 12. Screen inventory and design priority
 
 | Workspace | User value | Planning priority | State |
 |---|---|---|---|
@@ -237,7 +250,7 @@ Across workspaces, plan for:
 
 Priority is a planning aid, not a commitment to implement in this order. The first workflow must be selected after the current prototype baseline and user priorities are reviewed.
 
-## 12. Decisions still open
+## 13. Decisions still open
 
 - Whether player home is configurable, curated, or primarily a launch/overview page.
 - Exact global navigation destinations and labels.
@@ -248,7 +261,7 @@ Priority is a planning aid, not a commitment to implement in this order. The fir
 - Exact responsive breakpoints and mobile-specific interaction patterns.
 - Admin Console scope and relationship to existing admin routes.
 
-## 13. Relationship to implementation tasks
+## 14. Relationship to implementation tasks
 
 Future tasks should link to the relevant screen section and state which parts of the concept are in scope. A task must identify current source files and verified data/API dependencies; this page alone does not authorize implementation.
 
