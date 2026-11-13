@@ -14,17 +14,20 @@ Keep the three documentation homes distinct:
 
 The main game's current code and authoritative domain documentation govern game behavior and product design intent. This UI wiki must not create or redefine game mechanics or become a competing product-design authority. The canonical UI intent is in `galaxyGame/docs/wiki/ui/`; the canonical organizational/domain intent is in `galaxyGame/docs/wiki/`. When a UI decision depends on a game rule, resolve it in the main game source/wiki first, then record only the prototype-specific implementation implications here.
 
-## Current application direction
+## Current prototype purpose and direction
 
-- The prototype is intended to become the foundation of the new Galaxy Game interface, not remain a disconnected visual mockup.
-- JavaScript is the primary presentation and interaction layer.
-- **Proposal, not yet adopted:** the main GalaxyGame Rails 7 application would expose the API, and this separate Rails 8 prototype would consume it.
-- Under that proposal, the main application would retain game state, domain services, calculations, validation, persistence, authorization, and operations.
-- The prototype would present the UI and call documented API contracts; it would not directly access the main application's game database or duplicate its game logic.
-- The two Rails applications would run as separate processes. A one-command local startup arrangement and a single PostgreSQL server hosting separate logical databases are options to evaluate, not settled setup decisions.
-- Mock or local JSON data may support visual design, but it must remain clearly separate from live API data and must not be treated as an API contract.
-- Progressively port or integrate existing game models and services in small, tested vertical slices. Preserve behavior before refactoring.
-- The proposed application boundary, API contracts, local startup/database arrangement, and migration sequence remain open until reviewed and explicitly adopted. The current repositories use different Rails generations: Rails 7.x in the main game and Rails 8.x in the prototype.
+**CURRENT WORKING SCOPE — visual/interaction prototype and API discovery, not a production-functional application**
+
+The immediate purpose of this Rails 8 prototype is to assemble and evaluate the intended GalaxyGame views using existing view JavaScript, renderers, assets, and representative data. It does not need to reproduce the full simulation or be production-functional.
+
+- Get the existing view JavaScript and related components/assets in place first. Reuse and port the main game's Planetary, Surface, and Space work wherever practical; investigate broken behavior rather than replacing it by default.
+- For Planetary, use the existing confirmed Earth, Mars, Venus, and Titan data and the existing renderer/data path. For Surface, reuse existing surface data and tileset/image assets. For Space, reuse existing GalaxyGame space code and adapt the EVE Dashboard JavaScript/components (including wealth, fleet, chain, and other useful modules) to GalaxyGame terminology and data.
+- Preserve existing JavaScript behavior where possible. Adapt labels, data mappings, configuration, loading, and compatibility only as needed. Do not rewrite working fleet, chain, renderer, or dashboard code merely to fit the prototype.
+- Feed imported GalaxyGame JSON or clearly identified mock JSON into the same presentation code. Mock data is acceptable to demonstrate a view or interaction where real data is unavailable; it must not be mistaken for confirmed game behavior.
+- Add only the minimum prototype support needed to load data/assets and demonstrate navigation, rendering, selections, and representative interactions. Production API endpoints, full simulation operations, and backend integration are not prerequisites for this design exercise.
+- As each view is assembled, record what data it needs, what existing data/code/assets supply it, what is mocked or adapted, and what remains missing. These observations will help define future main-game API requirements; they do not themselves establish API contracts.
+- Settlement is the major new Player view. Its detailed design is early exploration; keep candidate layouts and mechanics explicitly provisional.
+- The main Rails 7 application remains the authority for game data and mechanics. The Rails 8 prototype is a separate presentation workspace. The eventual API boundary and integration approach remain open until informed by the prototype and reviewed against the main application.
 
 ## Current interface principles
 
