@@ -30,6 +30,14 @@ This page records the reuse-first direction for bringing existing GalaxyGame vie
 
 ---
 
+## 1A. Original EVE Dashboard source location
+
+The original EVE Dashboard application is a separate local Python project under:
+
+`/Users/tam0013/Documents/git/eve-dashboard/`
+
+The JavaScript modules were previously supplied/reviewed from that project. They are not part of the GalaxyGame main repository. Recover the original modules from this local source before adapting them; do not recreate them from descriptions or copy EVE application backend behavior. Known modules include `fleet_map.js`, `market.js`, `chain.js`, `assets.js`, `wealth.js`, and `structures.js`.
+
 ## 2. Reference-file inventory
 
 The following files were reviewed in earlier sessions and are the known reference set.
