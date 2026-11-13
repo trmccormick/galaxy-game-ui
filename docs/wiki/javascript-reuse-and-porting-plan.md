@@ -3,17 +3,19 @@
 **Status:** Proposed technical direction — for owner review  
 **Last updated:** 2026-11-08
 
-This page records which JavaScript patterns from the EVE-related files Tracy previously showed are candidates to recover, adapt, or build anew for Galaxy Game. It is a porting plan, not authorization to copy files wholesale or begin implementation.
+This page records the reuse-first direction for bringing existing GalaxyGame view JavaScript and EVE Dashboard presentation/interaction code into the Rails 8 prototype. It is a porting plan, not authorization to begin implementation. The prototype's immediate goal is to demonstrate views with imported or mock JSON and help identify future API data requirements—not to build a production-functional application.
 
 ## 1. Guiding approach
 
 - Recover and inspect any JavaScript already copied or adapted into galaxy-game-ui before creating a second implementation.
-- Treat the EVE files as interaction-pattern references. They do not define Galaxy Game domain rules, data structures, routes, or permissions.
-- Prefer small ES modules with clear responsibilities, integrated with the existing Rails/Importmap/Stimulus foundation unless later evidence supports a framework change.
-- Separate reusable presentation behavior from Galaxy Game-specific data mapping and domain decisions.
-- Keep authoritative state and game rules on the Rails/backend side. JavaScript owns transient presentation state and user interaction.
-- Port behavior in small increments and verify it in the rendered application.
-- Do not introduce a new build system or dependency merely because a reference file used one; inspect actual dependencies first.
+- First inspect and reuse the actual main-game view JavaScript, renderers, data-loading paths, and image assets. Planetary, Surface, and Space are port/adaptation targets, not blank-page redesigns.
+- Use confirmed existing Planetary data for Earth, Mars, Venus, and Titan; reuse existing Surface data and tileset images.
+- Reuse EVE Dashboard JavaScript such as wealth, fleet, chain, map, assets, market, and other useful modules as appropriate. Adapt GalaxyGame terminology and data mappings while preserving working behavior. EVE terminology and game rules are not imported.
+- Do not rewrite fleet, chain, renderer, or dashboard modules merely to fit the prototype. Add small adapters, configuration, or compatibility support only where needed.
+- Imported GalaxyGame JSON and clearly identified mock JSON should feed the same view code. The prototype only needs enough behavior to demonstrate the intended screens and representative interactions.
+- Separate reusable presentation behavior from GalaxyGame-specific data mapping. Record data needs and gaps as evidence for later API design; do not treat prototype fixtures as API contracts.
+- Keep authoritative state and game rules in the main application. Do not build production API operations or duplicate simulation logic in the prototype as part of this exercise.
+- Work within the existing Rails/Importmap/Stimulus foundation unless inspection shows a concrete need to change it; do not introduce a new build system or dependency merely because a source module used one.
 
 ## Completion Status (2026-11-08)
 
