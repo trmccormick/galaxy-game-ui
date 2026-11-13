@@ -65,7 +65,33 @@ For early visual development, the prototype may temporarily use mock fixtures or
 
 If adopted, this would replace the earlier prototype-owned JSON-reader-first integration sketch. Existing lookup services remain important because they may supply the main application's API implementation; they are not a reason to duplicate a reader in the prototype.
 
-## 3. Main-game lookup services: candidate starting point
+## 3. Initial existing-view data and asset findings
+
+**SOURCE INSPECTION — 2026-11-13; not runtime verification**
+
+The current main-app source contains a useful starting point for direct JSON-fed ports:
+
+### Planetary
+
+- View: `galaxy_game/app/views/admin/celestial_bodies/planetary.html.erb`
+- Renderer: `galaxy_game/app/javascript/admin/monitor.js`
+- The ERB view embeds JSON in a `<script type="application/json" id="monitor-data">` element. Its payload includes body identity, temperatures, atmospheric data, terrain data, planet/sphere attributes, layer-availability flags, and civilization features.
+- `AdminMonitor.init()` reads that embedded JSON and expects the existing page elements, including `#planetCanvas` and `#canvasWrapper`.
+- **Porting dependency to inspect:** the renderer also polls `/admin/celestial_bodies/:id/sphere_data` every five seconds. A static JSON/mock-data prototype must either supply an appropriate local fixture/update path or isolate this polling so the renderer can demonstrate from the imported snapshot alone. Do not make a production endpoint a prerequisite.
+
+### Surface
+
+- View: `galaxy_game/app/views/admin/celestial_bodies/surface.html.erb`
+- Renderer: `galaxy_game/app/assets/javascripts/surface_view.js`
+- Supporting renderers: `biome_renderer.js` and `terrain_tile_renderer.js`, with `simple_tileset_loader.js` also present in the main app.
+- The ERB view embeds JSON in `#surface-data`, including body identity, `terrain_data`, `planet_data`, tileset name, and layer availability. It also sets `window.PLANET_NAME` and `window.PLANET_TYPE`.
+- Current asset references include `/tilesets/galaxy_game/biomes.json`, the configured biome `asset_path` (falling back to `/api/assets/biomes/`), and terrain images under `/api/assets/terrain/`.
+- The prototype will need the existing configuration and image assets at compatible static paths, or a small configurable base-path adjustment. This is asset delivery support, not a new tileset or renderer.
+- Surface initialization is registered for both `DOMContentLoaded` and Turbo navigation; verify lifecycle behavior in the prototype rather than assuming it is already safe under every navigation pattern.
+
+These source findings identify the JSON boundary and asset dependencies to preserve. They do not diagnose the previously observed Earth/Mars tile-loading problems or prove that the views currently work at runtime. The original data and image assets must be checked in the local main-app data tree; uncommitted JSON is not expected to appear in GitHub.
+
+## 5. Main-game lookup services: candidate starting point
 
 The main repository has lookup services under:
 
@@ -80,7 +106,7 @@ The main application also defines `GalaxyGame::Paths` in `config/initializers/ga
 
 A reasonable first code slice to investigate is path configuration, `BaseLookupService`, `BlueprintLookupService` and `UnitLookupService`. This is a recommendation, not an approved task sequence. Read the complete implementations and specs before deciding the exact slice.
 
-## 4. Reader design questions
+## 5. Reader design questions
 
 Resolve these through code inspection and a small tested implementation, not by assumption:
 
@@ -91,7 +117,7 @@ Resolve these through code inspection and a small tested implementation, not by 
 5. **Error behavior:** preserve useful missing-file, malformed-data and lookup error behavior while making API failure responses deliberate.
 6. **First useful data:** which reader/service is required for the first actual screen and endpoint? Do not port every lookup service up front.
 
-## 5. First vertical slice
+## 6. First vertical slice
 
 If the proposal is adopted, the first API/JavaScript integration should prove one complete path:
 
@@ -105,7 +131,7 @@ The candidate first data domain is not locked. Basic models and lookup data are 
 
 Do not start this slice until the current UI work is committed or explicitly paused and reviewed. Do not overlap a substantial Qwen UI implementation with a new integration track.
 
-## 6. Progressive migration
+## 7. Progressive migration
 
 Potential future migration areas include:
 - basic game entities and lookup/data services;
@@ -128,7 +154,7 @@ For each migration:
 - connect the API and UI only after the backend slice is understood;
 - refactor or optimize separately from the behavior-preserving port.
 
-## 7. Application/API boundary
+## 8. Application/API boundary
 
 The proposal is that the main GalaxyGame application exposes the API and the prototype consumes it. This has not yet been adopted as the implementation architecture.
 
@@ -136,7 +162,7 @@ The exact API namespace, endpoint inventory, authentication flow, response schem
 
 A targeted backport into the main application can still be considered if a particular view or interaction is better served there. The choice between API consumption and any targeted backport remains open until the proposal is reviewed.
 
-## 8. Proposed local development arrangement
+## 9. Proposed local development arrangement
 
 **PROPOSAL — for review; no orchestration or database changes have been made**
 
@@ -177,7 +203,7 @@ The API URL and credentials should be configured through environment variables r
 
 This proposal needs review against both repositories' actual Docker/Compose, database, and startup configuration before any setup changes are made.
 
-## 9. Current prototype baseline
+## 10. Current prototype baseline
 
 The initial repository inspection described:
 - Rails 8.1;
@@ -192,7 +218,7 @@ The initial repository inspection described:
 
 These are baseline observations from the inspected branch and date, not permanent claims. Re-check the live repository before implementation. The presence of Active Record/PostgreSQL does not prove that game-domain persistence has been migrated.
 
-## 10. Related references
+## 11. Related references
 
 - [Project overview and architecture](README.md)
 - [Interface and workflow direction](interface-and-workflows.md)
