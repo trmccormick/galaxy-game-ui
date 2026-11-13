@@ -47,7 +47,7 @@ The proposed API would expose resources and workflows designed for the UI, reusi
 
 The API surface must be inspected and built incrementally; this document does not claim that the required endpoints already exist.
 
-## 2. Proposed data path
+## 3. Proposed data path
 
 ```text
 Main GalaxyGame application
@@ -65,7 +65,7 @@ For early visual development, the prototype may temporarily use mock fixtures or
 
 If adopted, this would replace the earlier prototype-owned JSON-reader-first integration sketch. Existing lookup services remain important because they may supply the main application's API implementation; they are not a reason to duplicate a reader in the prototype.
 
-## 3. Initial existing-view data and asset findings
+## 4. Initial existing-view data and asset findings
 
 **SOURCE INSPECTION — 2026-11-13; not runtime verification**
 
@@ -106,7 +106,7 @@ The main application also defines `GalaxyGame::Paths` in `config/initializers/ga
 
 A reasonable first code slice to investigate is path configuration, `BaseLookupService`, `BlueprintLookupService` and `UnitLookupService`. This is a recommendation, not an approved task sequence. Read the complete implementations and specs before deciding the exact slice.
 
-## 5. Reader design questions
+## 6. Reader design questions
 
 Resolve these through code inspection and a small tested implementation, not by assumption:
 
@@ -117,7 +117,7 @@ Resolve these through code inspection and a small tested implementation, not by 
 5. **Error behavior:** preserve useful missing-file, malformed-data and lookup error behavior while making API failure responses deliberate.
 6. **First useful data:** which reader/service is required for the first actual screen and endpoint? Do not port every lookup service up front.
 
-## 6. First vertical slice
+## 7. First vertical slice
 
 If the proposal is adopted, the first API/JavaScript integration should prove one complete path:
 
@@ -131,7 +131,7 @@ The candidate first data domain is not locked. Basic models and lookup data are 
 
 Do not start this slice until the current UI work is committed or explicitly paused and reviewed. Do not overlap a substantial Qwen UI implementation with a new integration track.
 
-## 7. Progressive migration
+## 8. Progressive migration
 
 Potential future migration areas include:
 - basic game entities and lookup/data services;
@@ -154,7 +154,7 @@ For each migration:
 - connect the API and UI only after the backend slice is understood;
 - refactor or optimize separately from the behavior-preserving port.
 
-## 8. Application/API boundary
+## 9. Application/API boundary
 
 The proposal is that the main GalaxyGame application exposes the API and the prototype consumes it. This has not yet been adopted as the implementation architecture.
 
@@ -162,7 +162,7 @@ The exact API namespace, endpoint inventory, authentication flow, response schem
 
 A targeted backport into the main application can still be considered if a particular view or interaction is better served there. The choice between API consumption and any targeted backport remains open until the proposal is reviewed.
 
-## 9. Proposed local development arrangement
+## 10. Proposed local development arrangement
 
 **PROPOSAL — for review; no orchestration or database changes have been made**
 
@@ -203,7 +203,7 @@ The API URL and credentials should be configured through environment variables r
 
 This proposal needs review against both repositories' actual Docker/Compose, database, and startup configuration before any setup changes are made.
 
-## 10. Current prototype baseline
+## 11. Current prototype baseline
 
 The initial repository inspection described:
 - Rails 8.1;
@@ -218,7 +218,7 @@ The initial repository inspection described:
 
 These are baseline observations from the inspected branch and date, not permanent claims. Re-check the live repository before implementation. The presence of Active Record/PostgreSQL does not prove that game-domain persistence has been migrated.
 
-## 11. Related references
+## 12. Related references
 
 - [Project overview and architecture](README.md)
 - [Interface and workflow direction](interface-and-workflows.md)
