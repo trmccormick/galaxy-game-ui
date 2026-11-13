@@ -24,7 +24,7 @@ This page records the reuse-first direction for bringing existing GalaxyGame vie
 | Step 0 — Recover/audit existing JS copies | Inspected current branch; no EVE JS copies found in active prototype | ✅ Completed |
 | Steps 1–8 — Porting sequence | Not yet started (implementation) | ⏳ Pending |
 
-**Audit finding:** No EVE-derived JavaScript files were found copied or adapted into the active `galaxy-game-ui` prototype on this branch. The six reference files (`fleet_map.js`, `market.js`, `chain.js`, `assets.js`, `wealth.js`, `structures.js`) exist only as external references from earlier sessions. A new port must be built from scratch.
+**Previous prototype audit finding (2026-11-08):** No EVE-derived JavaScript files were found copied or adapted into the active `galaxy-game-ui` prototype at that time. The six known reference modules (`fleet_map.js`, `market.js`, `chain.js`, `assets.js`, `wealth.js`, `structures.js`) had been examined in earlier work, but their original source location/revision was not recorded in this repository. This is not an instruction to rebuild them from scratch. Recover the original source or the previously supplied files, inspect current prototype copies and dependencies, then adapt the useful modules to GalaxyGame terminology and data. Reconfirm this audit against the current branch before implementation.
 
 **Screenshot evidence:** Current UI screenshots are available at `docs/wiki/assets/screenshots/galaxy-game-ui/`. These show the actual rendered pages where adapted EVE patterns would eventually be integrated (dashboard tables, navigation panels, admin console).
 
