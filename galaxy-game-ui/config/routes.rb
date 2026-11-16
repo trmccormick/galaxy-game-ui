@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   get   "about",     to: "landing#about"
   root  "landing#index"
 
+  # Player views
+  get "player/planetary", to: "player#planetary", as: :player_planetary
+
   namespace :admin do
     get "dashboard", to: "dashboard#index", as: :dashboard
   end

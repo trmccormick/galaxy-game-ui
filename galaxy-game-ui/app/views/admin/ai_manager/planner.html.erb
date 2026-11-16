@@ -1,0 +1,219 @@
+<h1 class="gg-section-title">AI Manager — Mission Planner</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Simulation Config -->
+  <div class="lg:col-span-1">
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-primary);">⚙️</span> Simulation Config
+      </h2>
+      <div class="space-y-4 mt-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Mission Pattern</label>
+          <select class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+            <option value="">Select Pattern...</option>
+            <% @patterns.each do |pattern| %>
+              <option value="<%= pattern[:id] %>"><%= pattern[:name] %></option>
+            <% end %>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Tech Level</label>
+          <select class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+            <option value="standard" selected>Standard (Current Tech)</option>
+            <option value="advanced">Advanced (+10 Years)</option>
+            <option value="experimental">Experimental (+20 Years)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Timeline (Years)</label>
+          <input type="number" value="10" min="5" max="50" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Budget (GCC)</label>
+          <input type="number" value="1000000" min="100000" step="100000" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Priority</label>
+          <select class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+            <option value="balanced" selected>Balanced</option>
+            <option value="speed">Speed (Fast Timeline)</option>
+            <option value="efficiency">Efficiency (Low Cost)</option>
+            <option value="reliability">Reliability (High Success)</option>
+          </select>
+        </div>
+        <%= button_to '▶ Run Simulation', admin_ai_manager_planner_path, method: :get, class: 'w-full py-2.5 rounded font-semibold text-sm transition-colors', style: 'background: var(--gg-primary); color: var(--bg-dark);' %>
+      </div>
+    </div>
+
+    <!-- Economic Forecast -->
+    <div class="gg-grid-panel mt-6">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-accent-purple);">📈</span> Economic Forecast
+      </h2>
+      <div class="space-y-3 mt-4 text-sm">
+        <div class="flex justify-between">
+          <span style="color: var(--gg-text-secondary);">Total Project Cost</span>
+          <span style="color: var(--gg-primary);"><%= number_to_human(@simulation_result[:costs][:total_gcc]) %> GCC</span>
+        </div>
+        <div class="flex justify-between">
+          <span style="color: var(--gg-text-secondary);">DC Expenditure</span>
+          <span style="color: var(--gg-text-primary);">72%</span>
+        </div>
+        <div class="flex justify-between">
+          <span style="color: var(--gg-text-secondary);">Player Earnings</span>
+          <span style="color: var(--gg-accent-success);"><%= @simulation_result[:player_revenue][:total_opportunity_gcc] %> GCC</span>
+        </div>
+        <div class="flex justify-between">
+          <span style="color: var(--gg-text-secondary);">Economic Velocity</span>
+          <span style="color: var(--gg-accent-cyan);"><%= number_to_human(12_400_000) %> GCC/yr</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulation Results -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Precursor Status -->
+    <% if @simulation_result[:local_capabilities][:available] %>
+      <div class="gg-grid-panel" style="border-left: 3px solid var(--gg-accent-success);">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">✅</span>
+          <div>
+            <h3 class="font-bold text-lg" style="color: var(--gg-primary);">Precursor Infrastructure: ACTIVE</h3>
+            <p class="text-sm mt-1" style="color: var(--gg-text-secondary);">Location: <%= @simulation_result[:local_capabilities][:location] %></p>
+            <p class="text-sm" style="color: var(--gg-accent-success);">Local Resources: <%= @simulation_result[:local_capabilities][:atmosphere].length + @simulation_result[:local_capabilities][:surface].length %> types available</p>
+            <p class="text-sm mt-1 font-semibold" style="color: var(--gg-accent-cyan);">💰 Precursor Savings: <%= number_to_human(@simulation_result[:costs][:precursor_total_savings]) %> GCC</p>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="gg-grid-panel" style="border-left: 3px solid var(--gg-accent-warning);">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⚠️</span>
+          <div>
+            <h3 class="font-bold text-lg" style="color: var(--gg-accent-warning);">No Precursor Infrastructure</h3>
+            <p class="text-sm mt-1" style="color: var(--gg-text-secondary);">All resources must be imported from Earth</p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Timeline -->
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-primary);">▸</span> Timeline
+      </h2>
+      <div class="mt-4 space-y-3">
+        <div class="flex justify-between text-sm">
+          <span style="color: var(--gg-text-secondary);">Total Duration</span>
+          <span style="color: var(--gg-primary); font-weight: 600;"><%= @simulation_result[:timeline][:total_years] %> years</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span style="color: var(--gg-text-secondary);">Phases</span>
+          <span style="color: var(--gg-primary); font-weight: 600;"><%= @simulation_result[:timeline][:phases].length %></span>
+        </div>
+        <div class="mt-3 space-y-2">
+          <% @simulation_result[:timeline][:phases].each do |phase| %>
+            <div class="flex items-center gap-3 py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+              <span class="w-2 h-2 rounded-full" style="background: var(--gg-primary);"></span>
+              <span class="text-sm font-medium" style="color: var(--gg-text-primary);"><%= phase[:name] %></span>
+              <span class="text-xs ml-auto" style="color: var(--gg-text-dim);"><%= phase[:duration] %> years</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Breakdown -->
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-accent-warning);">▸</span> Total Cost
+      </h2>
+      <div class="mt-4 space-y-3">
+        <div class="flex justify-between text-sm py-1.5 border-b border-[rgba(0,212,255,0.1)]">
+          <span style="color: var(--gg-text-secondary);">Base Cost</span>
+          <span style="color: var(--gg-text-primary);"><%= number_to_human(@simulation_result[:costs][:total_gcc]) %> GCC</span>
+        </div>
+        <div class="flex justify-between text-sm py-1.5 border-b border-[rgba(0,212,255,0.1)]">
+          <span style="color: var(--gg-text-secondary);">Contingency</span>
+          <span style="color: var(--gg-text-primary);"><%= number_to_human(@simulation_result[:costs][:contingency]) %> GCC</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold py-2" style="border-top: 2px solid var(--gg-primary); margin-top: 0.5rem;">
+          <span style="color: var(--gg-primary);">Grand Total</span>
+          <span style="color: var(--gg-primary);"><%= number_to_human(@simulation_result[:costs][:grand_total]) %> GCC</span>
+        </div>
+      </div>
+      <!-- Resource Breakdown Table -->
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm" style="border-collapse: separate; border-spacing: 0;">
+          <thead>
+            <tr class="border-b border-[rgba(0,212,255,0.2)]">
+              <th class="text-left py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Resource</th>
+              <th class="text-left py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Source</th>
+              <th class="text-right py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Quantity</th>
+              <th class="text-right py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Unit Cost</th>
+              <th class="text-right py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @simulation_result[:costs][:breakdown].each do |resource, details| %>
+              <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)]">
+                <td class="py-2 px-3 font-medium" style="color: var(--gg-text-primary);"><%= resource %></td>
+                <td class="py-2 px-3">
+                  <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: <%= details[:source_type] == 'local' ? 'rgba(6,255,165,0.15)' : 'rgba(255,214,10,0.15)' %>; color: <%= details[:source_type] == 'local' ? 'var(--gg-accent-success)' : 'var(--gg-accent-warning)' %>;">
+                    <%= details[:source_type].to_s.humanize %>
+                  </span>
+                </td>
+                <td class="py-2 px-3 text-right font-mono" style="color: var(--gg-text-primary);"><%= number_with_delimiter(details[:quantity]) %></td>
+                <td class="py-2 px-3 text-right font-mono" style="color: var(--gg-text-secondary);"><%= number_to_currency(details[:unit_cost], unit: "GCC ") %></td>
+                <td class="py-2 px-3 text-right font-mono font-semibold" style="color: var(--gg-primary);"><%= number_to_currency(details[:total], unit: "GCC ") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Player Opportunities -->
+    <div class="gg-grid-panel" style="border-left: 3px solid var(--gg-accent-success);">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-accent-success);">▸</span> Player Opportunities
+      </h2>
+      <div class="grid grid-cols-3 gap-4 mt-4 text-center">
+        <div>
+          <div class="text-2xl font-bold" style="color: var(--gg-accent-success);"><%= number_to_human(@simulation_result[:player_revenue][:total_opportunity_gcc]) %></div>
+          <div class="text-xs mt-1 uppercase tracking-wider" style="color: var(--gg-text-dim);">Total GCC</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold" style="color: var(--gg-primary);"><%= @simulation_result[:player_revenue][:contract_count] %></div>
+          <div class="text-xs mt-1 uppercase tracking-wider" style="color: var(--gg-text-dim);">Contracts</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold" style="color: var(--gg-accent-cyan);"><%= number_to_human(@simulation_result[:player_revenue][:average_contract_value]) %></div>
+          <div class="text-xs mt-1 uppercase tracking-wider" style="color: var(--gg-text-dim);">Avg Value</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource Requirements -->
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-accent-purple);">▸</span> Resource Requirements
+      </h2>
+      <div class="mt-4 space-y-2">
+        <div class="text-sm py-1.5" style="color: var(--gg-text-secondary);">Peak Demand: Year <%= @simulation_result[:resources][:peak_demand][:year] %> (<%= number_with_delimiter(@simulation_result[:resources][:peak_demand][:total_units]) %> units)</div>
+        <% @simulation_result[:resources][:total].sort_by { |_, qty| -qty }.first(8).each do |resource, quantity| %>
+          <div class="flex items-center justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+            <span class="font-mono text-sm" style="color: var(--gg-text-primary);"><%= resource %></span>
+            <span class="text-sm font-semibold" style="color: var(--gg-primary);"><%= number_to_human(quantity) %> units</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 text-center">
+  <%= link_to '← Back to AI Manager Dashboard', admin_ai_manager_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+</div>

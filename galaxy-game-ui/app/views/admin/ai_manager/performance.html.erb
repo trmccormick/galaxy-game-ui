@@ -1,0 +1,193 @@
+<h1 class="gg-section-title">AI Manager — Performance</h1>
+
+<!-- System Status Banner -->
+<div class="gg-grid-panel mb-6 flex items-center justify-between" style="border-left: 3px solid var(--gg-accent-cyan);">
+  <div>
+    <span class="text-sm text-[var(--gg-text-secondary)] uppercase tracking-wider">AI Performance Monitor</span>
+    <h2 class="text-xl font-bold mt-1" style="color: var(--gg-primary);">MONITORING</h2>
+    <p class="text-xs text-[var(--gg-text-dim)] mt-1">Version 1.0.0-alpha • Real-time metrics</p>
+  </div>
+  <div class="text-right">
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(0,255,249,0.1); color: var(--gg-accent-cyan);">
+      <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-cyan); animation: pulse 2s infinite;"></span>
+      Live
+    </span>
+  </div>
+</div>
+
+<!-- Performance Metrics Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="gg-grid-panel text-center" style="border-top: 3px solid var(--gg-accent-success);">
+    <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--gg-text-dim);">Success Rate</div>
+    <div class="gg-metric" style="color: var(--gg-accent-success);"><%= @metrics[:success_rate] %>%</div>
+    <div class="text-xs mt-2 font-medium" style="color: var(--gg-accent-success);">↑ +2.1%</div>
+  </div>
+  <div class="gg-grid-panel text-center" style="border-top: 3px solid var(--gg-primary);">
+    <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--gg-text-dim);">Avg Timeline</div>
+    <div class="gg-metric"><%= @metrics[:average_timeline] %></div>
+    <div class="text-xs mt-2 font-medium" style="color: var(--gg-text-secondary);">±0.0%</div>
+  </div>
+  <div class="gg-grid-panel text-center" style="border-top: 3px solid var(--gg-accent-cyan);">
+    <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--gg-text-dim);">Resource Efficiency</div>
+    <div class="gg-metric" style="color: var(--gg-accent-cyan);"><%= @metrics[:resource_efficiency] %>%</div>
+  </div>
+  <div class="gg-grid-panel text-center" style="border-top: 3px solid var(--gg-accent-purple);">
+    <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--gg-text-dim);">System Uptime</div>
+    <div class="gg-metric" style="color: var(--gg-accent-purple);"><%= @metrics[:system_uptime] %></div>
+  </div>
+</div>
+
+<!-- Resource Utilization -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="gg-grid-panel">
+    <h2 class="gg-section-title text-lg flex items-center gap-2">
+      <span style="color: var(--gg-accent-cyan);">📊</span> Resource Utilization
+    </h2>
+    <div class="space-y-4 mt-4">
+      <% @metrics[:resource_utilization].each do |resource, value| %>
+        <div>
+          <div class="flex justify-between text-sm mb-1.5">
+            <span style="color: var(--gg-text-secondary);"><%= resource.to_s.humanize %></span>
+            <span style="color: var(--gg-primary); font-weight: 600;"><%= value %>%</span>
+          </div>
+          <div class="w-full h-2 rounded-full" style="background: rgba(0,212,255,0.1);">
+            <% bar_color = if value > 80 %>var(--gg-accent-danger)<% elsif value > 60 %>var(--gg-accent-warning)<% else %>var(--gg-primary)<% end %>
+            <div class="h-2 rounded-full transition-all" style="width: <%= value %>; background: <%= bar_color %>;"></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- System Health -->
+  <div class="gg-grid-panel">
+    <h2 class="gg-section-title text-lg flex items-center gap-2">
+      <span style="color: var(--gg-accent-success);">⚙️</span> System Health
+    </h2>
+    <div class="space-y-3 mt-4">
+      <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-success);"></span>
+          <span class="text-sm font-medium" style="color: var(--gg-text-primary);">Decision Engine</span>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">Normal</span>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-success);"></span>
+          <span class="text-sm font-medium" style="color: var(--gg-text-primary);">Pattern Library</span>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);"><%= @metrics[:pattern_library_size] %> loaded</span>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-warning);"></span>
+          <span class="text-sm font-medium" style="color: var(--gg-text-primary);">Resource Monitor</span>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded font-medium" style="background: rgba(255,214,10,0.15); color: var(--gg-accent-warning);">High Utilization</span>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.1)]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-success);"></span>
+          <span class="text-sm font-medium" style="color: var(--gg-text-primary);">Mission Tracker</span>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">All accounted</span>
+      </div>
+      <div class="flex items-center justify-between py-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-success);"></span>
+          <span class="text-sm font-medium" style="color: var(--gg-text-primary);">Market Stabilization</span>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">Active</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mission Performance Table -->
+<div class="gg-grid-panel mb-6">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-primary);">🚀</span> Mission Performance
+  </h2>
+  <div class="overflow-x-auto mt-4">
+    <table class="w-full text-sm" style="border-collapse: separate; border-spacing: 0;">
+      <thead>
+        <tr class="border-b border-[rgba(0,212,255,0.2)]">
+          <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Mission</th>
+          <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Status</th>
+          <th class="text-center py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Progress</th>
+          <th class="text-center py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Timeline</th>
+          <th class="text-center py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Efficiency</th>
+          <th class="text-center py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)]">
+          <td class="py-3 px-4 font-medium" style="color: var(--gg-text-primary);">Mars Colony Alpha</td>
+          <td class="py-3 px-4"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">Active</span></td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-primary); font-weight: 600;">67%</span></td>
+          <td class="py-3 px-4 text-center font-mono text-xs" style="color: var(--gg-text-secondary);">8.2 / 12 mo</td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-accent-success); font-weight: 600;">94%</span></td>
+          <td class="py-3 px-4 text-center"><%= button_tag 'Details', type: 'button', class: 'px-3 py-1 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %></td>
+        </tr>
+        <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)]">
+          <td class="py-3 px-4 font-medium" style="color: var(--gg-text-primary);">Venus Industrial Hub</td>
+          <td class="py-3 px-4"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(255,214,10,0.15); color: var(--gg-accent-warning);">Delayed</span></td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-accent-warning); font-weight: 600;">23%</span></td>
+          <td class="py-3 px-4 text-center font-mono text-xs" style="color: var(--gg-text-secondary);">4.1 / 18 mo</td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-accent-warning); font-weight: 600;">78%</span></td>
+          <td class="py-3 px-4 text-center"><%= button_tag 'Details', type: 'button', class: 'px-3 py-1 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %></td>
+        </tr>
+        <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)]">
+          <td class="py-3 px-4 font-medium" style="color: var(--gg-text-primary);">Titan Fuel Depot</td>
+          <td class="py-3 px-4"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">Completed</span></td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-accent-success); font-weight: 600;">100%</span></td>
+          <td class="py-3 px-4 text-center font-mono text-xs" style="color: var(--gg-text-secondary);">6.8 / 7 mo</td>
+          <td class="py-3 px-4 text-center"><span style="color: var(--gg-accent-success); font-weight: 600;">96%</span></td>
+          <td class="py-3 px-4 text-center"><%= button_tag 'Review', type: 'button', class: 'px-3 py-1 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Performance Controls -->
+<div class="gg-grid-panel">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-accent-warning);">🎛️</span> Performance Controls
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Decision Timeout (seconds)</label>
+      <div class="flex items-center gap-2">
+        <input type="number" value="30" min="5" max="300" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        <%= button_tag 'Update', type: 'button', class: 'py-2 px-3 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %>
+      </div>
+    </div>
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Max Concurrent Missions</label>
+      <div class="flex items-center gap-2">
+        <input type="number" value="5" min="1" max="20" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        <%= button_tag 'Update', type: 'button', class: 'py-2 px-3 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %>
+      </div>
+    </div>
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Resource Threshold (%)</label>
+      <div class="flex items-center gap-2">
+        <input type="number" value="85" min="50" max="95" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        <%= button_tag 'Update', type: 'button', class: 'py-2 px-3 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+</style>
+
+<div class="mt-6 text-center">
+  <%= link_to '← Back to AI Manager Dashboard', admin_ai_manager_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+</div>

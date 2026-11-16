@@ -1,0 +1,116 @@
+<h1 class="gg-section-title">AI Manager — Mission Patterns</h1>
+
+<!-- Pattern Testing Controls -->
+<div class="gg-grid-panel mb-6">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-accent-purple);">🧠</span> Pattern Testing
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Pattern</label>
+      <select class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+        <option value="">Select Pattern...</option>
+        <% @patterns.each do |pattern| %>
+          <option value="<%= pattern[:id] %>"><%= pattern[:name] %></option>
+        <% end %>
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Tech Level (1-5)</label>
+      <input type="number" value="3" min="1" max="5" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+    </div>
+    <div>
+      <label class="block text-xs uppercase tracking-wider mb-1.5" style="color: var(--gg-text-dim);">Budget (GCC)</label>
+      <input type="number" value="1000000" min="100000" class="w-full px-3 py-2 rounded text-sm" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); border: 1px solid rgba(0,212,255,0.2);">
+    </div>
+    <div class="flex items-end gap-2">
+      <%= button_tag '▶ Test Pattern', type: 'button', class: 'flex-1 py-2 rounded font-semibold text-sm transition-colors', style: 'background: var(--gg-primary); color: var(--bg-dark);' %>
+      <%= button_tag '↻ Load Pattern', type: 'button', class: 'flex-1 py-2 rounded font-semibold text-sm transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %>
+    </div>
+  </div>
+</div>
+
+<!-- Pattern Library -->
+<div class="gg-grid-panel mb-6">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-primary);">🎯</span> AI Mission Patterns
+    <span class="ml-auto text-xs font-normal" style="color: var(--gg-text-dim);"><%= @patterns.length %> patterns loaded</span>
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    <% @patterns.each do |pattern| %>
+      <div class="p-4 rounded-lg border transition-colors hover:border-[rgba(0,212,255,0.5)]" style="background: var(--gg-bg-surface); border-color: <%= pattern[:active] ? 'rgba(6,255,165,0.3)' : 'rgba(136,146,176,0.2)' %>;">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="font-bold text-base" style="color: var(--gg-primary);"><%= pattern[:name] %></h3>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider" style="background: <%= pattern[:active] ? 'rgba(6,255,165,0.15)' : 'rgba(136,146,176,0.15)' %>; color: <%= pattern[:active] ? 'var(--gg-accent-success)' : 'var(--gg-text-dim)' %>;">
+            <%= pattern[:active] ? 'ACTIVE' : 'INACTIVE' %>
+          </span>
+        </div>
+        <p class="text-sm mb-3" style="color: var(--gg-accent-cyan);"><%= pattern[:description] %></p>
+        <div class="space-y-1.5 text-sm">
+          <div class="flex justify-between">
+            <span style="color: var(--gg-text-dim);">Target</span>
+            <span style="color: var(--gg-text-primary);"><%= pattern[:target_body] %></span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--gg-text-dim);">Duration</span>
+            <span style="color: var(--gg-text-primary);"><%= pattern[:estimated_duration] %> years</span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--gg-text-dim);">Complexity</span>
+            <span class="px-1.5 py-0.5 rounded text-xs font-medium" style="background: <%= case pattern[:complexity]
+              when 'extreme' then 'rgba(255,0,110,0.15)'
+              when 'high' then 'rgba(255,214,10,0.15)'
+              else 'rgba(0,212,255,0.15)'
+            end %>; color: <%= case pattern[:complexity]
+              when 'extreme' then 'var(--gg-accent-danger)'
+              when 'high' then 'var(--gg-accent-warning)'
+              else 'var(--gg-primary)'
+            end %>;"><%= pattern[:complexity].to_s.humanize %></span>
+          </div>
+          <div class="flex justify-between">
+            <span style="color: var(--gg-text-dim);">Success Rate</span>
+            <span style="color: <%= pattern[:success_rate] >= 70 ? 'var(--gg-accent-success)' : pattern[:success_rate] >= 50 ? 'var(--gg-accent-warning)' : 'var(--gg-accent-danger)' %>;"><%= pattern[:success_rate] %>%</span>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <%= button_tag 'View', type: 'button', class: 'flex-1 py-1.5 rounded text-xs font-medium transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary); border: 1px solid rgba(0,212,255,0.3);' %>
+          <%= button_tag 'Test', type: 'button', class: 'flex-1 py-1.5 rounded text-xs font-medium transition-colors', style: 'background: rgba(157,78,221,0.1); color: var(--gg-accent-purple); border: 1px solid rgba(157,78,221,0.3);' %>
+          <% if pattern[:active] %>
+            <%= button_tag 'Deactivate', type: 'button', class: 'py-1.5 px-3 rounded text-xs font-medium transition-colors', style: 'background: rgba(255,0,110,0.1); color: var(--gg-accent-danger); border: 1px solid rgba(255,0,110,0.3);' %>
+          <% else %>
+            <%= button_tag 'Activate', type: 'button', class: 'py-1.5 px-3 rounded text-xs font-medium transition-colors', style: 'background: rgba(6,255,165,0.1); color: var(--gg-accent-success); border: 1px solid rgba(6,255,165,0.3);' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Pattern Types Reference -->
+<div class="gg-grid-panel">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-text-secondary);">📋</span> Pattern Types
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-purple);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Terraforming</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">Planetary transformation missions (Mars, Venus)</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-cyan);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Resource Extraction</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">Mining and harvesting operations (Titan, Asteroids, Europa)</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-warning);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Infrastructure</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">Base building and orbital construction patterns</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-success);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Research</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">Scientific investigation and data collection missions</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 text-center">
+  <%= link_to '← Back to AI Manager Dashboard', admin_ai_manager_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+</div>

@@ -1,0 +1,89 @@
+<h1 class="gg-section-title">AI Manager — Decisions</h1>
+
+<!-- Stats Row -->
+<div class="grid grid-cols-4 gap-4 mb-6">
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric"><%= @decisions.length %></div>
+    <div class="gg-stat-label mt-1">Total Decisions</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-success);">100%</div>
+    <div class="gg-stat-label mt-1">Success Rate</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-cyan);"><%= @metrics[:avg_decision_latency_ms] %>ms</div>
+    <div class="gg-stat-label mt-1">Avg Response Time</div>
+  </div>
+  <div class="gg-grid-panel text-center">
+    <div class="gg-metric" style="color: var(--gg-accent-purple);"><%= @metrics[:decisions_today] %></div>
+    <div class="gg-stat-label mt-1">Today</div>
+  </div>
+</div>
+
+<!-- Decision Log Table -->
+<div class="gg-grid-panel mb-6 overflow-x-auto">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-text-secondary);">🧠</span> Decision Log
+  </h2>
+  <table class="w-full text-sm mt-4" style="border-collapse: separate; border-spacing: 0;">
+    <thead>
+      <tr class="border-b border-[rgba(0,212,255,0.2)]">
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Time</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Body</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Location</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Type</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider hidden lg:table-cell" style="color: var(--gg-text-secondary);">Reasoning</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider hidden xl:table-cell" style="color: var(--gg-text-secondary);">Constraints</th>
+        <th class="text-left py-3 px-4 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @decisions.each do |log| %>
+        <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)] transition-colors">
+          <td class="py-3 px-4 font-mono text-xs" style="color: var(--gg-text-dim);"><%= log[:created_at].strftime('%Y-%m-%d %H:%M') %></td>
+          <td class="py-3 px-4 font-medium" style="color: var(--gg-primary);"><%= log[:celestial_body] %></td>
+          <td class="py-3 px-4 text-xs" style="color: var(--gg-text-secondary);"><%= log[:location_context] %></td>
+          <td class="py-3 px-4">
+            <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(157,78,221,0.15); color: var(--gg-accent-purple);">
+              <%= log[:decision_type].to_s.humanize %>
+            </span>
+          </td>
+          <td class="py-3 px-4 text-xs hidden lg:table-cell" style="color: var(--gg-text-primary); max-width: 280px;"><%= log[:reasoning] %></td>
+          <td class="py-3 px-4 text-xs hidden xl:table-cell font-mono" style="color: var(--gg-text-dim);"><%= log[:constraints].keys.join(', ') %></td>
+          <td class="py-3 px-4">
+            <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(6,255,165,0.15); color: var(--gg-accent-success);">✓ Approved</span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Decision Types Reference -->
+<div class="gg-grid-panel">
+  <h2 class="gg-section-title text-lg flex items-center gap-2">
+    <span style="color: var(--gg-text-secondary);">📋</span> Decision Types Reference
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-cyan);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Resource Allocation</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">AI deciding how to distribute limited resources across competing needs</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-purple);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Contract Negotiation</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">AI evaluating and negotiating supply contracts with NPCs</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-warning);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Mission Planning</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">AI making strategic decisions about mission priorities and timelines</div>
+    </div>
+    <div class="p-3 rounded" style="background: var(--gg-bg-surface); border-left: 3px solid var(--gg-accent-success);">
+      <div class="font-semibold text-sm mb-1" style="color: var(--gg-primary);">Settlement Operations</div>
+      <div class="text-xs" style="color: var(--gg-text-secondary);">AI managing day-to-day settlement activities and optimizations</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 text-center">
+  <%= link_to '← Back to AI Manager Dashboard', admin_ai_manager_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+</div>

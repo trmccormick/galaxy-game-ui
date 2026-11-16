@@ -1,0 +1,179 @@
+<h1 class="gg-section-title">AI Manager — Mission Detail</h1>
+
+<!-- Mission Header -->
+<div class="gg-grid-panel mb-6 flex items-center justify-between" style="border-left: 3px solid var(--gg-primary);">
+  <div>
+    <span class="font-mono text-2xl font-bold" style="color: var(--gg-primary);"><%= @mission[:identifier].upcase %></span>
+    <p class="text-sm mt-1" style="color: var(--gg-text-secondary);">
+      <%= @mission[:settlement] %> • <%= @mission[:mission_type].to_s.humanize %>
+    </p>
+  </div>
+  <div class="text-right">
+    <span class="inline-block px-3 py-1 rounded text-sm font-semibold" style="background: rgba(0,212,255,0.15); color: var(--gg-primary);">
+      <%= @mission[:status].to_s.humanize %>
+    </span>
+    <div class="text-xs mt-2" style="color: var(--gg-text-dim);">Progress: <%= @mission[:progress] %>%</div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Left Panel: Mission Info -->
+  <div class="lg:col-span-1 space-y-6">
+    <!-- Mission Controls -->
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-primary);">⚙️</span> Mission Controls
+      </h2>
+      <div class="space-y-3 mt-4">
+        <%= button_to '▶ Advance Phase', admin_ai_manager_advance_phase_path(@mission[:identifier]), method: :post, class: 'w-full py-2.5 rounded font-semibold text-sm transition-colors', style: 'background: var(--gg-accent-success); color: var(--bg-dark);' %>
+        <%= button_to '↺ Reset Mission', admin_ai_manager_reset_mission_path(@mission[:identifier]), method: :post, data: { confirm: 'Reset mission to beginning?' }, class: 'w-full py-2.5 rounded font-semibold text-sm transition-colors', style: 'background: rgba(255,214,10,0.1); color: var(--gg-accent-warning); border: 1px solid rgba(255,214,10,0.3);' %>
+      </div>
+    </div>
+
+    <!-- Mission Info -->
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-text-secondary);">📊</span> Mission Info
+      </h2>
+      <div class="space-y-3 mt-4 text-sm">
+        <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+          <span style="color: var(--gg-text-dim);">Type</span>
+          <span style="color: var(--gg-accent-success);"><%= @mission[:mission_type].to_s.humanize %></span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+          <span style="color: var(--gg-text-dim);">Total Tasks</span>
+          <span style="color: var(--gg-primary);"><%= @task_list.length %></span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+          <span style="color: var(--gg-text-dim);">Current Task</span>
+          <span style="color: var(--gg-accent-cyan);"><%= @current_task_index + 1 %> / <%= @task_list.length %></span>
+        </div>
+        <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+          <span style="color: var(--gg-text-dim);">Created</span>
+          <span style="color: var(--gg-text-primary);"><%= @mission[:created_at].strftime('%Y-%m-%d') %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manifest Data -->
+    <% if @mission[:manifest] %>
+      <div class="gg-grid-panel">
+        <h2 class="gg-section-title text-lg flex items-center gap-2">
+          <span style="color: var(--gg-accent-purple);">📋</span> Manifest Data
+        </h2>
+        <div class="space-y-3 mt-4 text-sm">
+          <% if @mission[:manifest][:target_location] %>
+            <div class="py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Target</span>
+              <span style="color: var(--gg-accent-cyan);"><%= @mission[:manifest][:target_location][:body] %></span>
+            </div>
+          <% end %>
+          <% if @mission[:manifest][:mission_objective] %>
+            <div class="py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Objective</span>
+              <p class="mt-1 text-xs leading-relaxed" style="color: var(--gg-text-primary);"><%= @mission[:manifest][:mission_objective] %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Operational Data -->
+    <% if @mission[:operational_data] %>
+      <div class="gg-grid-panel">
+        <h2 class="gg-section-title text-lg flex items-center gap-2">
+          <span style="color: var(--gg-accent-cyan);">📡</span> Operational Data
+        </h2>
+        <div class="space-y-3 mt-4 text-sm font-mono">
+          <% @mission[:operational_data].each do |key, value| %>
+            <div class="py-1.5 border-b border-[rgba(0,212,255,0.05)]">
+              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);"><%= key.to_s.humanize %></span>
+              <span style="color: var(--gg-accent-cyan);"><%= value %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Main Content: Task Breakdown -->
+  <div class="lg:col-span-2">
+    <div class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-primary);">📝</span> Task Breakdown
+      </h2>
+      <div class="space-y-4 mt-4">
+        <% @task_list.each_with_index do |task, index| %>
+          <% is_current = (index == @current_task_index) %>
+          <% is_done = (index < @current_task_index) %>
+          <% task_border = is_current ? 'rgba(0,255,249,0.4)' : is_done ? 'rgba(6,255,165,0.3)' : 'rgba(136,146,176,0.2)' %>
+          <% task_shadow = is_current ? 'box-shadow: 0 0 10px rgba(0,255,249,0.1);' : is_done ? '' : 'opacity: 0.7;' %>
+          <div class="p-4 rounded-lg border transition-colors" style="background: var(--gg-bg-surface); border-color: <%= task_border %>; <%= task_shadow %>">
+            <div class="flex items-start justify-between mb-3">
+              <% task_color = is_current ? 'var(--gg-accent-cyan)' : is_done ? 'var(--gg-accent-success)' : 'var(--gg-text-dim)' %>
+              <h4 class="font-mono text-sm font-bold" style="color: <%= task_color %>;">
+                Task <%= index + 1 %>: <%= task[:task_id] %>
+              </h4>
+              <% badge_bg = is_current ? 'rgba(0,255,249,0.15)' : is_done ? 'rgba(6,255,165,0.15)' : 'rgba(136,146,176,0.1)' %>
+              <% badge_color = is_current ? 'var(--gg-accent-cyan)' : is_done ? 'var(--gg-accent-success)' : 'var(--gg-text-dim)' %>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider" style="background: <%= badge_bg %>; color: <%= badge_color %>;">
+                <% badge_text = is_current ? '▶ CURRENT' : is_done ? '✅ DONE' : '⏸️ PENDING' %>
+                <%= badge_text %>
+              </span>
+            </div>
+            <p class="text-sm mb-3" style="color: var(--gg-text-secondary);"><%= task[:description] %></p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+              <% if task[:type] %>
+                <div>
+                  <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Type</span>
+                  <span style="color: var(--gg-text-primary);"><%= task[:type].to_s.humanize %></span>
+                </div>
+              <% end %>
+              <% if task[:resource] %>
+                <div>
+                  <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Resource</span>
+                  <span style="color: var(--gg-primary);"><%= task[:resource] %></span>
+                </div>
+              <% end %>
+              <% if task[:quantity] %>
+                <div>
+                  <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Quantity</span>
+                  <span style="color: var(--gg-text-primary);"><%= number_with_delimiter(task[:quantity]) %></span>
+                </div>
+              <% end %>
+              <% if task[:craft_type] %>
+                <div>
+                  <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Craft</span>
+                  <span style="color: var(--gg-text-primary);"><%= task[:craft_type].to_s.humanize %></span>
+                </div>
+              <% end %>
+            </div>
+            <% if task[:dependencies]&.any? %>
+              <div class="mt-3 pt-2 border-t border-[rgba(0,212,255,0.1)]">
+                <span class="text-xs" style="color: var(--gg-text-dim);">Dependencies: <%= task[:dependencies].join(', ') %></span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Execution Console -->
+    <div class="gg-grid-panel mt-6" style="border-left: 3px solid var(--gg-accent-success);">
+      <h2 class="gg-section-title text-lg flex items-center gap-2">
+        <span style="color: var(--gg-accent-success);">🖥️</span> Execution Console
+      </h2>
+      <div class="mt-4 p-4 rounded font-mono text-xs leading-relaxed" style="background: var(--bg-dark); color: var(--gg-accent-success); border: 1px solid rgba(6,255,165,0.2);">
+        <div style="color: var(--gg-accent-cyan); margin-bottom: 8px;">=== MISSION: <%= @mission[:identifier].upcase %> ===</div>
+        <div style="color: var(--gg-text-dim);">Status: <%= @mission[:status].to_s.humanize %></div>
+        <div style="color: var(--gg-text-dim);">Progress: <%= @mission[:progress] %>%</div>
+        <div style="color: var(--gg-text-dim);">Current Task: <%= @current_task_index + 1 %> / <%= @task_list.length %></div>
+        <div style="color: var(--gg-accent-success); margin-top: 10px;">System ready for task execution...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 text-center">
+  <%= link_to '← Back to Missions', admin_ai_manager_missions_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+</div>
