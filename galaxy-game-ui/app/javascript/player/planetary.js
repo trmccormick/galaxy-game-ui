@@ -31,6 +31,7 @@ window.PlayerPlanetary = (function() {
     offsetX: 0,
     offsetY: 0,
     scale: 1.0,
+    tileSize: 1,
     isDragging: false,
     dragStartX: 0,
     dragStartY: 0,
@@ -691,6 +692,8 @@ window.PlayerPlanetary = (function() {
     const tileByH = Math.floor(availH / height);
     const tileSize = Math.max(4, Math.min(tileByW, tileByH));
 
+    viewport.tileSize = tileSize;
+
     canvas.width   = width  * tileSize;
     canvas.height  = height * tileSize;
 
@@ -904,9 +907,10 @@ window.PlayerPlanetary = (function() {
 
         if (color) {
           ctx.fillStyle = color;
-          const screenX = x * viewport.scale + viewport.offsetX;
-          const screenY = y * viewport.scale + viewport.offsetY;
-          const screenSize = Math.max(1, viewport.scale);
+          const tileSize  = viewport.tileSize || 1;
+          const screenX = x * tileSize * viewport.scale + viewport.offsetX;
+          const screenY = y * tileSize * viewport.scale + viewport.offsetY;
+          const screenSize = Math.max(1, tileSize * viewport.scale);
           ctx.fillRect(screenX, screenY, screenSize, screenSize);
         }
       }
