@@ -49,12 +49,17 @@
             <% end %></li>
           </ul>
 
+          <!-- Player section -->
+          <ul class="gg-nav-list mt-4">
+            <li><strong class="px-4 text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Player</strong></li>
+            <li><%= link_to player_planetary_path, class: "gg-nav-link#{' active' if controller.is_a?(PlayerController) and action_name == 'planetary'}" do %>
+              <span>&#x1F310;</span> Planetary
+            <% end %></li>
+          </ul>
+
           <!-- Galaxy section -->
           <ul class="gg-nav-list mt-4">
             <li><strong class="px-4 text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Galaxy</strong></li>
-            <li><%= link_to player_planetary_path, class: "gg-nav-link" do %>
-              <span>&#x1F310;</span> Planetary
-            <% end %></li>
             <li><%= link_to '#galaxy', class: "gg-nav-link", data: { turbo_frame: :main_content } do %>
               <span>&#x1F30C;</span> Galaxy
             <% end %></li>

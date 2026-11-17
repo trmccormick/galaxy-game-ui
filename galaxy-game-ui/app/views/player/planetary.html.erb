@@ -1,261 +1,179 @@
-<!-- ===== Planetary Shell (sidebar + map + data panel) ===== -->
-    <div class="flex flex-1 overflow-hidden">
+<%# Planetary View — layout and markup for the Player Dashboard shell. %>
+<%# Layout: header line with body facts, toolbar above map, map center, data panel right. %>
+<%# The shared dashboard layout wraps this in <main>; no nested sidebar/main/footer here. %>
 
-        <!-- Sidebar: Layer Controls -->
-        <aside class="w-56 border-r border-[rgba(0,212,255,0.1)] shrink-0 overflow-y-auto" style="background: var(--gg-bg-dark); padding: var(--gg-spacing-md) 0;">
-            <nav>
-                <!-- Navigation -->
-                <div class="px-4 pb-3">
-                    <h3 class="text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.5rem;">Navigation</h3>
-                    <%= link_to "← Back to Dashboard", dashboard_path,
-                          class: "block w-full text-left rounded px-3 py-2 bg-[rgba(0,212,255,0.08)] hover:bg-[rgba(0,212,255,0.15)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)] text-xs" %>
-                </div>
+<%= stylesheet_link_tag 'pages/player_planetary', "data-turbo-track": "reload" %>
 
-                <!-- Map Layers -->
-                <div class="px-4 pb-3">
-                    <h3 class="text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.5rem;">Map Layers</h3>
-                    <div class="flex flex-col gap-1">
-                        <button class="layer-btn active gg-nav-link" data-layer="terrain" style="text-align: left; font-size: var(--gg-font-sm);">Terrain</button>
-                        <button class="layer-btn gg-nav-link" data-layer="water" style="text-align: left; font-size: var(--gg-font-sm);">Hydrosphere</button>
-                        <button class="layer-btn gg-nav-link" data-layer="biomes" style="text-align: left; font-size: var(--gg-font-sm);">Biomes</button>
-                        <button class="layer-btn gg-nav-link" data-layer="features" style="text-align: left; font-size: var(--gg-font-sm);">Features</button>
-                        <button class="layer-btn gg-nav-link" data-layer="temperature" style="text-align: left; font-size: var(--gg-font-sm);">Temperature</button>
-                        <button class="layer-btn gg-nav-link" data-layer="rainfall" style="text-align: left; font-size: var(--gg-font-sm);">Rainfall</button>
-                        <button class="layer-btn gg-nav-link" data-layer="resources" style="text-align: left; font-size: var(--gg-font-sm);">Resources</button>
-                    </div>
-                </div>
-            </nav>
-        </aside>
+<!-- Header line with body facts -->
+<div class="planetary-header">
+  <h1 class="planetary-title"><%= @planet_name %> — PLANETARY</h1>
+  <div class="planetary-facts">
+    <%= @planet_type %> |
+    Radius: <%= number_to_human(@radius, precision: 2) %> m |
+    Gravity: <%= number_with_precision(@gravity, precision: 3) %>g |
+    Temp: <%= number_with_precision(288.0, precision: 1) %>K
+  </div>
+</div>
 
-        <!-- Main content area: Map -->
-        <main class="flex-1 overflow-y-auto p-6" style="background: #0a0e1a;">
-            <div id="canvasWrapper" style="position: relative; width: 100%; height: calc(100vh - 200px);">
-                <div id="mapOverlay" style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; pointer-events: none;">
-                    <div id="mapTitle" style="color: var(--gg-text-primary); font-size: var(--gg-font-sm); padding: 0.5rem 1rem; background: rgba(10,14,26,0.8);"><%= @planet_name %> - PLANETARY MAP</div>
-                </div>
-                <div id="canvasScroller" style="width: 100%; height: 100%; overflow: auto;">
-                    <div id="canvasContainer" style="min-width: 800px; min-height: 400px; display: flex; align-items: center; justify-content: center;">
-                        <canvas id="planetCanvas" width="800" height="400" style="background: #000;"></canvas>
-                    </div>
-                </div>
-                <div id="mapControls" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem; z-index: 20;">
-                    <div class="rounded bg-[var(--gg-bg-surface)] border border-[rgba(0,212,255,0.2)] px-3 py-2 text-xs">
-                        <label style="color: var(--gg-text-secondary);">Zoom: <span id="zoomValue" class="text-[var(--gg-primary)]">1.0x</span></label>
-                        <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1" style="width: 120px; margin-top: 0.25rem;">
-                    </div>
-                    <button id="resetViewBtn" class="rounded bg-[rgba(0,212,255,0.1)] hover:bg-[rgba(0,212,255,0.2)] transition-colors text-[var(--gg-text-secondary)] hover:text-[var(--gg-primary)] px-3 py-2 text-xs" title="Reset view to center">&#x2302; Reset</button>
-                </div>
-            </div>
-        </main>
+<!-- Toolbar above the map -->
+<div class="planetary-toolbar">
+  <!-- Layer buttons -->
+  <div class="layer-selector">
+    <button class="layer-btn active" data-layer="terrain">Terrain</button>
+    <button class="layer-btn" data-layer="water">Hydrosphere</button>
+    <button class="layer-btn" data-layer="biomes">Biomes</button>
+    <button class="layer-btn" data-layer="features">Features</button>
+    <button class="layer-btn" data-layer="temperature">Temperature</button>
+    <button class="layer-btn" data-layer="rainfall">Rainfall</button>
+    <button class="layer-btn" data-layer="resources">Resources</button>
+  </div>
 
-        <!-- Right Panel: Data Panel -->
-        <aside id="dataPanel" style="background: var(--gg-bg-surface); color: var(--gg-text-primary); width: 320px; border-left: 1px solid rgba(0,212,255,0.1); padding: 1.5rem 1rem; overflow-y: auto;">
-            <!-- Atmosphere Section -->
-            <div class="data-section mb-6">
-                <h3 class="text-[var(--gg-primary)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.75rem;">Atmosphere</h3>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Pressure:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="atmo-pressure">1.00 atm</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Temperature:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="atmo-temp">288.0 K</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Total Mass:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="atmo-mass">5.15e19 kg</span>
-                </div>
-                <!-- Composition -->
-                <h4 class="subsection text-[var(--gg-text-dim)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-top: 1rem; margin-bottom: 0.5rem;">Composition</h4>
-                <div id="atmo-composition">
-                    <div class="data-row mb-1 flex justify-between">
-                        <span class="data-label" style="color: var(--gg-text-secondary);">N<sub>2</sub>:</span>
-                        <span class="data-value text-[var(--gg-primary)]">78.0%</span>
-                    </div>
-                    <div class="data-row mb-1 flex justify-between">
-                        <span class="data-label" style="color: var(--gg-text-secondary);">O<sub>2</sub>:</span>
-                        <span class="data-value text-[var(--gg-primary)]">21.0%</span>
-                    </div>
-                    <div class="data-row mb-1 flex justify-between">
-                        <span class="data-label" style="color: var(--gg-text-secondary);">Ar:</span>
-                        <span class="data-value text-[var(--gg-primary)]">0.93%</span>
-                    </div>
-                </div>
-            </div>
+  <!-- Zoom and reset -->
+  <div class="planetary-controls">
+    <div class="control-group">
+      <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
+      <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1">
+    </div>
+    <button id="resetViewBtn" class="control-btn" title="Reset view to center">&#x2302; Reset</button>
+  </div>
+</div>
 
-            <!-- Biosphere Section -->
-            <div class="data-section mb-6">
-                <h3 class="text-[var(--gg-primary)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.75rem;">Biosphere</h3>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Biodiversity:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="bio-diversity">65.0%</span>
-                </div>
-                <div class="progress-bar mb-2 rounded-full overflow-hidden" style="background: rgba(0,212,255,0.1); height: 8px;">
-                    <div id="bio-diversity-bar" class="progress-fill" style="width: 65%; background: var(--gg-accent-success); height: 100%;"></div>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Habitability:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="bio-habitability">92.0%</span>
-                </div>
-                <div class="progress-bar mb-2 rounded-full overflow-hidden" style="background: rgba(0,212,255,0.1); height: 8px;">
-                    <div id="bio-habitability-bar" class="progress-fill" style="width: 92%; background: var(--gg-accent-success); height: 100%;"></div>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Life Forms:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="bio-lifeforms">Extensive</span>
-                </div>
-            </div>
+<!-- Map and data panel area -->
+<div class="planetary-body">
+  <!-- Map canvas -->
+  <div id="canvasWrapper" class="planetary-map">
+    <div id="mapOverlay" class="map-overlay">
+      <div id="mapTitle"><%= @planet_name %> — PLANETARY MAP</div>
+    </div>
+    <div id="canvasScroller" class="map-scroller">
+      <div id="canvasContainer" class="map-container">
+        <canvas id="planetCanvas" width="800" height="400"></canvas>
+      </div>
+    </div>
+  </div>
 
-            <!-- Geosphere Section -->
-            <div class="data-section mb-6">
-                <h3 class="text-[var(--gg-primary)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.75rem;">Geosphere</h3>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Geological Activity:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="geo-activity">50/100</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Tectonic Active:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="geo-tectonic">Yes</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Core Mass:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="geo-core">1.33e23 kg</span>
-                </div>
-            </div>
-
-            <!-- Hydrosphere Section -->
-            <div class="data-section mb-6">
-                <h3 class="text-[var(--gg-primary)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em; margin-bottom: 0.75rem;">Hydrosphere</h3>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Liquid Coverage:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="hydro-coverage">71.0%</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Primary Liquid:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="hydro-ocean">H<sub>2</sub>O</span>
-                </div>
-                <div class="data-row mb-2 flex justify-between">
-                    <span class="data-label" style="color: var(--gg-text-secondary);">Total Liquid Mass:</span>
-                    <span class="data-value text-[var(--gg-primary)]" id="hydro-ice">1.4e21 kg</span>
-                </div>
-            </div>
-        </aside>
+  <!-- Right Panel: Data Panel -->
+  <aside id="dataPanel" class="planetary-data-panel">
+    <!-- Atmosphere Section -->
+    <div class="data-section mb-6">
+      <h3 class="section-title">Atmosphere</h3>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Pressure:</span>
+        <span class="data-value" id="atmo-pressure"><%= number_with_precision(@atmosphere[:pressure], precision: 2) %> atm</span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Temperature:</span>
+        <span class="data-value" id="atmo-temp"><%= number_with_precision(@atmosphere[:temperature], precision: 1) %> K</span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Total Mass:</span>
+        <span class="data-value" id="atmo-mass"><%= number_to_human(@atmosphere[:total_mass], precision: 2) %> kg</span>
+      </div>
+      <!-- Composition -->
+      <h4 class="subsection-title">Composition</h4>
+      <div id="atmo-composition">
+        <% @atmosphere[:composition].each do |gas, percentage| %>
+          <div class="data-row mb-1 flex justify-between">
+            <span class="data-label"><%= gas %>:</span>
+            <span class="data-value"><%= number_with_precision(percentage, precision: 2) %>%</span>
+          </div>
+        <% end %>
+      </div>
     </div>
 
-    <!-- Bottom Panel: Console -->
-    <footer style="border-top: 1px solid rgba(0,212,255,0.1); padding: 0.75rem 1rem; background: var(--gg-bg-surface);">
-        <div id="console" style="font-family: monospace; font-size: 11px; color: var(--gg-text-secondary); max-height: 80px; overflow-y: auto;">
-            <div class="console-line info" style="color: var(--gg-primary);">&gt; planetary monitoring system initialized for <%= @planet_name %></div>
-        </div>
-    </footer>
+    <!-- Biosphere Section -->
+    <div class="data-section mb-6">
+      <h3 class="section-title">Biosphere</h3>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Biodiversity:</span>
+        <span class="data-value" id="bio-diversity"><%= number_with_precision(@biosphere[:biodiversity], precision: 1) %>%</span>
+      </div>
+      <div class="progress-bar mb-2 rounded-full overflow-hidden">
+        <div id="bio-diversity-bar" class="progress-fill" style="width: <%= @biosphere[:biodiversity] %>; background: var(--gg-accent-success); height: 100%;"></div>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Habitability:</span>
+        <span class="data-value" id="bio-habitability"><%= number_with_precision(@biosphere[:habitability], precision: 1) %>%</span>
+      </div>
+      <div class="progress-bar mb-2 rounded-full overflow-hidden">
+        <div id="bio-habitability-bar" class="progress-fill" style="width: <%= @biosphere[:habitability] %>; background: var(--gg-accent-success); height: 100%;"></div>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Life Forms:</span>
+        <span class="data-value" id="bio-lifeforms"><%= @biosphere[:life_forms] %></span>
+      </div>
+    </div>
 
-    <!-- MOCK DATA: Ported from main app source (galaxyGame/galaxy_game). Earth body data. -->
-    <script type="application/json" id="monitor-data">
-    {
-      "planet_id": 1,
-      "planet_name": "Earth",
-      "planet_type": "terrestrial",
-      "surface_temperature": 288,
-      "atmosphere_temperature": 288,
-      "atmosphere_pressure": 1.0,
-      "atmospheric_composition": { "N2": 78.0, "O2": 21.0, "Ar": 0.93 },
-      "terrain_data": {
-        "elevation": [
-          [-800,-750,-600,-400,-200,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [-750,-600,-300,   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [-600,-300,   0,  50, 80,120,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [-400,   0,  50,200,300,150,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [-200,   0, 80,300,400,200, 50,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,120,150, 80,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0, 50, 80,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,  0, 50,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,  0, 50,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0, 80,150,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,120,300,400,200, 50,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0, 80,200,300,150,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0, 50,120,300, 80,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,150,400,200, 50,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,200,350,180, 80,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,180,320,160, 60,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [   0,   0,  0,100,250,120, 30,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0]
-        ],
-        "biomes": [
-          ["ocean","ocean","ocean","ocean","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","ocean","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","coast","tropical_rainforest","tropical_rainforest","tropical_rainforest","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","coast","tropical_rainforest","temperate_forest","temperate_forest","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","coast","temperate_forest","temperate_forest","mountain","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","temperate_forest","grassland","plains","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","coast","grassland","plains","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","coast","coast","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","coast","coast","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","coast","grassland","plains","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["coast","coast","temperate_forest","temperate_forest","mountain","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","coast","temperate_forest","temperate_forest","mountain","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","coast","tropical_rainforest","temperate_forest","temperate_forest","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","tropical_rainforest","tropical_rainforest","tropical_rainforest","tropical_rainforest","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","ocean","tropical_rainforest","temperate_forest","grassland","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","ocean","ocean","temperate_forest","temperate_forest","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"],
-          ["ocean","ocean","ocean","ocean","ocean","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast","coast"]
-        ],
-        "resource_grid": [
-          ["none","none","none","none","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","none","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","rock","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","rock","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","rock","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","rock","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","rock","rock","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","rock","rock","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","rock","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["rock","rock","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","rock","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","rock","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","iron","iron","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","rock","iron","iron","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"],
-          ["none","none","none","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock","rock"]
-        ],
-        "quality_score": "mock",
-        "generation_method": "prototype_mock_data"
-      },
-      "planet_data": {
-        "name": "Earth",
-        "type": "terrestrial",
-        "atmosphere": { "pressure": 1.0, "temperature": 288, "total_mass": 5.15e19, "composition": { "N2": 78.0, "O2": 21.0, "Ar": 0.93 } },
-        "surface_temperature": 288,
-        "temperature": 288,
-        "geological_activity": 50,
-        "gravity": 1.0,
-        "geosphere_attributes": { "geological_activity": 50, "tectonic_active": true, "core_mass": 1.33e23 },
-        "crust_composition": {},
-        "liquid_name": "H2O",
-        "water_coverage": 71.0,
-        "has_biosphere": true,
-        "has_hydrosphere": true,
-        "has_atmosphere": true
-      },
-      "geosphere_present": true,
-      "biosphere_present": true,
-      "hydrosphere_present": true,
-      "atmosphere_present": true,
-      "terrain_map_present": false,
-      "available_layers": {
-        "terrain": true,
-        "water": true,
-        "biomes": true,
-        "features": true,
-        "temperature": true,
-        "rainfall": true,
-        "resources": true,
-        "civilization": true
-      },
-      "civilization_features": []
-    }
-    </script>
+    <!-- Geosphere Section -->
+    <div class="data-section mb-6">
+      <h3 class="section-title">Geosphere</h3>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Geological Activity:</span>
+        <span class="data-value" id="geo-activity"><%= @geosphere[:geological_activity] %>/100</span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Tectonic Active:</span>
+        <span class="data-value" id="geo-tectonic"><%= @geosphere[:tectonic_active] ? 'Yes' : 'No' %></span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Core Mass:</span>
+        <span class="data-value" id="geo-core"><%= number_to_human(@geosphere[:core_mass], precision: 2) %> kg</span>
+      </div>
+    </div>
 
-    <%= javascript_include_tag 'player/planetary', "data-turbo-track": "reload" %>
+    <!-- Hydrosphere Section -->
+    <div class="data-section mb-6">
+      <h3 class="section-title">Hydrosphere</h3>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Liquid Coverage:</span>
+        <span class="data-value" id="hydro-coverage"><%= number_with_precision(@hydrosphere[:liquid_coverage], precision: 1) %>%</span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Primary Liquid:</span>
+        <span class="data-value" id="hydro-ocean"><%= @hydrosphere[:primary_liquid] %></span>
+      </div>
+      <div class="data-row mb-2 flex justify-between">
+        <span class="data-label">Total Liquid Mass:</span>
+        <span class="data-value" id="hydro-mass"><%= number_to_human(@hydrosphere[:total_liquid_mass], precision: 2) %> kg</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- MOCK DATA: Representative Earth data ported from main app (galaxyGame/galaxy_game). -->
+<!-- Prototype does NOT process game data; these values are display-only for layout work. -->
+<script type="application/json" id="monitor-data">
+<%= raw({
+  planet_id: 1,
+  planet_name: @planet_name,
+  planet_type: @planet_type,
+  surface_temperature: 288,
+  atmosphere_temperature: 288,
+  atmosphere_pressure: 1.0,
+  atmospheric_composition: { "N2" => 78.0, "O2" => 21.0, "Ar" => 0.93 },
+  terrain_data: @terrain_data,
+  planet_data: {
+    name: @planet_name,
+    type: @planet_type,
+    atmosphere: { pressure: @atmosphere[:pressure], temperature: @atmosphere[:temperature], total_mass: @atmosphere[:total_mass], composition: @atmosphere[:composition] },
+    surface_temperature: 288,
+    geological_activity: @geosphere[:geological_activity],
+    gravity: @gravity,
+    geosphere_attributes: { geological_activity: @geosphere[:geological_activity], tectonic_active: @geosphere[:tectonic_active], core_mass: @geosphere[:core_mass] },
+    liquid_name: @hydrosphere[:primary_liquid],
+    water_coverage: @hydrosphere[:liquid_coverage],
+    has_biosphere: true,
+    has_hydrosphere: true,
+    has_atmosphere: true
+  },
+  geosphere_present: true,
+  biosphere_present: true,
+  hydrosphere_present: true,
+  atmosphere_present: true,
+  terrain_map_present: false,
+  available_layers: { terrain: true, water: true, biomes: true, features: true, temperature: true, rainfall: true, resources: true, civilization: true },
+  civilization_features: []
+}.to_json) %>
+</script>
+
+<%= javascript_include_tag 'player/planetary', "data-turbo-track": "reload" %>
