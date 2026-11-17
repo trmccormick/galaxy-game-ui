@@ -89,8 +89,29 @@
           <% if Current.user&.role_admin? %>
             <ul class="gg-nav-list mt-4">
               <li><strong class="px-4 text-[var(--gg-accent-danger)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">Admin</strong></li>
-              <li><%= link_to admin_dashboard_path, class: "gg-nav-link" do %>
+              <li><%= link_to admin_dashboard_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::DashboardController)}" do %>
                 <span>&#x1F3A1;</span> Admin Console
+              <% end %></li>
+            </ul>
+            <ul class="gg-nav-list mt-4">
+              <li><strong class="px-4 text-[var(--gg-accent-purple)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">AI Manager</strong></li>
+              <li><%= link_to admin_ai_manager_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerController) && controller.action_name == 'index'}" do %>
+                <span>&#x1F916;</span> Dashboard
+              <% end %></li>
+              <li><%= link_to admin_ai_manager_missions_path, class: "gg-nav-link #{'active' if controller.action_name == 'missions'}" do %>
+                <span>&#x1F680;</span> Missions
+              <% end %></li>
+              <li><%= link_to admin_ai_manager_decisions_path, class: "gg-nav-link #{'active' if controller.action_name == 'decisions'}" do %>
+                <span>&#x1F9E0;</span> Decisions
+              <% end %></li>
+              <li><%= link_to admin_ai_manager_planner_path, class: "gg-nav-link #{'active' if controller.action_name == 'planner'}" do %>
+                <span>&#x1F4CB;</span> Planner
+              <% end %></li>
+              <li><%= link_to admin_ai_manager_patterns_path, class: "gg-nav-link #{'active' if controller.action_name == 'patterns'}" do %>
+                <span>&#x1F3AF;</span> Patterns
+              <% end %></li>
+              <li><%= link_to admin_ai_manager_performance_path, class: "gg-nav-link #{'active' if controller.action_name == 'performance'}" do %>
+                <span>&#x1F4C8;</span> Performance
               <% end %></li>
             </ul>
           <% end %>
