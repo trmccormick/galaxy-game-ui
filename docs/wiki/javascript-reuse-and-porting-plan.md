@@ -36,7 +36,7 @@ The original EVE Dashboard application is a separate local Python project under:
 
 `/Users/tam0013/Documents/git/eve-dashboard/`
 
-The JavaScript modules were previously supplied/reviewed from that project. They are not part of the GalaxyGame main repository. Recover the original modules from this local source before adapting them; do not recreate them from descriptions or copy EVE application backend behavior. Known modules include `fleet_map.js`, `market.js`, `chain.js`, `assets.js`, `wealth.js`, and `structures.js`.
+The JavaScript modules were previously supplied/reviewed from that project. They are not part of the GalaxyGame main repository. Recover the original modules from this local source before adapting them; do not recreate them from descriptions or copy EVE application backend behavior. Known modules include `fleet_map.js`, `fleet_builder.js`, `fleet.js`, `market.js`, `chain.js`, `assets.js`, `wealth.js`, and `structures.js`.
 
 ## 2. Reference-file inventory
 
@@ -45,6 +45,7 @@ The following files were reviewed in earlier sessions and are the known referenc
 | Reference file | Existing pattern | Evidence | Reuse assessment | Galaxy Game adaptation |
 |---|---|---|---|---|
 | fleet_map.js | SVG map, pan/zoom, markers, routes, tooltips, context menus, shortest-path interaction | REPORTED (code-derived from previously examined JS file) | **Adapt selectively** | Map canvas and interaction controller for star-system/spatial views. Replace EVE objects, route semantics, data contracts, and actions with Galaxy Game concepts. |
+| fleet_builder.js | Character/team selection, grouping, ordering, favourites, and quick-action patterns | REPORTED (code-derived from user-supplied reference file) | **Adapt selectively; not a direct port** | Reframe around named craft and optional operational/task groups. GalaxyGame craft are autonomous assets commanded remotely; do not import pilots, characters, EVE fleet membership assumptions, localStorage preferences, or EVE endpoints. |
 | market.js | Searchable/filterable table, sorting, summary metrics, refresh | REPORTED (code-derived from previously examined JS file) | **Strong candidate to adapt** | Generic table/search/filter/sort pattern for market and other data-heavy workspaces. Keep market-specific columns and transaction behavior separate. |
 | chain.js | Interactive network graph, editing, pan/zoom, links, contextual details | REPORTED (code-derived from previously examined JS file) | **Adapt selectively** | Possible infrastructure/logistics/network visualization. Do not assume EVE chain topology maps directly to Galaxy Game networks. |
 | assets.js | Multi-select filters, select all/none, indeterminate state, typeahead | REPORTED (code-derived from previously examined JS file) | **Strong candidate to adapt** | Reusable filter/selection controller for assets, inventories, and other bulk-selection interfaces. |
@@ -76,6 +77,20 @@ Must be redesigned:
 - empty/loading/error behavior.
 
 **Candidate destination:** a focused map controller/module plus a Galaxy Game map data adapter. Exact filenames are OPEN.
+
+#### Craft operations and grouping — fleet_builder.js
+
+Potentially reusable interaction patterns, subject to a later task-specific source/dependency review:
+- selecting craft by their GalaxyGame ship/craft names and displaying their operational status and current location;
+- grouping selected craft for a defined task or operation where the workflow calls for it;
+- ordering, filtering, favouriting, and quick-selection patterns;
+- presenting an assigned objective/destination separately from the craft's current state.
+
+GalaxyGame's model is craft-centered, not character-centered. Craft are automated operational assets. Players and authorized Admin/AI Manager workflows assign objectives remotely; craft execute through their onboard automation and the AI Manager according to their capabilities and available communications. Do not model pilots/characters as the controlling identity, imply direct piloting, or assume every craft must belong to a fleet. A craft may operate independently or be associated with an optional task/operational group. Names, locations, status, assignments, permissions, communication reach, and execution results must come from GalaxyGame data/services; frontend interactions do not create authoritative operations.
+
+Do not port the EVE module wholesale. Its browser localStorage preferences, EVE character/team schema, and `/fleet/*` endpoints are not GalaxyGame contracts. Keep the Player and Admin workflows distinct even if they share a presentation helper.
+
+**Candidate destination:** a small craft-selection/grouping interaction module or feature-specific controller, only after a concrete Player or Admin workflow is selected. This is separate from the first Sol Space map slice, which only needs map pan/zoom and object selection.
 
 #### Data-table interaction — market.js
 
@@ -238,7 +253,7 @@ The first vertical slice may change this order. The chosen workflow, not this ta
 ## 7. Porting checklist
 
 For each reference file:
-- [ ] Locate the original file and record its repository/source and revision.
+- [ ] Locate the original file and record its repository/source and revision (including the user-supplied `fleet_builder.js` reference).
 - [ ] Search the current prototype and local working tree for copies, partial ports, or related controllers.
 - [ ] Identify dependencies, global variables, selectors, CSS assumptions, endpoints, and data shapes.
 - [ ] Separate generic interaction behavior from EVE-specific domain logic.
