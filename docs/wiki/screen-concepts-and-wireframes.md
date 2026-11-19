@@ -234,6 +234,8 @@ A discovered system has a harvestable EM field under the current design; unvisit
 
 Sol's natural wormhole remains present for the current human-expansion scenario, although it is comparatively—not absolutely—more stable due to its placement opposite Jupiter. The Eden-side snap predates EM stabilization technology. The game-domain wiki is authoritative for these mechanics.
 
+**Prototype naming note — owner-confirmed:** The system currently labeled **Eden** in generated data is identified by the stable identifier `AOL-732356`. “Eden” is only a working display name and may be replaced; keep the identifier unchanged when the name changes. The name is under review because the procedural generator also uses Eden for a planet and because EVE Online's **New Eden** creates an avoidable naming association. No replacement system name is confirmed. Gaia and Aki Gaia are discussion candidates/context, not approved system names. Do not rename the JSON or present Eden as the final system name. The main game's domain wiki remains authoritative for the naming decision.
+
 ## 11. Shared interaction and state requirements
 
 Across workspaces, plan for:
