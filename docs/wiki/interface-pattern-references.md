@@ -154,7 +154,7 @@ A Planetary workspace, Orbital view, Surface workspace, and Map Studio have diff
 
 ## 10. UI-first integration choice
 
-The prototype should first establish and review the look, layout, navigation, and interaction patterns. Mock data may support this work but must not be mistaken for live state or a committed data contract.
+The prototype should first establish and review the look, layout, navigation, and interaction patterns. Mock data may support this work but must not be mistaken for live state or a committed data contract. Even mock data should be delivered through the same Rails-to-frontend boundary planned for the real data path.
 
 When the presentation is ready to integrate, evaluate whether to backport the refined views into the main application or retain the prototype as a separate UI consuming capabilities exposed by a main-application API. This remains an open implementation choice. In either case, the main application owns authoritative simulation behavior, domain rules, calculations, permissions, and operations. Reuse existing services and data access wherever possible; do not recreate game logic in the UI.
 
@@ -170,3 +170,5 @@ For every ported view, identify which existing main-app services, datasets, calc
 Mock data is acceptable while refining the UI, but keep it visibly separate from live API responses. Do not let mock schemas dictate the backend contract without review. Do not duplicate game rules, authoritative calculations, persistence, permissions, or simulation behavior in the prototype.
 
 The API should be introduced incrementally around reviewed screens. Its exact endpoints, response schemas, authentication, and deployment details remain open and must be grounded in inspection of the main application's existing code.
+
+**Runtime data boundary — established direction (2026-11-19):** Browser JavaScript does not load GalaxyGame universe/system JSON files. Rails owns file access, source selection, record lookup, and preparation of the data required by each view. Rails provides a focused payload to the page (controller-rendered data or a Rails endpoint); JavaScript consumes that payload and handles presentation and transient interaction. A later API/provider may replace Rails' current local-JSON source without requiring a frontend rewrite. The EVE `universe.min.json` is only a reference/test fixture for understanding a compact data structure; it is never a GalaxyGame browser runtime dependency. The four-system map experiment must use actual GalaxyGame system records resolved by Rails and only real relationships supplied by the backend. Remove the EVE map's direct JSON fetch and EVE-specific route/path assumptions when adapting it.
