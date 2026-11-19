@@ -122,6 +122,33 @@ The prototype must preserve the main game's distinctions among Settlements, Colo
 
 The authoritative details, including the corporate-withdrawal control-transfer rule and unresolved asset/liability mechanics, belong in the main game's `galaxyGame/docs/wiki/player/settlement_ownership_and_governance.md` (canonical domain intent) page.
 
+## 7A. Public landing page and system overview
+
+The public landing page is the entry point to GalaxyGame and should introduce the game while making its current multi-system setting understandable. It is a public-facing entry experience, not the authenticated player dashboard and not an Admin/AI Manager workspace.
+
+### Page layout
+
+Use this overall content order:
+
+1. **Brand/hero area:** GalaxyGame identity, a concise description of the game, and clear Sign In / account-entry actions. Keep this restrained so the system overview remains the main content.
+2. **Star-system overview:** a prominent overview of the five intended systems—**Sol**, **Alpha Centauri**, **FR-488530**, **DJEW-716790**, and **Eden**. Each system should be identifiable by its real name and stable system identifier where available. Use compact, consistent system cards or equivalent compact panels; avoid oversized decorative cards that waste space.
+3. **System network context:** communicate that the setting includes natural and artificial wormhole connections. Sol is the central system in the intended overview. A network diagram may connect the system panels when the actual connection records/topology are available; do not invent missing edges or imply an unverified route. The exact complete four-connection topology remains to be reconciled before it is presented as authoritative.
+4. **Supporting public information:** concise explanatory content and any secondary public links. Do not let secondary status panels compete with the system overview.
+
+The visual language should follow the prototype's established dark/cyan desktop style, with compact typography, readable spacing and clear separation between system identity, connection type and supporting metadata. This is a landing page, not an attempt to reproduce an EVE Online interface.
+
+### System-card data and meaning
+
+Populate the five system entries from the copied star-system JSON sources described in [Data Integration and Backend Integration Proposal](data-integration-and-migration.md). The card identity and any displayed celestial-object count must come from those records. A card may show a concise selection of system-level facts that are actually present in the source; do not fabricate population, economy, discovery or operational status.
+
+Sol's smaller `sol.json` fixture includes the major worlds Earth, Mars, Venus and Titan and is sufficient for ordinary UI testing. `sol-complete.json` supplies a larger celestial-object collection for testing broader lists and counts. Neither file contains terrain. Do not show a terrain/map preview or infer map completeness from these files.
+
+Keep static illustrative dashboard metrics, recent activity or other non-source content clearly identified as illustrative/mock. The presence of JSON-backed system cards does not make unrelated metrics live.
+
+### Connection context
+
+The intended network story distinguishes natural wormholes from artificial wormholes; these are not interchangeable connection types. Confirmed anchor context includes Jupiter as the Sol natural-wormhole anchor, Saturn as the Eden artificial-wormhole anchor, and an Earth-side artificial-wormhole endpoint opposite Neptune associated with the Alpha Centauri connection. The remaining exact edge list and complete four-connection topology are not yet confirmed. Until that is resolved from authoritative records, present only verified connections or use a clearly provisional explanatory treatment rather than drawing a definitive complete network.
+
 ## 8. References
 
 - [Project overview and architecture](README.md)
