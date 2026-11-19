@@ -22,6 +22,12 @@ For each view, record:
 
 This is evidence gathering for future API design, not an API contract. Mock fields must not silently become requirements or be presented as established game mechanics. The prototype is not expected to implement authoritative simulation operations or production backend behavior.
 
+### First landing-page system data — do not make completeness a gate
+
+The first landing-page slice should load and display the available system records, including the five intended systems, using the existing source JSON and a small Rails-side reader/controller path. Early procedural or hybrid test data is acceptable as provisional source material. Do not hold up the landing page, system cards, navigation, or subsequent view-porting work while every planetary property is scientifically corrected or every system has been surveyed. Preserve system identity and any data provenance that is available; label preliminary/incomplete data honestly rather than silently presenting it as verified. Correct structural defects such as identifiers only where they break object identity, selection, or relationships needed by the page.
+
+The later game-domain work for StarSim-derived property refinement, player survey observations, calibration/reconciliation, and active map/body updates is recorded in the authoritative main GalaxyGame wiki, especially `galaxyGame/docs/wiki/design/starsim_and_protection_classes.md` and `galaxyGame/docs/wiki/services/ai_manager.md`. It is not part of the landing-page loader's responsibility and is not a prerequisite for this prototype task. The prototype should consume the available data and record genuine display/integration gaps; it must not attempt to perform scientific corrections itself.
+
 ## 2. Longer-term API direction (still to be designed)
 
 The main GalaxyGame application is expected to remain authoritative for game state, domain behavior, calculations, validation, persistence, authorization, and operations. The prototype can help reveal what information and actions its screens need, but endpoint names, response schemas, authentication, update cadence, and integration approach must be designed later from inspected main-app services and reviewed UI workflows. No production API work is required to make the current prototype useful.
