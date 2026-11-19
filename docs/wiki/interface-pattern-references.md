@@ -23,6 +23,7 @@ The following existing JavaScript examples have been examined as interaction ref
 | Example | Reusable interaction pattern | Evidence | Galaxy Game adaptation boundary |
 |---|---|---|---|
 | `fleet_map.js` | Interactive SVG map, pan/zoom, routes, markers, tooltips, context menus and shortest-path visualization | REPORTED (code-derived from previously examined JS file) | Reuse map interaction mechanics only. Route meaning, availability and any path calculation must come from Galaxy Game data and rules. |
+| `fleet_builder.js` | Character/team selection, grouping, ordering, favourites and quick-action interactions | REPORTED (code-derived from user-supplied JS reference) | Adapt interaction patterns to named autonomous craft and optional task groups. Do not import pilots/characters, EVE fleet assumptions, localStorage schema, or `/fleet/*` endpoints. |
 | `market.js` | Searchable/filterable market table, sorting, summary metrics and refresh interaction | REPORTED (code-derived from previously examined JS file) | Reuse table/filter patterns. Market data, order semantics, prices and refresh behavior must be supplied by Galaxy Game services. |
 | `chain.js` | Interactive network map, node/link editing, zoom/pan and contextual information | REPORTED (code-derived from previously examined JS file) | Reuse graph interaction patterns. Galaxy Game wormhole topology and edit permissions must come from its own domain rules. |
 | `assets.js` | Multi-select filters, select all/none, indeterminate state and typeahead | REPORTED (code-derived from previously examined JS file) | Reuse generic filter controls. Asset categories and permissions must use Galaxy Game's own data. |
@@ -31,7 +32,21 @@ The following existing JavaScript examples have been examined as interaction ref
 
 These are references already identified in prior review, not proof that each file is present in the active prototype. Confirm exact source paths and current copies before implementation.
 
-## 3. Presentation patterns worth evaluating
+## 3. Craft-centered operations — Galaxy Game adaptation
+
+EVE's `fleet_builder.js` is a reference for interaction mechanics, not for Galaxy Game's operational model. Galaxy Game craft are autonomous assets that players command remotely by assigning objectives or tasks; they are not normally piloted by player characters. The craft's onboard automation and the AI Manager support execution according to craft capabilities and available communications.
+
+For a Galaxy Game craft interface:
+- identify each asset by its ship/craft name and relevant craft identity, not by a pilot or character;
+- show current location, operational state, assigned objective, and communication/command freshness only when supplied by authoritative data;
+- allow craft to be selected and optionally grouped for a specific task or operation;
+- preserve independent craft operation; do not assume every craft belongs to a standing fleet;
+- distinguish issuing a remote objective from directly controlling/piloting a craft, and distinguish a requested task from a confirmed execution result;
+- keep Player asset-management and Admin/AI Manager operational workflows separate, even if they share generic selection/grouping components.
+
+Reusable patterns may include selection, grouping, ordering, filtering, favourites, and contextual status/detail panels. EVE character records, fleet membership rules, localStorage preferences, and backend endpoints are not Galaxy Game data contracts or behavior.
+
+## 4. Presentation patterns worth evaluating
 
 ### Catalogs, assessment, and drill-down
 
@@ -69,7 +84,7 @@ Do not use a dashboard, card grid, or map by default. Choose the presentation th
 - Show aggregate totals alongside detailed rows.
 - Do not imply an external valuation source or live price when the backend has not supplied one.
 
-## 4. Current UI foundation and visual direction
+## 5. Current UI foundation and visual direction
 
 **ESTABLISHED VISUAL DIRECTION — 2026-11-11**
 
@@ -92,7 +107,7 @@ Earlier first-attempt notes contain several different visual suggestions, includ
 
 Do not wholesale-import the first-attempt EVE stylesheet. Select individual patterns and adapt them to the current Tailwind v4/Propshaft asset setup after inspecting the live branch.
 
-## 5. Combining the reference sources
+## 6. Combining the reference sources
 
 Evaluate three sources for different strengths:
 
@@ -102,7 +117,7 @@ Evaluate three sources for different strengths:
 
 Do not assume one source is the standard for every screen. Preserve the strongest relevant elements from each and adapt them to Galaxy Game's actual workflows.
 
-## 6. Responsive and accessibility expectations
+## 7. Responsive and accessibility expectations
 
 For each implemented interaction:
 - provide keyboard-accessible controls and visible focus;
@@ -115,14 +130,14 @@ For each implemented interaction:
 
 These are quality expectations for future work, not a claim that the current prototype already satisfies them.
 
-## 7. Related planning pages
+## 8. Related planning pages
 
 - [Interface and workflow direction](interface-and-workflows.md)
 - [Data integration and migration](data-integration-and-migration.md)
 - [First-attempt reconciliation](first-attempt-reconciliation.md)
 - [Prototype roadmap](prototype-roadmap.md)
 
-## 8. Main-application views as a porting source
+## 9. Main-application views as a porting source
 
 **ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
 
@@ -137,14 +152,14 @@ Review the existing Planetary/Orbital, Surface, Map Studio, Monitor, resource, i
 
 A Planetary workspace, Orbital view, Surface workspace, and Map Studio have different purposes. Consistency means coherent navigation, typography, spacing, controls, terminology, and status presentation—not identical page layouts or a universal dashboard template.
 
-## 9. UI-first integration choice
+## 10. UI-first integration choice
 
 The prototype should first establish and review the look, layout, navigation, and interaction patterns. Mock data may support this work but must not be mistaken for live state or a committed data contract.
 
 When the presentation is ready to integrate, evaluate whether to backport the refined views into the main application or retain the prototype as a separate UI consuming capabilities exposed by a main-application API. This remains an open implementation choice. In either case, the main application owns authoritative simulation behavior, domain rules, calculations, permissions, and operations. Reuse existing services and data access wherever possible; do not recreate game logic in the UI.
 
 
-## 10. Main application API as the prototype's data source
+## 11. Main application API as the prototype's data source
 
 **ESTABLISHED INTEGRATION DIRECTION — 2026-11-11**
 
