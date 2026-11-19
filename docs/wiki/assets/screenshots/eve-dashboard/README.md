@@ -25,13 +25,15 @@ The following JavaScript files were previously examined as interaction reference
 | File | Source context | What was documented |
 |------|---------------|---------------------|
 | `fleet_map.js` | JavaScript from a previously examined EVE-related dashboard application (fleet management) | SVG map interactions, pan/zoom, markers, routes, tooltips, context menus, shortest-path logic |
+| `fleet_builder.js` | User-supplied JavaScript from the EVE Dashboard reference | Character/team selection, grouping, ordering, favourites, quick actions, localStorage preferences, EVE-specific endpoints; candidate interaction mechanics only |
+| `fleet.js` | User-supplied JavaScript from the EVE Dashboard reference | EVE waypoint form handling and fleet endpoint submission; low reuse potential beyond generic form interaction patterns |
 | `market.js` | JavaScript from a previously examined EVE-related dashboard application (market window) | Searchable/filterable table, sorting, summary metrics, refresh behavior |
 | `chain.js` | JavaScript from a previously examined EVE-related dashboard application (wormhole chain visualization) | Interactive network graph, node/link editing, zoom/pan, contextual details |
 | `assets.js` | JavaScript from a previously examined EVE-related dashboard application (asset manager) | Multi-select filters, select-all/none, indeterminate state, typeahead |
 | `wealth.js` | JavaScript from a previously examined EVE-related dashboard application (wallet/transaction history) | Analytics chart, grouping, filters, shared selection, transaction drill-down |
 | `structures.js` | JavaScript from a previously examined EVE-related dashboard application (structure management) | Delegated clipboard actions and feedback |
 
-These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact source paths, versions, and current state in any repository should be re-verified before use.
+The original six reference files were reviewed before 2026-11-08. Additional user-supplied files fleet_builder.js and fleet.js were inspected on 2026-11-19. Exact original source paths/revisions and current prototype copies must still be re-verified before implementation.
 
 ---
 
@@ -52,6 +54,11 @@ These files were reviewed in earlier sessions (prior to 2026-11-08). Their exact
 **Dependencies:** Requires SVG rendering library (or custom canvas), coordinate system for star positions, route data from EVE APIs.
 
 **Galaxy Game adaptation:** The fleet_map.js patterns are directly relevant to the Galaxy Game system map workspace concept. Coordinate systems and object types must be replaced with Galaxy Game's own data model.
+
+### Craft selection and operational grouping
+**What the supplied fleet_builder.js does:** Provides selection and grouping interactions around EVE character/team records, with ordering, favourites, localStorage preferences, quick actions, and EVE-specific endpoints.
+
+**Galaxy Game adaptation:** Reuse only suitable interaction mechanics. The primary records are named GalaxyGame craft/ships, not pilots or characters. Craft are autonomous assets commanded remotely; players and Admin/AI Manager workflows assign objectives, while onboard automation and the AI Manager support execution according to craft capabilities and available communications. A craft may operate independently or be grouped for a particular task/operation; do not assume every craft belongs to a standing fleet. Player asset management and Admin/AI Manager oversight remain distinct workflows. Do not reuse EVE character/team schemas, localStorage conventions, fleet endpoints, or fleet gameplay rules.
 
 ### Table Interactions
 **What EVE does:** Sortable columns, search filtering, category filters, multi-select rows, summary metrics above/below the table, refresh buttons. Selected rows highlight and update detail panels.
