@@ -28,6 +28,28 @@ The first landing-page slice should load and display the available system record
 
 The later game-domain work for StarSim-derived property refinement, player survey observations, calibration/reconciliation, and active map/body updates is recorded in the authoritative main GalaxyGame wiki, especially `galaxyGame/docs/wiki/design/starsim_and_protection_classes.md` and `galaxyGame/docs/wiki/services/ai_manager.md`. It is not part of the landing-page loader's responsibility and is not a prerequisite for this prototype task. The prototype should consume the available data and record genuine display/integration gaps; it must not attempt to perform scientific corrections itself.
 
+### Sol system fixtures and celestial-object data
+
+The prototype's copied JSON data is organized under its top-level `json-data/` directory, matching the main game's two data categories:
+
+- `json-data/star_systems/`
+- `json-data/generated_star_systems/`
+
+The Sol fixtures are intentionally different in breadth:
+
+- **`star_systems/sol.json`** is a smaller sample of Sol's celestial objects. It already includes major worlds such as Earth, Mars, Venus and Titan, alongside other objects. It is useful for ordinary UI development and for testing views against a smaller object collection.
+- **`star_systems/sol-complete.json`** is the fuller Sol celestial-object collection. Use it when testing larger system catalogs, object counts, navigation and selection across the broader collection.
+
+These are separate, intentional fixtures—not a broken/incomplete file that should be merged into the fuller one. Preserve both unchanged. The smaller sample is not missing the major worlds merely because it contains fewer total objects.
+
+**Important data boundary:** these star-system JSON files describe star systems and celestial objects. They do not contain terrain. Do not describe either Sol fixture as a terrain/map dataset, and do not make terrain loading, terrain-map completeness, or map generation a prerequisite for the landing page or this initial JSON-backed UI work. Terrain and terrain assets are separate data concerns for the relevant later views.
+
+The prototype has also been supplied with generated-system JSON under `json-data/generated_star_systems/`. Treat those files as available UI input; do not require new StarSim generation or scientific refinement to complete the initial landing page. The main game may later improve generated properties through its own StarSim/survey work, but the prototype must not correct or rewrite those records.
+
+For the landing page, show the five intended systems: **Sol**, **Alpha Centauri**, **FR-488530**, **DJEW-716790**, and **Eden** (Eden's system identifier is **AOL-732356**). System cards and any object counts should be derived from the copied JSON records, not duplicated as hand-authored mock system definitions. Preserve source identifiers and parent/child relationships so that separate celestial objects remain separately selectable even when preliminary generated records need later data-quality work.
+
+`sol.json` is the normal smaller fixture for the first landing-page implementation and its smaller-data test case; `sol-complete.json` is the fuller-data test case. The loader should be able to select the intended Sol fixture without conflating their contents. This is a display/data-access task only: no terrain, simulation, survey, calibration, or StarSim generation behavior belongs in the prototype loader.
+
 ## 2. Longer-term API direction (still to be designed)
 
 The main GalaxyGame application is expected to remain authoritative for game state, domain behavior, calculations, validation, persistence, authorization, and operations. The prototype can help reveal what information and actions its screens need, but endpoint names, response schemas, authentication, update cadence, and integration approach must be designed later from inspected main-app services and reviewed UI workflows. No production API work is required to make the current prototype useful.
