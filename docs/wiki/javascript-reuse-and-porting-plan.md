@@ -1,7 +1,7 @@
 # JavaScript Reuse, Porting, and Module Plan
 
 **Status:** Proposed technical direction — for owner review  
-**Last updated:** 2026-11-08
+**Last updated:** 2026-11-19
 
 This page records the reuse-first direction for bringing existing GalaxyGame view JavaScript and EVE Dashboard presentation/interaction code into the Rails 8 prototype. It is a porting plan, not authorization to begin implementation. The prototype's immediate goal is to demonstrate views with imported or mock JSON and help identify future API data requirements—not to build a production-functional application.
 
