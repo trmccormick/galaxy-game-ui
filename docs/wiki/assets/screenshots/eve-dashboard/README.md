@@ -1,6 +1,7 @@
 # EVE Dashboard — Visual Reference Documentation
 
 **Collection date:** 2026-11-08  
+**Last updated:** 2026-11-19
 **Source:** Source code review of previously examined JavaScript files (no live EVE Dashboard access)  
 **Status:** Code-based observations only — not visually verified from the live product
 
