@@ -48,7 +48,7 @@ The prototype has also been supplied with generated-system JSON under `json-data
 
 For the landing page, show the five intended systems: **Sol**, **Alpha Centauri**, **FR-488530**, **DJEW-716790**, and **Eden** (Eden's system identifier is **AOL-732356**). System cards and any object counts should be derived from the copied JSON records, not duplicated as hand-authored mock system definitions. Preserve source identifiers and parent/child relationships so that separate celestial objects remain separately selectable even when preliminary generated records need later data-quality work.
 
-`sol.json` is the normal smaller fixture for the first landing-page implementation and its smaller-data test case; `sol-complete.json` is the fuller-data test case. The loader should be able to select the intended Sol fixture without conflating their contents. This is a display/data-access task only: no terrain, simulation, survey, calibration, or StarSim generation behavior belongs in the prototype loader.
+Use `sol-complete.json` when the landing page should represent the fuller Sol celestial-object collection. Keep `sol.json` as the smaller sample fixture; it is also valid for UI testing because it already includes Earth, Mars, Venus, Titan and other major objects. Both fixtures are useful for testing different collection sizes. The loader should be able to select the intended Sol fixture without conflating their contents. This is a display/data-access task only: no terrain, simulation, survey, calibration, or StarSim generation behavior belongs in the prototype loader.
 
 ## 2. Longer-term API direction (still to be designed)
 
