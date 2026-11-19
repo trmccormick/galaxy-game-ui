@@ -3,7 +3,7 @@
 **Status:** Proposed technical direction — for owner review  
 **Last updated:** 2026-11-19
 
-This page records the reuse-first direction for bringing existing GalaxyGame view JavaScript and EVE Dashboard presentation/interaction code into the Rails 8 prototype. It is a porting plan, not authorization to begin implementation. The prototype's immediate goal is to demonstrate views with imported or mock JSON and help identify future API data requirements—not to build a production-functional application.
+This page records the reuse-first direction for bringing existing GalaxyGame view JavaScript and EVE Dashboard presentation/interaction code into the Rails 8 prototype. It is a porting plan, not authorization to begin implementation. The prototype's immediate goal is to demonstrate views using data supplied by Rails (including Rails-loaded local JSON or clearly identified mock data) and help identify future API data requirements—not to build a production-functional application.
 
 ## 1. Guiding approach
 
@@ -12,7 +12,8 @@ This page records the reuse-first direction for bringing existing GalaxyGame vie
 - Use confirmed existing Planetary data for Earth, Mars, Venus, and Titan; reuse existing Surface data and tileset images.
 - Reuse EVE Dashboard JavaScript such as wealth, fleet, chain, map, assets, market, and other useful modules as appropriate. Adapt GalaxyGame terminology and data mappings while preserving working behavior. EVE terminology and game rules are not imported.
 - Do not rewrite fleet, chain, renderer, or dashboard modules merely to fit the prototype. Add small adapters, configuration, or compatibility support only where needed.
-- Imported GalaxyGame JSON and clearly identified mock JSON should feed the same view code. The prototype only needs enough behavior to demonstrate the intended screens and representative interactions.
+- GalaxyGame JSON files are backend data sources, not browser assets. Rails services/controllers load and resolve the required records, then provide a focused display payload to the frontend. Clearly identified mock data may use the same controller-to-view payload boundary.
+- Browser JavaScript must not fetch or parse GalaxyGame universe/system JSON files directly, know filesystem paths, or implement its own system/body lookup. Keep source selection, file access, lookup, and authoritative data preparation in Rails.
 - Separate reusable presentation behavior from GalaxyGame-specific data mapping. Record data needs and gaps as evidence for later API design; do not treat prototype fixtures as API contracts.
 - Keep authoritative state and game rules in the main application. Do not build production API operations or duplicate simulation logic in the prototype as part of this exercise.
 - Work within the existing Rails/Importmap/Stimulus foundation unless inspection shows a concrete need to change it; do not introduce a new build system or dependency merely because a source module used one.
@@ -224,13 +225,19 @@ The inspected prototype foundation uses Importmap, Turbo, and Stimulus. Unless t
 
 1. Rails renders the page shell and data attributes needed to identify the feature/context.
 2. Stimulus connects the relevant controller to the DOM.
-3. The controller requests data through a small API client or feature-specific request method.
-4. A feature adapter maps the API response to display-ready values.
+3. Rails supplies the data through controller-rendered payloads or a Rails endpoint/request; the source may be local JSON read by Rails today and an API/provider later.
+4. A frontend presentation adapter maps the Rails response to display-ready values without knowing the underlying file or source.
 5. The controller updates the relevant view region and presents loading, empty, and error states.
 6. Any state-changing action is submitted to Rails, where authentication, authorization, validation, and persistence are enforced.
 7. The UI reflects the confirmed backend result; it does not claim success before the response.
 
 Do not choose React, Vue, or another framework as a prerequisite. Revisit the frontend framework only if concrete workflow complexity demonstrates that the current foundation is insufficient.
+
+### Data ownership and EVE map adaptation
+
+The EVE `universe.min.json` file is a reference for understanding a compact universe data shape and may be used as an offline analysis/test fixture while developing the Rails data path. It is not a GalaxyGame runtime asset and must not be fetched by browser JavaScript. For the four-system experiment, Rails should resolve the four actual GalaxyGame systems from their authoritative sources and provide a compact, display-ready payload (system identity/name, coordinates or layout positions, and only real relationships supported by GalaxyGame data). The adapted map JavaScript consumes that payload and owns only presentation/interaction such as rendering, pan/zoom, selection, and visual highlighting. Any EVE `fetch('universe.min.json')`, EVE pathfinding assumptions, security coloring, and `/fleet/route` request must be removed or replaced with explicit Rails-provided GalaxyGame data/services.
+
+The same boundary applies to craft interactions: Rails supplies craft identity, name, location, status, assignment, communication freshness, and authorized actions; JavaScript renders and manages transient UI interaction. It must not read craft/system JSON files or invent authoritative state.
 
 ## 6. Suggested porting sequence
 
