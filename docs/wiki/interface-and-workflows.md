@@ -141,7 +141,7 @@ The visual language should follow the prototype's established dark/cyan desktop 
 
 Populate the five system entries from the copied star-system JSON sources described in [Data Integration and Backend Integration Proposal](data-integration-and-migration.md). The card identity and any displayed celestial-object count must come from those records. A card may show a concise selection of system-level facts that are actually present in the source; do not fabricate population, economy, discovery or operational status.
 
-Sol's smaller `sol.json` fixture includes the major worlds Earth, Mars, Venus and Titan and is sufficient for ordinary UI testing. `sol-complete.json` supplies a larger celestial-object collection for testing broader lists and counts. Neither file contains terrain. Do not show a terrain/map preview or infer map completeness from these files.
+Use `sol-complete.json` when the landing page should represent the fuller Sol celestial-object collection. The smaller `sol.json` fixture is also suitable for UI testing: it already includes Earth, Mars, Venus, Titan and other major objects, while exercising a smaller collection. Both are useful test inputs for different collection sizes. Neither file contains terrain. Do not show a terrain/map preview or infer map completeness from these files.
 
 Keep static illustrative dashboard metrics, recent activity or other non-source content clearly identified as illustrative/mock. The presence of JSON-backed system cards does not make unrelated metrics live.
 
