@@ -131,7 +131,7 @@ The public landing page is the entry point to GalaxyGame and should introduce th
 Use this overall content order:
 
 1. **Brand/hero area:** GalaxyGame identity, a concise description of the game, and clear Sign In / account-entry actions. Keep this restrained so the system overview remains the main content.
-2. **Star-system overview:** a prominent overview of the five intended systems—**Sol**, **Alpha Centauri**, **FR-488530**, **DJEW-716790**, and **Eden**. Each system should be identifiable by its real name and stable system identifier where available. Use compact, consistent system cards or equivalent compact panels; avoid oversized decorative cards that waste space.
+2. **Star-system overview:** a prominent overview of the systems currently made available to the experience. Do not assume a permanent five-system catalog or hard-code generated test-system identifiers/filenames. Sol is the only fixed authored baseline; other systems and their generated instances may change. Identify each available system using its supplied name and stable identifier where available. Use compact, consistent system rows/cards or equivalent panels; avoid oversized decorative cards that waste space.
 3. **System network context:** communicate that the setting includes natural and artificial wormhole connections. Sol is the central system in the intended overview. A network diagram may connect the system panels when the actual connection records/topology are available; do not invent missing edges or imply an unverified route. The exact complete four-connection topology remains to be reconciled before it is presented as authoritative.
 4. **Supporting public information:** concise explanatory content and any secondary public links. Do not let secondary status panels compete with the system overview.
 
@@ -139,11 +139,27 @@ The visual language should follow the prototype's established dark/cyan desktop 
 
 ### System-card data and meaning
 
-Populate the five system entries from the copied star-system JSON sources described in [Data Integration and Backend Integration Proposal](data-integration-and-migration.md). The card identity and any displayed celestial-object count must come from those records. A card may show a concise selection of system-level facts that are actually present in the source; do not fabricate population, economy, discovery or operational status.
+Populate the overview from the system records actually made available to the prototype, using the data-access approach described in [Data Integration and Backend Integration Proposal](data-integration-and-migration.md). Do not assume a fixed count or permanent list of systems. The card identity and any displayed counts must come from the supplied records. A card may show concise system-level facts actually present in the source; do not fabricate population, economy, discovery or operational status. Treat generated identifiers and filenames as data, not as permanent UI contracts.
 
 Use `sol-complete.json` when the landing page should represent the fuller Sol celestial-object collection. The smaller `sol.json` fixture is also suitable for UI testing: it already includes Earth, Mars, Venus, Titan and other major objects, while exercising a smaller collection. Both are useful test inputs for different collection sizes. Neither file contains terrain. Do not show a terrain/map preview or infer map completeness from these files.
 
 Keep static illustrative dashboard metrics, recent activity or other non-source content clearly identified as illustrative/mock. The presence of JSON-backed system cards does not make unrelated metrics live.
+
+
+### System data, completeness, and discovery
+
+The game is unfinished and its system-generation model is still evolving. The wiki records current understanding and open questions as work exposes them; it must not turn exploratory discussion into an assumed finalized architecture.
+
+A system JSON file is **starting information, not necessarily a complete playable system or exhaustive inventory**:
+
+- Sol is the only fixed, manually authored baseline, but its representation is incomplete too. StarSim may add further objects/details to Sol.
+- Every other system starts from incomplete information. This includes real systems with extensive known astronomical data, real systems with sparse known data, and generated starting conditions.
+- StarSim uses available information to complete and populate a playable system. Generated/completed output is still not necessarily exhaustive.
+- Survey missions help add newly discovered objects and details over time and may support further spawning/addition. The exact mechanics and distinction between simulated existence, spawning, discovery, and player-visible knowledge must follow the main game's evolving implementation.
+
+The UI must not equate the contents of an input JSON file with everything that exists in a system, or equate everything represented in simulation with everything a player has discovered. Where the prototype only has a source fixture, present it as the available snapshot/input and label its scope/provenance honestly. Do not imply that the prototype itself performs StarSim completion, survey discovery, or scientific reconciliation.
+
+The main game's current `data/json-data/star_systems/` directory contains Sol and real-system records with varying amounts of information; all non-Sol records are incomplete starting information for StarSim. `generated_star_systems/` contains generated/completed outputs, not guaranteed exhaustive catalogs. The physical directory organization is provisional and may be refined later; do not prescribe a migration or assume that every source file is a playable system.
 
 ### Connection context
 
