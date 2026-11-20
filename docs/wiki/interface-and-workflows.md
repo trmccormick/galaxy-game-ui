@@ -132,7 +132,7 @@ Use this overall content order:
 
 1. **Brand/hero area:** GalaxyGame identity, a concise description of the game, and clear Sign In / account-entry actions. Keep this restrained so the system overview remains the main content.
 2. **Star-system overview:** a prominent overview populated from current, live application data—not a hard-coded catalog or a static snapshot. Sol is the fixed baseline and should always be represented. Other systems are dynamic: the set may expand as systems are generated, introduced, or connected, and a system's current accessibility may change as natural-wormhole connections become available or unavailable. Identify systems from supplied records and show current connection/accessibility only when authoritative live data provides it. Do not assume that every known/generated system is currently reachable, or that a natural-wormhole connection guarantees continuous access. Use compact, consistent system rows/cards or equivalent panels; avoid oversized decorative cards that waste space.
-3. **System network context:** communicate that the setting includes natural and artificial wormhole connections. Sol is the central system in the intended overview. A network diagram may connect the system panels when the actual connection records/topology are available; do not invent missing edges or imply an unverified route. The exact complete four-connection topology remains to be reconciled before it is presented as authoritative.
+3. **System network context:** communicate that the setting includes natural and artificial wormhole connections, but do not present the network as fixed. Natural wormholes can shift; artificial wormholes can be shut down and retargeted, changing routes. Build any network diagram from current authoritative connection state so it can reflect these changes. Show current availability rather than treating known, historical, or configured connections as permanently active. Sol is the fixed baseline, not a guarantee of fixed routes.
 4. **Supporting public information:** concise explanatory content and any secondary public links. Do not let secondary status panels compete with the system overview.
 
 The visual language should follow the prototype's established dark/cyan desktop style, with compact typography, readable spacing and clear separation between system identity, connection type and supporting metadata. This is a landing page, not an attempt to reproduce an EVE Online interface.
@@ -163,7 +163,14 @@ The main game's current `data/json-data/star_systems/` directory contains Sol an
 
 ### Connection context
 
-The intended network story distinguishes natural wormholes from artificial wormholes; these are not interchangeable connection types. Confirmed anchor context includes Jupiter as the Sol natural-wormhole anchor, Saturn as the Eden artificial-wormhole anchor, and an Earth-side artificial-wormhole endpoint opposite Neptune associated with the Alpha Centauri connection. The remaining exact edge list and complete four-connection topology are not yet confirmed. Until that is resolved from authoritative records, present only verified connections or use a clearly provisional explanatory treatment rather than drawing a definitive complete network.
+The wormhole network is dynamic by design; it is not a fixed topology or a permanent list of routes.
+
+- **Natural wormholes** can shift over time, changing their positions and the systems/locations they connect. Their route availability must be treated as time-dependent.
+- **Artificial wormholes** can be shut down and retargeted. This deliberately changes the connection endpoints and can reorganize the available routes through the network.
+- The current network must therefore be derived from authoritative, current connection state, not from a static diagram, system JSON, historical connection list, or hard-coded four-edge topology.
+- The landing page should distinguish natural versus artificial connections and communicate current availability/state when that data is supplied. A connection record, known anchor, or historical route does not prove that the route is currently active or traversable.
+- Network views should be able to reflect route changes over time. Do not imply that the system set itself is fixed merely because Sol is the fixed baseline; systems and routes are separate data concerns.
+- Exact fields, update cadence, route-history presentation, and the runtime mechanics that move natural wormholes or shut down/retarget artificial ones remain implementation details to verify against the evolving game code.
 
 ## 8. References
 
