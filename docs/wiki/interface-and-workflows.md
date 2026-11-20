@@ -166,7 +166,8 @@ The main game's current `data/json-data/star_systems/` directory contains Sol an
 The wormhole network is dynamic by design; it is not a fixed topology or a permanent list of routes.
 
 - **Natural wormholes** can shift over time, changing their positions and the systems/locations they connect. Their route availability must be treated as time-dependent.
-- **Artificial wormholes** can be shut down and retargeted. This deliberately changes the connection endpoints and can reorganize the available routes through the network.
+- **Artificial wormholes** can be shut down and retargeted. This deliberately changes the connection endpoints and can reorganize the available routes through the network. An existing Sol-side AWS route may be reassigned to connect a newly scouted frontier system, with the displaced route retargeted to another system.
+- This supports a strategic expansion pattern: scout a virgin system through a natural wormhole, establish an AWS there when settlement/resource value justifies it, then connect it to Sol's developed industrial/logistics base. The AWS corridor can move personnel, ships, equipment, construction materials, and supplies more quickly, supporting settlement and resource extraction.
 - The current network must therefore be derived from authoritative, current connection state, not from a static diagram, system JSON, historical connection list, or hard-coded four-edge topology.
 - The landing page should distinguish natural versus artificial connections and communicate current availability/state when that data is supplied. A connection record, known anchor, or historical route does not prove that the route is currently active or traversable.
 - Network views should be able to reflect route changes over time. Do not imply that the system set itself is fixed merely because Sol is the fixed baseline; systems and routes are separate data concerns.
