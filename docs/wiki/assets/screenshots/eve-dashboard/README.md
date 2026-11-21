@@ -2,14 +2,14 @@
 
 **Collection date:** 2026-11-08  
 **Last updated:** 2026-11-19
-**Source:** User-shared JavaScript from the owner's independently developed Python EVE Dashboard application  
+**Source:** User-shared JavaScript from a friend's independently developed Python EVE Dashboard application  
 **Status:** Code-based observations only — not visually verified from the live product
 
 ---
 
 ## Application identity and evidence limits
 
-EVE Dashboard is the owner's independently developed Python application, shared by the user for inspection and possible collaboration. It connects to the EVE Online API; it is not EVE Online itself and is not an official EVE Online interface. The application and its source are a separate reference from the game/API it connects to.
+EVE Dashboard is a friend's independently developed Python application, shared by the user for inspection and possible collaboration. It connects to the EVE Online API; it is not EVE Online itself and is not an official EVE Online interface. The application and its source are a separate reference from the game/API it connects to.
 
 The observations below are derived from the user-shared JavaScript files previously examined, not from a live inspection of the running application. Treat them as code-derived observations about those supplied files, not a complete description of the application. Do not use general EVE Online UI conventions as evidence of how EVE Dashboard behaves.
 
