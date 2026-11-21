@@ -37,7 +37,7 @@ GalaxyGame is its own game. It draws selective inspiration from games, simulatio
 
 **EVE Dashboard** is a separate, independently developed Python application shared by its owner for inspection and possible collaboration. It connects to the EVE Online API; it is not EVE Online itself or an official EVE Online interface. For this prototype, its JavaScript may be copied and adapted for testing where the source has been shared. Track the origin of copied code and its dependencies. Prototype experimentation does not establish ownership or production-use rights; confirm applicable licensing and permissions before shipping reused code.
 
-Use EVE Dashboard as a source of specific UI and JavaScript patterns—such as maps, graph interactions, selection, panels, and fleet-builder presentation—not as a specification for EVE Online gameplay or GalaxyGame's operational rules. Inspect actual source behavior and adapt it to GalaxyGame's distinct craft, route, operation, and communications model.
+Use EVE Dashboard as a source of specific UI and JavaScript patterns—such as maps, graph interactions, selection, panels, and fleet-builder presentation—not as a specification for EVE Online gameplay or GalaxyGame's operational rules. Inspect actual source behavior and adapt it to GalaxyGame's distinct craft, route, operation, and communications model. The canonical gameplay distinction between spacecraft-based Space Operations and planetary Surface Operations is documented in the [main GalaxyGame wiki](https://github.com/trmccormick/galaxyGame/blob/main/docs/wiki/player/space_and_surface_operations.md); this UI wiki records the corresponding presentation and interaction implications.
 
 ## Current interface principles
 
