@@ -50,7 +50,7 @@ The original six reference files were reviewed before 2026-11-08. Additional use
 ### Map Interactions
 **What the supplied EVE Dashboard code demonstrates:** SVG-based map with pan/zoom, marker selection, hover tooltips, route overlays, and layer toggles. Selected objects show detail panels alongside the map.
 
-**Dependencies:** Requires SVG rendering library (or custom canvas), coordinate system for star positions, route data from EVE APIs.
+**Dependencies/assumptions:** SVG rendering approach, coordinate system, and source-specific route data/API payloads. Inspect the actual module before assuming a particular library or data contract.
 
 **Galaxy Game adaptation:** The fleet_map.js patterns are directly relevant to the Galaxy Game system map workspace concept. Coordinate systems and object types must be replaced with Galaxy Game's own data model.
 
@@ -69,7 +69,7 @@ The original six reference files were reviewed before 2026-11-08. Additional use
 ### Network Visualization
 **What the supplied EVE Dashboard code demonstrates:** Force-directed or manual-layout graph with draggable nodes, clickable edges, zoom/pan, node detail panels on selection, link state indicators.
 
-**Dependencies:** Graph layout algorithm, edge routing logic, node/edge data structures specific to EVE's wormhole system.
+**Dependencies/assumptions:** Graph layout, edge routing, and node/edge data structures reflecting the source application's EVE Online wormhole data. Replace these with GalaxyGame's own topology and domain rules.
 
 **Galaxy Game adaptation:** The chain.js patterns could inform Galaxy Game's logistics/network visualization, but only if a real workflow requires it. Wormhole topology must come from Galaxy Game's own rules.
 
