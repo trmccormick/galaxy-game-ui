@@ -43,7 +43,7 @@
 - Responsive/mobile viewport captures for any screen.
 - Error states (invalid credentials, session timeout, 404 pages).
 - Any interactive behavior (hover states, dropdowns, map interactions, table sorting).
-- EVE Dashboard live reference screenshots (no access to the EVE Online client or web interface).
+- EVE Dashboard application reference screenshots (no live access to the friend's EVE Dashboard application during this capture; source-code observations are documented separately).
 
 ---
 
