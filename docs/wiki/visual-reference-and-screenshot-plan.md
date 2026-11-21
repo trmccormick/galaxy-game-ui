@@ -5,6 +5,8 @@
 
 This page defines how screenshots and visual inspections should become part of the Galaxy Game UI wiki. The goal is a durable visual record of the current prototype, useful patterns from the EVE Dashboard reference, and the decisions that translate those references into Galaxy Game.
 
+EVE Dashboard is the owner's independently developed Python application connected to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. References to live access in this document mean access to that EVE Dashboard application, not to the EVE Online client. Use the shared source files for code-derived observations when the running application is unavailable.
+
 Screenshots are evidence and design references. They do not, by themselves, establish approved requirements.
 
 ## Completion Status (2026-11-08)
@@ -180,7 +182,7 @@ For each pattern, capture or reference:
 - possible Galaxy Game use;
 - EVE-specific behavior that must not be copied.
 
-If Qwen cannot access the live EVE environment, it can still document the supplied source files and any screenshots already available. It must label code-derived observations separately from live-UI verification.
+If Qwen cannot access the live EVE Dashboard application, it can still document the supplied source files and any screenshots already available. It must label code-derived observations separately from live-UI verification.
 
 ### D. Reusable design observations
 
@@ -243,7 +245,7 @@ This is a documentation assignment, not an implementation task.
 ### Step 3 — Document EVE Dashboard
 
 - Inspect the supplied EVE JS files and trace their behavior.
-- Capture relevant live UI examples only if the reference environment is available and access is authorized.
+- Capture relevant live EVE Dashboard UI examples only if the application is available and access is authorized.
 - Create the overview and interaction-pattern notes from observable evidence.
 - Separate live-verified facts from source-code observations and interpretation.
 - Identify reusable patterns and Galaxy Game adaptation opportunities.
