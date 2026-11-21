@@ -29,9 +29,19 @@ The immediate purpose of this Rails 8 prototype is to assemble and evaluate the 
 - Settlement is the major new Player view. Its detailed design is early exploration; keep candidate layouts and mechanics explicitly provisional.
 - The main Rails 7 application remains the authority for game data and mechanics. The Rails 8 prototype is a separate presentation workspace. The eventual API boundary and integration approach remain open until informed by the prototype and reviewed against the main application.
 
+## GalaxyGame identity and reference boundaries
+
+**ESTABLISHED PRODUCT PRINCIPLE — 2026-11-21**
+
+GalaxyGame is its own game. It draws selective inspiration from games, simulations, and applications, but it is not an attempt to recreate or combine EVE Online, SimEarth, Civilization, SimCity, or another existing product. References provide examples of particular presentation or interaction ideas; they do not define GalaxyGame's mechanics, terminology, data model, or player experience.
+
+**EVE Dashboard** is a separate, independently developed Python application shared by its owner for inspection and possible collaboration. It connects to the EVE Online API; it is not EVE Online itself or an official EVE Online interface. For this prototype, its JavaScript may be copied and adapted for testing where the source has been shared. Track the origin of copied code and its dependencies. Prototype experimentation does not establish ownership or production-use rights; confirm applicable licensing and permissions before shipping reused code.
+
+Use EVE Dashboard as a source of specific UI and JavaScript patterns—such as maps, graph interactions, selection, panels, and fleet-builder presentation—not as a specification for EVE Online gameplay or GalaxyGame's operational rules. Inspect actual source behavior and adapt it to GalaxyGame's distinct craft, route, operation, and communications model.
+
 ## Current interface principles
 
-The product has two primary dashboards: **Player Dashboard** and **Admin Dashboard**. They are different products for different audiences and workflows; do not reuse Player Dashboard screens as Admin screens or vice versa. The Player Dashboard has exactly four contexts: **Space, Planetary, Surface, and Settlement**. Galaxy/system catalogs and system workspaces are navigation and selection workspaces, not additional Player views. The Admin Dashboard contains dedicated workspaces including **AI Manager** and **Map Studio**, plus simulation, data, account, and system-administration tools. AI Manager is a major operational workspace within Admin, not a fifth Player view.
+The product has two primary dashboards: **Player Dashboard** and **Admin Dashboard**. They are different products for different audiences and workflows; do not reuse Player Dashboard screens as Admin screens or vice versa. The Player Dashboard has exactly three primary views: **Planetary, Surface, and Settlement**. **Space** is a separate Player context for system-wide spatial awareness and spacecraft operations, not a fourth primary view. Galaxy/system catalogs and system workspaces are navigation and selection workspaces, not additional Player views. The Admin Dashboard contains dedicated workspaces including **AI Manager** and **Map Studio**, plus simulation, data, account, and system-administration tools. AI Manager is a major operational workspace within Admin, not a fifth Player view.
 
 The immediate prototype priority is to bring forward existing Player-view JavaScript, renderers, data, and assets—Planetary, Surface, and Space—using imported or clearly identified mock JSON. The goal is to get the views demonstrable, not production-functional. Settlement is a new, early-design workspace; Admin and AI Manager screens remain part of the broader prototype scope. Mock actions must not be presented as connected to live simulation services.
 
