@@ -5,11 +5,13 @@
 
 This page records external application patterns and earlier Galaxy Game UI research that may inform presentation and interaction. These references are not sources of Galaxy Game domain rules, data structures or gameplay behavior.
 
+GalaxyGame is an original game, not a recreation of any reference title. In particular, EVE Dashboard is the owner's independently developed Python application that connects to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. It is a UI/code reference only. The shared JavaScript can be copied into the prototype for testing and adaptation, with source provenance retained; production reuse requires checking applicable licenses, permissions, and third-party dependencies.
+
 ## 1. Reference applications and their roles
 
 | Reference | Useful for | Do not import |
 |---|---|---|
-| EVE Dashboard | Dense dashboard composition, navigation patterns, panels, wayfinding, maps, tables and client-side interactions | EVE terminology, account/corporation concepts, game rules, APIs or branding |
+| EVE Dashboard (friend's Python application connected to the EVE Online API) | Dense dashboard composition, navigation patterns, panels, wayfinding, maps, tables and client-side interactions; shared JavaScript for prototype experimentation | EVE Online gameplay, terminology, account/corporation concepts, API assumptions, branding, or its backend architecture |
 | EVE Tycoon | Organizing market, industry and manufacturing workflows | EVE market semantics, item taxonomy or economic assumptions |
 | EVEpraisal | Bulk input, valuation result presentation and summary workflows | EVE price data, valuation rules or service dependencies |
 | Main Galaxy Game UI | Actual Galaxy Game terminology, domain concepts and existing workflows | Old visual treatments or admin-only workflows without review |
