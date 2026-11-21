@@ -5,7 +5,7 @@
 
 This page defines how screenshots and visual inspections should become part of the Galaxy Game UI wiki. The goal is a durable visual record of the current prototype, useful patterns from the EVE Dashboard reference, and the decisions that translate those references into Galaxy Game.
 
-EVE Dashboard is the owner's independently developed Python application connected to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. References to live access in this document mean access to that EVE Dashboard application, not to the EVE Online client. Use the shared source files for code-derived observations when the running application is unavailable.
+EVE Dashboard is a friend's independently developed Python application connected to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. References to live access in this document mean access to that EVE Dashboard application, not to the EVE Online client. Use the shared source files for code-derived observations when the running application is unavailable.
 
 Screenshots are evidence and design references. They do not, by themselves, establish approved requirements.
 
