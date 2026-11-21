@@ -5,12 +5,15 @@
 
 This page records the reuse-first direction for bringing existing GalaxyGame view JavaScript and EVE Dashboard presentation/interaction code into the Rails 8 prototype. It is a porting plan, not authorization to begin implementation. The prototype's immediate goal is to demonstrate views using data supplied by Rails (including Rails-loaded local JSON or clearly identified mock data) and help identify future API data requirements—not to build a production-functional application.
 
+EVE Dashboard is the independently developed Python application shared by the user's friend; it connects to the EVE Online API and is distinct from EVE Online itself. The user has approved copying shared JavaScript into the GalaxyGame prototype for testing. Keep copied-source provenance visible, inspect dependencies, and distinguish temporary prototype use from any later production adoption. Do not claim ownership of the source application or assume its license covers production redistribution.
+
 ## 1. Guiding approach
 
 - Recover and inspect any JavaScript already copied or adapted into galaxy-game-ui before creating a second implementation.
 - First inspect and reuse the actual main-game view JavaScript, renderers, data-loading paths, and image assets. Planetary, Surface, and Space are port/adaptation targets, not blank-page redesigns.
 - Use confirmed existing Planetary data for Earth, Mars, Venus, and Titan; reuse existing Surface data and tileset images.
 - Reuse EVE Dashboard JavaScript such as wealth, fleet, chain, map, assets, market, and other useful modules as appropriate. Adapt GalaxyGame terminology and data mappings while preserving working behavior. EVE terminology and game rules are not imported.
+- For prototype work, copying shared JavaScript is acceptable for testing; record exact source file/origin, copied or modified prototype paths, required libraries, and what was adapted. Before production release, review source licensing, third-party licenses, and permissions separately.
 - Do not rewrite fleet, chain, renderer, or dashboard modules merely to fit the prototype. Add small adapters, configuration, or compatibility support only where needed.
 - GalaxyGame JSON files are backend data sources, not browser assets. Rails services/controllers load and resolve the required records, then provide a focused display payload to the frontend. Clearly identified mock data may use the same controller-to-view payload boundary.
 - Browser JavaScript must not fetch or parse GalaxyGame universe/system JSON files directly, know filesystem paths, or implement its own system/body lookup. Keep source selection, file access, lookup, and authoritative data preparation in Rails.
