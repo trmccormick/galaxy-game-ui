@@ -2,20 +2,18 @@
 
 **Collection date:** 2026-11-08  
 **Last updated:** 2026-11-19
-**Source:** Source code review of previously examined JavaScript files (no live EVE Dashboard access)  
+**Source:** User-shared JavaScript from the owner's independently developed Python EVE Dashboard application  
 **Status:** Code-based observations only — not visually verified from the live product
 
 ---
 
-## Access Limitation
+## Application identity and evidence limits
 
-Live access to the EVE Online client or EVE Dashboard web interface was **not available** during this documentation session. The following observations are derived entirely from:
+EVE Dashboard is the owner's independently developed Python application, shared by the user for inspection and possible collaboration. It connects to the EVE Online API; it is not EVE Online itself and is not an official EVE Online interface. The application and its source are a separate reference from the game/API it connects to.
 
-1. Previously examined JavaScript source files in earlier sessions
-2. Existing wiki documentation that references EVE patterns
-3. General knowledge of EVE Online's established UI conventions (as of 2024)
+The observations below are derived from the user-shared JavaScript files previously examined, not from a live inspection of the running application. Treat them as code-derived observations about those supplied files, not a complete description of the application. Do not use general EVE Online UI conventions as evidence of how EVE Dashboard behaves.
 
-These observations should be treated as **hypotheses to verify**, not confirmed behavior. If live access becomes available, these notes should be validated or corrected against the actual product.
+The shared JavaScript may be copied and adapted in the GalaxyGame prototype for testing. Keep provenance and dependency notes. Prototype copying does not establish ownership or production redistribution rights; review applicable licenses and permissions before production use. Generic interaction patterns may also be independently implemented.
 
 ---
 
@@ -25,14 +23,14 @@ The following JavaScript files were previously examined as interaction reference
 
 | File | Source context | What was documented |
 |------|---------------|---------------------|
-| `fleet_map.js` | JavaScript from a previously examined EVE-related dashboard application (fleet management) | SVG map interactions, pan/zoom, markers, routes, tooltips, context menus, shortest-path logic |
+| `fleet_map.js` | JavaScript from the user's shared EVE Dashboard application (fleet management) | SVG map interactions, pan/zoom, markers, routes, tooltips, context menus, shortest-path logic |
 | `fleet_builder.js` | User-supplied JavaScript from the EVE Dashboard reference | Character/team selection, grouping, ordering, favourites, quick actions, localStorage preferences, EVE-specific endpoints; candidate interaction mechanics only |
 | `fleet.js` | User-supplied JavaScript from the EVE Dashboard reference | EVE waypoint form handling and fleet endpoint submission; low reuse potential beyond generic form interaction patterns |
-| `market.js` | JavaScript from a previously examined EVE-related dashboard application (market window) | Searchable/filterable table, sorting, summary metrics, refresh behavior |
-| `chain.js` | JavaScript from a previously examined EVE-related dashboard application (wormhole chain visualization) | Interactive network graph, node/link editing, zoom/pan, contextual details |
-| `assets.js` | JavaScript from a previously examined EVE-related dashboard application (asset manager) | Multi-select filters, select-all/none, indeterminate state, typeahead |
-| `wealth.js` | JavaScript from a previously examined EVE-related dashboard application (wallet/transaction history) | Analytics chart, grouping, filters, shared selection, transaction drill-down |
-| `structures.js` | JavaScript from a previously examined EVE-related dashboard application (structure management) | Delegated clipboard actions and feedback |
+| `market.js` | JavaScript from the user's shared EVE Dashboard application (market window) | Searchable/filterable table, sorting, summary metrics, refresh behavior |
+| `chain.js` | JavaScript from the user's shared EVE Dashboard application (wormhole chain visualization) | Interactive network graph, node/link editing, zoom/pan, contextual details |
+| `assets.js` | JavaScript from the user's shared EVE Dashboard application (asset manager) | Multi-select filters, select-all/none, indeterminate state, typeahead |
+| `wealth.js` | JavaScript from the user's shared EVE Dashboard application (wallet/transaction history) | Analytics chart, grouping, filters, shared selection, transaction drill-down |
+| `structures.js` | JavaScript from the user's shared EVE Dashboard application (structure management) | Delegated clipboard actions and feedback |
 
 The original six reference files were reviewed before 2026-11-08. Additional user-supplied files fleet_builder.js and fleet.js were inspected on 2026-11-19. Exact original source paths/revisions and current prototype copies must still be re-verified before implementation.
 
