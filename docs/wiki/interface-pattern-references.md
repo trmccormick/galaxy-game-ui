@@ -5,7 +5,7 @@
 
 This page records external application patterns and earlier Galaxy Game UI research that may inform presentation and interaction. These references are not sources of Galaxy Game domain rules, data structures or gameplay behavior.
 
-GalaxyGame is an original game, not a recreation of any reference title. In particular, EVE Dashboard is the owner's independently developed Python application that connects to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. It is a UI/code reference only. The shared JavaScript can be copied into the prototype for testing and adaptation, with source provenance retained; production reuse requires checking applicable licenses, permissions, and third-party dependencies.
+GalaxyGame is an original game, not a recreation of any reference title. In particular, EVE Dashboard is a friend's independently developed Python application that connects to the EVE Online API; it is separate from EVE Online itself and is not an official EVE Online interface. It is a UI/code reference only. The shared JavaScript can be copied into the prototype for testing and adaptation, with source provenance retained; production reuse requires checking applicable licenses, permissions, and third-party dependencies.
 
 ## 1. Reference applications and their roles
 
