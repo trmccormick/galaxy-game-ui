@@ -39,16 +39,16 @@ The original six reference files were reviewed before 2026-11-08. Additional use
 ## Patterns Worth Evaluating (Code-Derived)
 
 ### Navigation and Wayfinding
-**What EVE does:** Global navigation bar with workspace-specific secondary navigation. Context selectors for fleet/singleton views. Breadcrumb-style location indicators.
+**Candidate pattern to inspect:** Global navigation, workspace-specific secondary navigation, context selectors, and breadcrumb-style location indicators. These are not confirmed by the supplied JavaScript files.
 
-*Note: These navigation observations are general knowledge of EVE Online's established interface conventions, not findings derived from the six JavaScript files.*
+*Evidence note: The supplied JavaScript does not establish the EVE Dashboard application's global navigation. Do not infer the friend's app navigation from EVE Online's own interface; verify it from the running Dashboard application if access becomes available.*
 
 **Why it appears useful:** Players can always see their current workspace and return to common destinations without losing context.
 
-**Galaxy Game adaptation:** The sidebar pattern observed in the current Galaxy Game prototype (Account/Galaxy/Operations/Admin sections) aligns with this approach. Whether EVE's global bar or Galaxy Game's sidebar better serves the game's information architecture is an open question.
+**Galaxy Game adaptation:** The sidebar pattern observed in the current Galaxy Game prototype (Account/Galaxy/Operations/Admin sections) aligns with this approach. Whether a persistent global navigation bar or GalaxyGame's existing sidebar better serves the game's information architecture is an open question.
 
 ### Map Interactions
-**What EVE does:** SVG-based map with pan/zoom, marker selection, hover tooltips, route overlays, and layer toggles. Selected objects show detail panels alongside the map.
+**What the supplied EVE Dashboard code demonstrates:** SVG-based map with pan/zoom, marker selection, hover tooltips, route overlays, and layer toggles. Selected objects show detail panels alongside the map.
 
 **Dependencies:** Requires SVG rendering library (or custom canvas), coordinate system for star positions, route data from EVE APIs.
 
@@ -60,21 +60,21 @@ The original six reference files were reviewed before 2026-11-08. Additional use
 **Galaxy Game adaptation:** Reuse only suitable interaction mechanics. The primary records are named GalaxyGame craft/ships, not pilots or characters. Craft are autonomous assets commanded remotely; players and Admin/AI Manager workflows assign objectives, while onboard automation and the AI Manager support execution according to craft capabilities and available communications. A craft may operate independently or be grouped for a particular task/operation; do not assume every craft belongs to a standing fleet. Player asset management and Admin/AI Manager oversight remain distinct workflows. Do not reuse EVE character/team schemas, localStorage conventions, fleet endpoints, or fleet gameplay rules.
 
 ### Table Interactions
-**What EVE does:** Sortable columns, search filtering, category filters, multi-select rows, summary metrics above/below the table, refresh buttons. Selected rows highlight and update detail panels.
+**What the supplied EVE Dashboard code demonstrates:** Sortable columns, search filtering, category filters, multi-select rows, summary metrics above/below the table, refresh buttons. Selected rows highlight and update detail panels.
 
 **Dependencies:** Client-side sorting/filtering logic, server-side pagination for large datasets, event delegation for row actions.
 
 **Galaxy Game adaptation:** The market.js patterns are strong candidates for the Galaxy Game market/economy workspace and any data-heavy player screens (assets, settlements, missions).
 
 ### Network Visualization
-**What EVE does:** Force-directed or manual-layout graph with draggable nodes, clickable edges, zoom/pan, node detail panels on selection, link state indicators.
+**What the supplied EVE Dashboard code demonstrates:** Force-directed or manual-layout graph with draggable nodes, clickable edges, zoom/pan, node detail panels on selection, link state indicators.
 
 **Dependencies:** Graph layout algorithm, edge routing logic, node/edge data structures specific to EVE's wormhole system.
 
 **Galaxy Game adaptation:** The chain.js patterns could inform Galaxy Game's logistics/network visualization, but only if a real workflow requires it. Wormhole topology must come from Galaxy Game's own rules.
 
 ### Analytics and Charts
-**What EVE does:** Time-series charts with date range selectors, grouping controls, linked table selection (clicking a chart region filters the table), drill-down to transaction details.
+**What the supplied EVE Dashboard code demonstrates:** Time-series charts with date range selectors, grouping controls, linked table selection (clicking a chart region filters the table), drill-down to transaction details.
 
 **Dependencies:** Charting library (likely D3.js or custom), time-window aggregation logic, shared selection state management.
 
@@ -84,21 +84,21 @@ The original six reference files were reviewed before 2026-11-08. Additional use
 
 ## What Must NOT Be Imported from EVE
 
-- EVE terminology (fleet, corporation, alliance, PLEX, etc.)
-- EVE's game-domain hierarchy and faction structure
-- EVE's economic rules and market mechanics
-- EVE's navigation labels and feature grouping
-- EVE's visual styling (specific color palettes, icons, branding)
-- EVE's permission model and access controls
-- Any assumption that EVE's information density is appropriate for Galaxy Game
+- EVE Online terminology and game concepts (corporation, alliance, PLEX, and game-specific fleet semantics); retain only generic words when they accurately describe GalaxyGame concepts.
+- EVE Online's game-domain hierarchy and faction structure
+- EVE Online's economic rules and market mechanics
+- EVE Online's navigation labels and feature grouping
+- EVE Online's visual styling (specific color palettes, icons, branding)
+- EVE Online's permission model and access controls
+- Any assumption that EVE Online's information density is appropriate for GalaxyGame
 
 ---
 
 ## Recommended Next Steps for EVE Reference Documentation
 
-1. **If live access becomes available:** Capture genuine screenshots of the EVE Dashboard navigation, map workspace, market window, asset manager, and wealth/transaction views. Document each with viewport, interaction tested, and relevant source context.
+1. **If live access to the EVE Dashboard application becomes available:** Capture genuine screenshots of the EVE Dashboard navigation, map workspace, market window, asset manager, and wealth/transaction views. Document each with viewport, interaction tested, and relevant source context.
 
-2. **Verify code-derived observations:** Compare the previously examined JavaScript files against the source of that same EVE-related dashboard application to confirm patterns are still applicable.
+2. **Verify code-derived observations:** Compare the previously examined JavaScript files against the source of the EVE Dashboard application to confirm patterns are still applicable.
 
 3. **Connect to Galaxy Game wiki pages:** Each pattern above should be linked to the relevant screen concept in `screen-concepts-and-wireframes.md` and the JS reuse plan in `javascript-reuse-and-porting-plan.md`.
 
