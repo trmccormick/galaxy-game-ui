@@ -138,4 +138,48 @@ class Admin::MapStudioController < Admin::BaseController
     }
   end
 
+  # Review a generated artifact against a destination body's current terrain.
+  # Destination records are illustrative fixtures; no production bodies are read.
+  def apply
+    load_apply_review
+  end
+
+  # Prototype-only confirmation. This action deliberately performs no writes.
+  def simulate_apply
+    load_apply_review
+    @simulation_result = true
+    render :apply
+  end
+
+  private
+
+  def load_apply_review
+    maps = {
+      "mars_northern_lowlands_20261121.json" => ["Mars · Northern Lowlands", "Mars", "800 × 400", "2.4 MB", "FreeCiv · Earth Large; Civ4 · Highlands"],
+      "earth_global_baseline_20261120.json" => ["Earth · Global Baseline", "Earth", "800 × 400", "3.1 MB", "FreeCiv · Earth Classic; Civ4 · Terra"],
+      "luna_marius_hills_20261118.json" => ["Luna · Marius Hills Region", "Luna", "600 × 300", "1.7 MB", "Civ4 · Highlands"],
+      "venus_global_reference_20261116.json" => ["Venus · Global Reference", "Venus", "800 × 400", "2.8 MB", "FreeCiv · Earth Large"],
+      "eden1_initial_terrain_20261114.json" => ["Eden-1 · Initial Terrain", "Eden-1", "800 × 400", "2.2 MB", "Civ4 · Terra; FreeCiv · Highlands"],
+      "mars_tharsis_test_20261110.json" => ["Mars · Tharsis Test", "Mars", "400 × 200", "820 KB", "FreeCiv · Highlands"]
+    }
+    record = maps[params[:id].to_s]
+    unless record
+      redirect_to admin_map_studio_browse_path, alert: "That fixture map is not available in the prototype."
+      return
+    end
+
+    @map = { id: params[:id], name: record[0], target: record[1], dimensions: record[2], file_size: record[3], sources: record[4].split("; ") }
+    @destination_bodies = [
+      { id: "earth", name: "Earth", kind: "Terrestrial planet", terrain: "Present · existing baseline", source: "NASA / imported baseline" },
+      { id: "mars", name: "Mars", kind: "Terrestrial planet", terrain: "Present · automatically generated", source: "StarSim automatic terrain" },
+      { id: "luna", name: "Luna", kind: "Airless major moon", terrain: "Present · regional terrain", source: "StarSim automatic terrain" },
+      { id: "venus", name: "Venus", kind: "Terrestrial planet", terrain: "Present · existing baseline", source: "StarSim automatic terrain" },
+      { id: "eden-1", name: "Eden-1", kind: "Extrasolar terrestrial world", terrain: "Not yet populated", source: "No stored terrain fixture" },
+      { id: "titan", name: "Titan", kind: "Major moon", terrain: "Present · automatically generated", source: "StarSim automatic terrain" }
+    ]
+    @selected_body = @destination_bodies.find { |body| body[:id] == params[:body_id].to_s }
+    @target_matches = @selected_body && @selected_body[:name] == @map[:target]
+    @has_existing_terrain = @selected_body && !@selected_body[:terrain].start_with?("Not yet")
+  end
+
 end
