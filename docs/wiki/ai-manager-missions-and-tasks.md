@@ -56,8 +56,10 @@ Players do **not** author or maintain the shared task library. They do not need 
 
 ## Prototype examples and source boundaries
 
-- The main game repository contains an experimental V2 task example at `galaxy_game/data/json-data/missions_v2/tasks/task_venus_harvest_arrival_v2.json`. It describes a Venus harvester arrival/offload task with N₂/CO₂ payload and Luna tank-farm prerequisites. It is a **task**, not the entire repeatable Venus harvesting mission.
-- The main game also contains `precursor_mission_profile_v1.json`, an experimental phase-oriented profile example that references the Venus arrival task. Treat both as source examples only; do not claim the current V2 engine discovers or executes them successfully.
+- The main game defines the JSON data root and mission subpaths in `galaxy_game/config/initializers/game_data_paths.rb`. The UI prototype mirrors the relevant `GalaxyGame::Paths` constants and mounts the main `data/json-data/` tree read-only for local testing.
+- The two V2 locations are intentionally distinct: `data/json-data/missions_v2/` contains the limited Luna mission/task examples assembled for the testing setup; `data/json-data/missions/tasks_v2/` contains the broader reusable task library in draft form. The prototype should use both through the matching path constants and label their source/maturity accurately.
+- The Venus arrival/offload task example belongs to the V2 test/setup task data. It describes a Venus harvester arrival/offload task with N₂/CO₂ payload and Luna tank-farm prerequisites. It is a **task**, not the entire repeatable Venus harvesting mission.
+- The main game also contains `precursor_mission_profile_v1.json`, an experimental phase-oriented profile example that references the Venus arrival task. Treat examples as source material only; do not claim the current V2 engine discovers or executes them successfully.
 - The Venus Atmospheric Harvest Run shown in prototype mission screens is a representative repeatable mission concept: dispatch/operate the Venus harvester, harvest atmospheric cargo, return to the receiving settlement, offload into prepared storage, and repeat as conditions and launch opportunities permit. The actual detailed task composition and run logic remain subject to main-game code and design validation.
 - The prototype may use fixture data to demonstrate screens and interactions. Clearly label fixtures and mock actions; do not change simulation state or claim live execution.
 
