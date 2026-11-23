@@ -1,0 +1,20 @@
+<div class="mb-5">
+  <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Shared library</p>
+  <h1 class="gg-section-title">Mission Library</h1>
+  <p class="text-sm" style="color:var(--gg-text-secondary);">Predefined repeatable operational flows built from shared tasks. Missions guide planning; they are not rigid execution scripts.</p>
+  <p class="text-xs mt-2" style="color:var(--gg-accent-warning);">Prototype examples · experimental source definitions are clearly identified.</p>
+</div>
+<div class="space-y-3">
+  <% @missions.each do |mission| %>
+    <section class="gg-grid-panel">
+      <div class="flex flex-wrap justify-between gap-3">
+        <div class="min-w-0">
+          <h2 class="text-base font-semibold"><%= link_to mission[:name], admin_ai_manager_library_mission_path(mission[:id]), style: "color:var(--gg-primary);" %></h2>
+          <p class="text-sm mt-1"><%= mission[:objective] %></p>
+          <p class="text-xs mt-2" style="color:var(--gg-text-dim);">Scope: <%= mission[:scope] %> · <%= mission[:tasks].length %> task groupings</p>
+        </div>
+        <div class="text-right"><div class="text-xs" style="color:var(--gg-accent-warning);"><%= mission[:maturity] %></div><%= link_to "Review mission →", admin_ai_manager_library_mission_path(mission[:id]), class: "text-xs mt-3 inline-block", style: "color:var(--gg-primary);" %></div>
+      </div>
+    </section>
+  <% end %>
+</div>
