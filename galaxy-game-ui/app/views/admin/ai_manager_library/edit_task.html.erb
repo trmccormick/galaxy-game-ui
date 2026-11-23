@@ -1,0 +1,78 @@
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+  <div>
+    <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Shared Task Library</p>
+    <h1 class="gg-section-title">Task Definition Editor</h1>
+    <p class="text-sm" style="color:var(--gg-text-secondary);"><%= @task[:name] %> · <span class="font-mono"><%= @task[:id] %></span></p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <%= link_to "← Task detail", admin_ai_manager_library_task_path(@task[:id]), class: "text-xs px-3 py-2 rounded border", style: "border-color:rgba(0,212,255,.22);color:var(--gg-primary);" %>
+    <span class="text-xs px-3 py-2 rounded" style="background:rgba(255,190,11,.10);color:var(--gg-accent-warning);">Fixture editor · no persistence</span>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(240px,1fr)] gap-4 mb-4">
+  <section class="gg-grid-panel">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <h2 class="gg-section-title text-lg">Structured fields</h2>
+      <span class="text-xs" style="color:var(--gg-text-dim);">Common task properties</span>
+    </div>
+    <div data-controller="ai-manager-task-editor">
+      <div class="space-y-3">
+        <label class="block">
+          <span class="gg-stat-label block mb-1">Task name</span>
+          <input type="text" data-ai-manager-task-editor-target="name" data-action="input->ai-manager-task-editor#updateStructured" class="w-full rounded px-3 py-2 text-sm" style="background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);">
+        </label>
+        <label class="block">
+          <span class="gg-stat-label block mb-1">Description</span>
+          <textarea rows="3" data-ai-manager-task-editor-target="description" data-action="input->ai-manager-task-editor#updateStructured" class="w-full rounded px-3 py-2 text-sm" style="background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);"></textarea>
+        </label>
+        <label class="block">
+          <span class="gg-stat-label block mb-1">Prerequisite task references</span>
+          <input type="text" data-ai-manager-task-editor-target="prerequisites" data-action="input->ai-manager-task-editor#updateStructured" placeholder="Comma-separated task IDs" class="w-full rounded px-3 py-2 text-sm" style="background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);">
+          <span class="text-xs block mt-1" style="color:var(--gg-text-dim);">References only; this editor does not create or modify referenced task definitions.</span>
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-5 mb-2">
+        <h2 class="gg-section-title text-lg">Raw JSON</h2>
+        <button type="button" data-action="ai-manager-task-editor#format" class="text-xs px-3 py-2 rounded border" style="border-color:rgba(0,212,255,.22);color:var(--gg-primary);">Format JSON</button>
+      </div>
+      <textarea data-ai-manager-task-editor-target="raw" data-action="input->ai-manager-task-editor#updateRaw" spellcheck="false" rows="24" class="w-full rounded p-3 text-xs font-mono" style="background:#07111d;border:1px solid rgba(0,212,255,.24);color:var(--gg-text-primary);"><%= @task_json %></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-3 mt-3">
+        <p data-ai-manager-task-editor-target="status" class="text-xs" data-state="success" style="color:var(--gg-text-secondary);">Loading source fixture…</p>
+        <button type="button" data-action="ai-manager-task-editor#preview" class="text-xs px-3 py-2 rounded font-semibold" style="background:rgba(0,212,255,.12);color:var(--gg-primary);">Preview changes</button>
+      </div>
+      <section data-ai-manager-task-editor-target="previewPanel" hidden class="mt-4">
+        <div class="flex items-center justify-between mb-2"><h3 class="gg-section-title text-base">Document preview</h3><span class="text-xs" style="color:var(--gg-text-dim);">Client-side only</span></div>
+        <pre data-ai-manager-task-editor-target="preview" class="overflow-x-auto rounded p-3 text-xs font-mono whitespace-pre-wrap" style="background:#07111d;color:var(--gg-text-secondary);"></pre>
+      </section>
+    </div>
+  </section>
+
+  <aside class="space-y-4">
+    <section class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg">Source record</h2>
+      <div class="gg-stat-label mt-3 mb-1">Source</div>
+      <p class="text-xs font-mono break-all" style="color:var(--gg-text-secondary);"><%= @task[:source] %></p>
+      <div class="gg-stat-label mt-4 mb-1">Maturity</div>
+      <p class="text-sm" style="color:var(--gg-accent-warning);"><%= @task[:maturity] %></p>
+      <div class="gg-stat-label mt-4 mb-1">Definition identity</div>
+      <p class="text-xs font-mono break-all"><%= @task[:id] %></p>
+    </section>
+    <section class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg">Editor boundary</h2>
+      <ul class="space-y-2 text-xs" style="color:var(--gg-text-secondary);">
+        <li>• Structured fields and raw JSON synchronize in the browser.</li>
+        <li>• JSON syntax can be checked and formatted.</li>
+        <li>• Preview displays the edited document locally.</li>
+        <li>• No file is saved and no game data changes.</li>
+        <li>• Schema, reference, effect, and prerequisite validation are not yet connected.</li>
+      </ul>
+    </section>
+    <section class="gg-grid-panel">
+      <h2 class="gg-section-title text-lg">Next authoring capability</h2>
+      <p class="text-xs" style="color:var(--gg-text-secondary);">Add source-aware validation and a reviewable diff, then build the Mission Template Designer using shared task references.</p>
+      <%= link_to "Open Mission Library →", admin_ai_manager_library_missions_path, class: "text-xs inline-block mt-3", style: "color:var(--gg-primary);" %>
+    </section>
+  </aside>
+</div>
