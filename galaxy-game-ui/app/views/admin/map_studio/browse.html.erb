@@ -1,0 +1,239 @@
+<% content_for :title, "Browse Generated Maps | Map Studio" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "pages/map_studio", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="map-studio-page map-studio-browse-page">
+  <div class="map-studio-heading">
+    <div>
+      <div class="map-studio-eyebrow">ADMIN / WORLD TOOLS / MAP STUDIO</div>
+      <h1 class="gg-section-title">Generated Map Library</h1>
+      <p class="map-studio-intro">Review generated terrain baselines, compare their metadata and source material, and identify candidates for a world's initial terrain state.</p>
+    </div>
+    <span class="map-studio-prototype-tag">UI PROTOTYPE · FIXTURE DATA</span>
+  </div>
+
+  <div class="map-studio-toolbar">
+    <%= link_to "← Map Studio overview", admin_map_studio_path, class: "map-studio-back-link" %>
+    <%= link_to "＋ Generate terrain", admin_map_studio_generate_path, class: "map-studio-action-link" %>
+  </div>
+
+  <section class="map-studio-library-stats" aria-label="Generated map library summary">
+    <div class="map-studio-panel"><span>Library maps</span><strong><%= @map_stats[:total] %></strong></div>
+    <div class="map-studio-panel"><span>Applied baselines</span><strong><%= @map_stats[:applied] %></strong></div>
+    <div class="map-studio-panel"><span>Not yet applied</span><strong><%= @map_stats[:pending] %></strong></div>
+    <div class="map-studio-panel"><span>Average quality</span><strong><%= @map_stats[:average_quality] %><small>/ 10</small></strong></div>
+  </section>
+
+  <section class="map-studio-panel map-studio-library-filters">
+    <div class="map-studio-library-filter-heading">
+      <div><h2>Map library</h2><p>Filter and sort the generated terrain collection.</p></div>
+      <span id="map-studio-visible-count"><%= @generated_maps.length %> maps</span>
+    </div>
+    <div class="map-studio-library-filter-grid">
+      <label class="map-studio-field">
+        <span>Search library</span>
+        <input type="search" id="map-library-search" placeholder="Search map, world or source…">
+      </label>
+      <label class="map-studio-field">
+        <span>Sort by</span>
+        <select id="map-library-sort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="quality">Quality score</option>
+        </select>
+      </label>
+      <label class="map-studio-field">
+        <span>Biome focus</span>
+        <select id="map-library-biome">
+          <option value="">All biomes</option>
+          <option value="Balanced">Balanced</option>
+          <option value="Oceanic">Oceanic</option>
+          <option value="Continental">Continental</option>
+          <option value="Arid">Arid</option>
+          <option value="Arctic">Arctic</option>
+        </select>
+      </label>
+      <label class="map-studio-field">
+        <span>Complexity</span>
+        <select id="map-library-complexity">
+          <option value="">All complexities</option>
+          <option value="Simple">Simple</option>
+          <option value="Normal">Normal</option>
+          <option value="Complex">Complex</option>
+        </select>
+      </label>
+      <label class="map-studio-field">
+        <span>Applied status</span>
+        <select id="map-library-applied">
+          <option value="">All maps</option>
+          <option value="applied">Applied to a world</option>
+          <option value="pending">Not yet applied</option>
+        </select>
+      </label>
+    </div>
+    <div class="map-studio-filter-footer">
+      <span id="map-studio-filter-summary">Showing all library maps</span>
+      <button type="button" id="map-library-reset" class="map-studio-reset-button">Reset filters</button>
+    </div>
+  </section>
+
+  <section class="map-studio-library-grid" id="map-studio-library-grid" aria-label="Generated maps">
+    <% @generated_maps.each do |map| %>
+      <article class="map-studio-panel map-studio-library-card"
+        data-map-id="<%= map[:id] %>"
+        data-map-name="<%= map[:name] %>"
+        data-map-planet="<%= map[:planet] %>"
+        data-map-created="<%= map[:created_at] %>"
+        data-map-quality="<%= map[:quality_score] %>"
+        data-map-biome="<%= map[:biome_focus] %>"
+        data-map-complexity="<%= map[:complexity] %>"
+        data-map-applied="<%= map[:applied] ? 'applied' : 'pending' %>"
+        data-map-search="<%= [map[:name], map[:planet], map[:description], map[:source_maps].join(' ')].join(' ').downcase %>"
+        data-map-description="<%= map[:description] %>"
+        data-map-sources="<%= map[:source_maps].join(' · ') %>"
+        data-map-dimensions="<%= map[:dimensions] %>"
+        data-map-size="<%= map[:file_size] %>"
+        data-map-type="<%= map[:planet_type] %>">
+        <div class="map-studio-map-art" aria-hidden="true">
+          <div class="map-studio-map-art-grid"></div>
+          <div class="map-studio-map-continent map-studio-map-continent-one"></div>
+          <div class="map-studio-map-continent map-studio-map-continent-two"></div>
+          <span class="map-studio-map-art-label">TERRAIN PREVIEW</span>
+          <span class="map-studio-map-coordinate"><%= map[:planet].upcase %> / BASELINE</span>
+        </div>
+        <div class="map-studio-library-card-body">
+          <div class="map-studio-library-card-topline">
+            <span class="map-studio-map-world"><%= map[:planet] %></span>
+            <span class="map-studio-map-quality"><%= map[:quality_score] %><small> / 10</small></span>
+          </div>
+          <h3><%= map[:name] %></h3>
+          <p class="map-studio-map-description"><%= map[:description] %></p>
+          <div class="map-studio-map-tags">
+            <span><%= map[:biome_focus] %></span>
+            <span><%= map[:complexity] %></span>
+            <span><%= map[:dimensions] %></span>
+          </div>
+          <div class="map-studio-map-meta">
+            <span><%= map[:created_at].to_date.strftime("%b %d, %Y") %></span>
+            <span class="<%= map[:applied] ? 'is-applied' : 'is-pending' %>"><%= map[:applied] ? "Applied baseline" : "Available" %></span>
+          </div>
+          <div class="map-studio-map-actions">
+            <button type="button" class="map-studio-secondary-button map-studio-preview-map">Inspect details</button>
+            <span class="map-studio-map-action-note">Apply workflow not connected</span>
+          </div>
+        </div>
+      </article>
+    <% end %>
+  </section>
+
+  <div class="map-studio-library-empty map-studio-panel" id="map-studio-library-empty" hidden>
+    <div class="map-studio-empty-symbol">⌕</div>
+    <h2>No matching maps</h2>
+    <p>Try changing or clearing the current filters.</p>
+    <button type="button" id="map-library-empty-reset" class="map-studio-secondary-button">Clear filters</button>
+  </div>
+
+  <section class="map-studio-library-note">
+    <strong>Prototype data boundary</strong>
+    <span>These library records and preview graphics are illustrative fixtures. Inspecting a map is local to this page; applying terrain to a celestial body is intentionally disabled until the production workflow is connected.</span>
+  </section>
+</div>
+
+<div class="map-studio-detail-backdrop" id="map-studio-detail-modal" hidden>
+  <section class="map-studio-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="map-studio-detail-title">
+    <div class="map-studio-detail-header">
+      <div><span class="map-studio-aside-heading">MAP RECORD / FIXTURE PREVIEW</span><h2 id="map-studio-detail-title">Map details</h2></div>
+      <button type="button" class="map-studio-modal-close" id="map-studio-modal-close" aria-label="Close details">×</button>
+    </div>
+    <p id="map-studio-detail-description"></p>
+    <div class="map-studio-detail-grid">
+      <div><span>Target world</span><strong id="detail-world">—</strong></div>
+      <div><span>World type</span><strong id="detail-type">—</strong></div>
+      <div><span>Quality score</span><strong id="detail-quality">—</strong></div>
+      <div><span>Biome focus</span><strong id="detail-biome">—</strong></div>
+      <div><span>Complexity</span><strong id="detail-complexity">—</strong></div>
+      <div><span>Dimensions</span><strong id="detail-dimensions">—</strong></div>
+      <div><span>File size</span><strong id="detail-size">—</strong></div>
+      <div><span>Applied status</span><strong id="detail-applied">—</strong></div>
+    </div>
+    <div class="map-studio-detail-sources"><span>Source maps</span><strong id="detail-sources">—</strong></div>
+    <div class="map-studio-detail-footer"><span>Preview only · no live map file is loaded</span><button type="button" class="map-studio-secondary-button" id="map-studio-modal-done">Close</button></div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector(".map-studio-browse-page");
+    if (!root || root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
+    const grid = document.getElementById("map-studio-library-grid");
+    const cards = Array.from(grid.querySelectorAll(".map-studio-library-card"));
+    const search = document.getElementById("map-library-search");
+    const sort = document.getElementById("map-library-sort");
+    const biome = document.getElementById("map-library-biome");
+    const complexity = document.getElementById("map-library-complexity");
+    const applied = document.getElementById("map-library-applied");
+    const empty = document.getElementById("map-studio-library-empty");
+    const count = document.getElementById("map-studio-visible-count");
+    const summary = document.getElementById("map-studio-filter-summary");
+
+    const updateLibrary = () => {
+      const query = search.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        return (!query || card.dataset.mapSearch.includes(query)) &&
+          (!biome.value || card.dataset.mapBiome === biome.value) &&
+          (!complexity.value || card.dataset.mapComplexity === complexity.value) &&
+          (!applied.value || card.dataset.mapApplied === applied.value);
+      });
+
+      visible.sort((a,b) => {
+        if (sort.value === "oldest") return a.dataset.mapCreated.localeCompare(b.dataset.mapCreated);
+        if (sort.value === "name") return a.dataset.mapName.localeCompare(b.dataset.mapName);
+        if (sort.value === "quality") return Number(b.dataset.mapQuality) - Number(a.dataset.mapQuality);
+        return b.dataset.mapCreated.localeCompare(a.dataset.mapCreated);
+      });
+      visible.forEach(card => grid.appendChild(card));
+      cards.filter(card => !visible.includes(card)).forEach(card => card.hidden = true);
+      visible.forEach(card => card.hidden = false);
+      count.textContent = visible.length + (visible.length === 1 ? " map" : " maps");
+      empty.hidden = visible.length !== 0;
+      const active = [query,biome.value,complexity.value,applied.value].filter(Boolean).length;
+      summary.textContent = active ? "Filtered results · " + active + " active filter(s)" : "Showing all library maps";
+    };
+
+    const reset = () => {
+      search.value = ""; sort.value = "newest"; biome.value = ""; complexity.value = ""; applied.value = "";
+      updateLibrary();
+    };
+    [search,sort,biome,complexity,applied].forEach(control => control.addEventListener("input", updateLibrary));
+    document.getElementById("map-library-reset").addEventListener("click", reset);
+    document.getElementById("map-library-empty-reset").addEventListener("click", reset);
+
+    const modal = document.getElementById("map-studio-detail-modal");
+    const closeModal = () => { modal.hidden = true; };
+    const setText = (id, value) => { document.getElementById(id).textContent = value || "—"; };
+    cards.forEach(card => card.querySelector(".map-studio-preview-map").addEventListener("click", () => {
+      setText("map-studio-detail-title", card.dataset.mapName);
+      setText("map-studio-detail-description", card.dataset.mapDescription);
+      setText("detail-world", card.dataset.mapPlanet);
+      setText("detail-type", card.dataset.mapType);
+      setText("detail-quality", card.dataset.mapQuality + " / 10");
+      setText("detail-biome", card.dataset.mapBiome);
+      setText("detail-complexity", card.dataset.mapComplexity);
+      setText("detail-dimensions", card.dataset.mapDimensions);
+      setText("detail-size", card.dataset.mapSize);
+      setText("detail-applied", card.dataset.mapApplied === "applied" ? "Applied baseline" : "Not yet applied");
+      setText("detail-sources", card.dataset.mapSources);
+      modal.hidden = false;
+      document.getElementById("map-studio-modal-close").focus();
+    }));
+    document.getElementById("map-studio-modal-close").addEventListener("click", closeModal);
+    document.getElementById("map-studio-modal-done").addEventListener("click", closeModal);
+    modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && !modal.hidden) closeModal(); });
+    updateLibrary();
+  })();
+</script>
