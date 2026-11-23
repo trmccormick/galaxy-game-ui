@@ -2,10 +2,9 @@ class Admin::AiManagerController < Admin::BaseController
   layout "dashboard"
 
   def index
-    @system_status = { active_missions: 4, completed_missions: 127, failed_missions: 8, total_settlements: 8 }
-    @quick_actions = mock_quick_actions
-    @active_missions = mock_missions[:active]
-    @settlements = mock_settlements
+    @systems = api.systems
+    @selected_system = api.resolve_system(params[:system])
+    @overview = api.overview(system_id: @selected_system)
   end
 
   def missions
@@ -15,8 +14,15 @@ class Admin::AiManagerController < Admin::BaseController
   end
 
   def decisions
-    @decisions = mock_decisions
-    @metrics = mock_performance_metrics
+    @systems = api.systems
+    @selected_system = api.resolve_system(params[:system])
+    @decisions = api.decisions(system_id: @selected_system)
+    @decision_counts = {
+      total: @decisions.length,
+      awaiting_review: @decisions.count { |decision| decision[:outcome] == "Awaiting operator review" },
+      active: @decisions.count { |decision| decision[:outcome] == "Active" },
+      blocked: @decisions.count { |decision| decision[:outcome] == "Blocked" }
+    }
   end
 
   def planner
@@ -60,6 +66,10 @@ class Admin::AiManagerController < Admin::BaseController
   end
 
   private
+
+  def api
+    @api ||= MockAiManagerApi.new
+  end
 
   # ── Mock data helpers ──────────────────────────────────────────────
 
