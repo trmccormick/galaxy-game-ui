@@ -53,7 +53,11 @@ class Admin::AiManagerController < Admin::BaseController
       created_at: selected[:created_at]
     )
     @task_list = mock_task_list
-    @current_task_index = [((@mission[:progress].to_i / 25) - 1), 0].max.clamp(0, @task_list.length - 1)
+    @current_task_index = if @mission[:status].to_s == "completed"
+      @task_list.length
+    else
+      [((@mission[:progress].to_i / 25) - 1), 0].max.clamp(0, @task_list.length - 1)
+    end
     @manifest = @mission[:manifest]
     @mission_activity = mock_mission_activity(@mission[:identifier])
     @mission_results = mock_mission_results(@mission[:identifier], @mission[:status])
