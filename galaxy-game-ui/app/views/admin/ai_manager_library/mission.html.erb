@@ -1,0 +1,27 @@
+<div class="flex flex-wrap justify-between gap-3 mb-5">
+  <div><p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / Mission Library</p><h1 class="gg-section-title"><%= @mission[:name] %></h1><p class="text-sm" style="color:var(--gg-text-secondary);"><%= @mission[:scope] %> · <%= @mission[:maturity] %></p></div>
+  <%= link_to "← Mission Library", admin_ai_manager_library_missions_path, class: "text-xs", style: "color:var(--gg-primary);" %>
+</div>
+<div class="gg-grid-panel mb-4">
+  <h2 class="gg-section-title text-lg">Mission objective</h2>
+  <p class="text-sm"><%= @mission[:objective] %></p>
+  <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+    <div><div class="gg-stat-label">Repeatability / operating condition</div><%= @mission[:repeatability] %></div>
+    <div><div class="gg-stat-label">Source and maturity</div><%= @mission[:source] %></div>
+  </div>
+</div>
+<div class="gg-grid-panel">
+  <div class="flex flex-wrap justify-between gap-2 mb-3"><h2 class="gg-section-title text-lg">Operational flow</h2><span class="text-xs" style="color:var(--gg-text-dim);">Illustrative composition · AI Manager may adapt</span></div>
+  <div class="space-y-2">
+    <% @linked_tasks.each_with_index do |task, index| %>
+      <div class="flex gap-3 items-start border-l-2 pl-3 py-2" style="border-color:var(--gg-primary);">
+        <span class="text-xs font-mono" style="color:var(--gg-primary);"><%= (index + 1).to_s.rjust(2, "0") %></span>
+        <div class="flex-1"><div class="text-sm font-semibold"><%= task[:name] %></div><div class="text-xs" style="color:var(--gg-text-dim);"><%= task[:role] %> · <%= task[:status] %></div></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+  <section class="gg-grid-panel"><h2 class="gg-section-title text-base">Admin responsibilities</h2><p class="text-sm">Maintain the shared mission definition, referenced tasks, prerequisites, expected outcomes, maturity, and validation evidence.</p></section>
+  <section class="gg-grid-panel"><h2 class="gg-section-title text-base">AI Manager responsibilities</h2><p class="text-sm">Select and sequence available tasks, resolve dependencies, adapt to current conditions, manage assets within authority, and evaluate each run.</p></section>
+</div>
