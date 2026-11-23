@@ -29,7 +29,7 @@
     <div class="gg-stat-label mt-4 mb-1">Category</div>
     <div class="text-sm"><%= @task[:category] %></div>
     <div class="gg-stat-label mt-4 mb-1">Editing</div>
-    <div class="text-sm">Not available in this prototype checkpoint</div>
+    <% if @task[:document] %><%= link_to "Open Task Definition Editor →", edit_admin_ai_manager_library_task_path(@task[:id]), class: "text-sm font-semibold", style: "color:var(--gg-primary);" %><% else %><div class="text-sm">No complete source document is available for editing</div><% end %>
   </section>
 </div>
 
