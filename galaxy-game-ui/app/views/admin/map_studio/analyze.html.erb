@@ -85,6 +85,7 @@
         <h3>Workflow boundary</h3>
         <p class="map-studio-intro">This is a reusable generated-map artifact, separate from the terrain currently persisted on a celestial body.</p>
         <p class="map-studio-prototype-disclaimer">Applying a map is a separate operation that updates the target body's Geosphere terrain_map. The prototype does not perform that write.</p>
+        <%= link_to "Review destination / apply", admin_map_studio_apply_path(@map[:id]), class: "map-studio-analysis-link" %>
         <%= link_to "Return to map library", admin_map_studio_browse_path, class: "map-studio-analysis-link" %>
       </section>
     </aside>
