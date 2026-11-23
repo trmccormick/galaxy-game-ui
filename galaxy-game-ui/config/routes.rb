@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     get "map_studio/generate", to: "map_studio#generate", as: :map_studio_generate
     get "map_studio/browse", to: "map_studio#browse", as: :map_studio_browse
     get "map_studio/analyze/:id", to: "map_studio#analyze", as: :map_studio_analyze
+    get "map_studio/apply/:id", to: "map_studio#apply", as: :map_studio_apply
+    post "map_studio/apply/:id/simulate", to: "map_studio#simulate_apply", as: :map_studio_simulate_apply
 
     get "ai_manager", to: "ai_manager#index", as: :ai_manager
     get "ai_manager/missions", to: "ai_manager#missions", as: :ai_manager_missions
