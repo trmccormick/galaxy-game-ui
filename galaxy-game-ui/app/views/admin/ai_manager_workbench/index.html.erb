@@ -4,7 +4,10 @@
     <h1 class="gg-section-title">Operations Workbench</h1>
     <p class="text-sm" style="color:var(--gg-text-secondary);">Shared autonomous-management capabilities · NPC operations</p>
   </div>
-  <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.12);color:var(--gg-accent-warning);">Prototype fixtures · not connected to simulation</span>
+  <div class="flex items-center gap-2">
+    <%= link_to "← Overview", admin_ai_manager_path(system: @selected_system), class: "text-xs font-semibold px-3 py-2 rounded border", style: "border-color:rgba(0,212,255,.25);color:var(--gg-primary);" %>
+    <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.12);color:var(--gg-accent-warning);">Prototype fixtures · not connected to simulation</span>
+  </div>
 </div>
 
 <div class="flex flex-wrap gap-2 mb-5">
@@ -13,8 +16,8 @@
   <% end %>
 </div>
 
-<div class="grid grid-cols-3 gap-3 mb-5">
-  <% { "Needs attention" => @counts[:attention], "Active" => @counts[:active], "Completed" => @counts[:completed] }.each do |label, value| %>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+  <% { "Needs attention" => @counts[:attention], "Queued" => @counts[:queued], "Active" => @counts[:active], "Blocked" => @counts[:blocked], "Completed" => @counts[:completed] }.each do |label, value| %>
     <div class="gg-grid-panel"><div class="gg-metric"><%= value %></div><div class="gg-stat-label"><%= label %></div></div>
   <% end %>
 </div>
@@ -31,7 +34,7 @@
   <%= form_with url: admin_ai_manager_workbench_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-4 gap-2 mb-4" do %>
     <%= hidden_field_tag :system, @selected_system %>
     <%= text_field_tag :q, @filters[:query], placeholder: "Search tasks or targets", class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
-    <%= select_tag :status, options_for_select([["All statuses", ""]] + @status_options.map { |value| [value.humanize, value] }, @filters[:status]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+    <%= select_tag :status, options_for_select([["All statuses", ""]] + @status_options.map { |value| [@status_labels[value], value] }, @filters[:status]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
     <%= select_tag :category, options_for_select([["All categories", ""]] + @category_options.map { |value| [value, value] }, @filters[:category]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
     <div class="flex gap-2">
       <%= submit_tag "Filter", class: "px-4 py-2 rounded text-sm font-semibold", style: "background:rgba(0,212,255,.14);color:var(--gg-primary);border:1px solid rgba(0,212,255,.3);" %>
@@ -50,7 +53,7 @@
             <td class="py-3 pr-3"><div class="font-semibold" style="color:var(--gg-text-primary);"><%= task[:title] %></div><div class="text-xs font-mono" style="color:var(--gg-text-dim);"><%= task[:id] %></div></td>
             <td class="py-3 pr-3"><%= task[:target] %><div class="text-xs" style="color:var(--gg-text-dim);"><%= task[:target_type] %></div></td>
             <td class="py-3 pr-3"><%= task[:origin] %></td><td class="py-3 pr-3"><%= task[:priority].humanize %></td>
-            <td class="py-3 pr-3"><%= task[:status].humanize %></td>
+            <td class="py-3 pr-3"><%= task[:status_label] %></td>
             <td class="py-3 text-right whitespace-nowrap"><%= link_to "Open →", admin_ai_manager_workbench_task_path(task[:id]), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %></td>
           </tr>
         <% end %>
@@ -61,4 +64,4 @@
     </table>
   </div>
 </div>
-<p class="text-xs" style="color:var(--gg-text-dim);">Sol and Eden are named context fixtures only. The queue uses controller-owned examples and does not load either system's JSON.</p>
+<p class="text-xs" style="color:var(--gg-text-dim);">Sol and Eden are replaceable context fixtures supplied by the shared mock API. No world JSON is loaded here and no task action changes live simulation state.</p>
