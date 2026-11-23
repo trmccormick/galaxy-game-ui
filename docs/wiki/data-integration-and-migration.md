@@ -6,11 +6,13 @@
 
 ## 1. Immediate prototype data approach
 
-**CURRENT PROTOTYPE DATA ACCESS — main-game JSON tree is mounted read-only for local testing**
+**LOCAL TEST DATA ACCESS — direct read-only mount; production UI integration — API**
 
-The UI prototype follows the main GalaxyGame application's data-root convention. In the main game, `GalaxyGame::Paths::JSON_DATA` resolves from `GALAXY_JSON_DATA_PATH` when configured, otherwise to `Rails.root/app/data`. The prototype now uses the same environment-variable/fallback pattern and mirrors the mission path constants needed by the authoring screens.
+The main GalaxyGame Rails application remains the authoritative owner of game data and exposes it to the UI through its API. The Rails 8 UI prototype is an API client; its normal application workflows must obtain game data and submit authorized changes through that API. It must not become a second reader/writer of the main application's files or database.
 
-For local Docker development, `docker-compose.dev.yml` mounts the sibling main repository's `../galaxyGame/data/json-data` read-only at `/home/galaxy_game/app/data` and sets `GALAXY_JSON_DATA_PATH=/home/galaxy_game/app/data`. This keeps the main repository authoritative, avoids copying or drifting fixture files, and keeps the existing prototype imports mount at `/home/galaxy_game/data` separate.
+For local development and UI testing, Docker mounts the main repository's existing `data/json-data/` directory directly into the prototype container, read-only. The mount is configurable with `GALAXY_GAME_REPO_PATH` (default `../galaxyGame`) and appears at `/home/galaxy_game/app/data`; `GALAXY_JSON_DATA_PATH` points the prototype's mirrored path constants at that mount. This reuses the one authoritative set of JSON files—there is no copied or separately maintained prototype data tree. The existing prototype imports mount at `/home/galaxy_game/data` remains separate.
+
+Treat this mount as a developer/test source for fixture-backed screens, source inspection, and API-contract discovery only. It is not the production data-access path and should not be used to bypass the API in application workflows. Keep it read-only; never write edits back to the main-game JSON tree from the prototype. When a screen is connected to the API, the API response becomes its runtime data source. Test-only direct-file access should remain clearly isolated and labelled.
 
 The path contract intentionally preserves both mission-data families defined by the main game's `config/initializers/game_data_paths.rb`:
 
@@ -27,9 +29,9 @@ The path contract intentionally preserves both mission-data families defined by 
 
 These paths are deliberately distinct. The limited Luna missions/tasks under `missions_v2/` are the current testing setup; `missions/tasks_v2/` is the broader draft task library. Do not merge, rename, or treat one as a replacement for the other. UI fixtures should identify which source and maturity they represent.
 
-The mount is read-only: the prototype may inspect and render source JSON, but must not modify main-game data. Player/Admin editing screens should initially operate on clearly identified in-memory or prototype-owned copies/fixtures. Persisting edits back to the main-game library requires a separately designed, authorized workflow and is not enabled by this mount.
+The mount is read-only and must not be used as the backing store for Player/Admin editing. Editing screens should call the main game's API; until those API workflows are available, clearly label local mock interactions and do not imply that changes were persisted.
 
-For non-Docker environments, set `GALAXY_JSON_DATA_PATH` to the corresponding JSON-data root. If unset, the initializer falls back to the prototype Rails app's `app/data`, matching the main game's convention.
+For isolated tests outside Docker, `GALAXY_JSON_DATA_PATH` may point at a local test-data root. If unset, the initializer falls back to the prototype Rails app's `app/data`. This is a test/source-data convenience, not a reason to add a production file-reader path.
 
 
 **CURRENT PROTOTYPE SCOPE — temporary data supply for design and API discovery**
@@ -58,10 +60,10 @@ The later game-domain work for StarSim completion, survey observations/discoveri
 
 ### Sol system fixtures and celestial-object data
 
-The prototype's copied JSON data is organized under its top-level `json-data/` directory. The corresponding main-app source tree is `data/json-data/`:
+For direct local test-data inspection, the prototype container sees the main app's JSON data at `/home/galaxy_game/app/data` through the read-only Docker mount. The source tree remains `data/json-data/` in the main repository; there should be no maintained prototype copy:
 
 - Main app: `data/json-data/star_systems/` and `data/json-data/generated_star_systems/`
-- Prototype copy: `json-data/star_systems/` and `json-data/generated_star_systems/`
+- Prototype container mount: `/home/galaxy_game/app/data/star_systems/` and `/home/galaxy_game/app/data/generated_star_systems/`
 
 These are the current directory roles, not a finalized taxonomy. The main app's `star_systems/` currently contains Sol and real-system starting records with varying levels of completeness; non-Sol records are incomplete inputs for StarSim, not complete playable systems. The generated directory contains generated/completed outputs and fixtures, which are also not guaranteed exhaustive inventories. The organization may be tuned later after the generator, lookup/loading paths, provenance needs, and UI discovery behavior are better understood. Do not reorganize or migrate these directories as part of prototype data-loading work.
 
