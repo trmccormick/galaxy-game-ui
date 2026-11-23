@@ -1,0 +1,94 @@
+<% content_for :title, "Analyze Generated Map | Map Studio" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "pages/map_studio", "data-turbo-track": "reload" %>
+<% end %>
+
+<% total_biomes = @map[:biome_counts].values.sum %>
+<div class="map-studio-page map-studio-analysis-page">
+  <div class="map-studio-heading">
+    <div>
+      <div class="map-studio-eyebrow">ADMIN / WORLD TOOLS / MAP STUDIO / ANALYSIS</div>
+      <h1 class="gg-section-title">Map analysis</h1>
+      <p class="map-studio-intro">Inspect the generated artifact, its source references, terrain composition and available quality metadata before deciding whether it is a suitable initial terrain candidate.</p>
+    </div>
+    <span class="map-studio-prototype-tag">UI PROTOTYPE · FIXTURE DATA</span>
+  </div>
+
+  <div class="map-studio-toolbar">
+    <%= link_to "← Generated map library", admin_map_studio_browse_path, class: "map-studio-back-link" %>
+    <%= link_to "＋ Generate terrain", admin_map_studio_generate_path, class: "map-studio-action-link" %>
+  </div>
+
+  <div class="map-studio-analysis-layout">
+    <div class="map-studio-analysis-main">
+      <section class="map-studio-panel map-studio-analysis-preview">
+        <div class="map-studio-analysis-heading">
+          <h2><%= @map[:name] %></h2>
+          <p><%= @map[:description] %></p>
+          <div class="map-studio-analysis-meta">
+            <span>Target: <strong><%= @map[:planet] %></strong></span>
+            <span>Generated: <%= @map[:created_at] %></span>
+            <span>Dimensions: <%= @map[:dimensions] %></span>
+            <span>Complexity: <%= @map[:complexity] %></span>
+          </div>
+        </div>
+        <div class="map-studio-analysis-art" role="img" aria-label="Illustrative terrain preview; generated map data is not loaded">
+          <div class="map-studio-analysis-land"></div>
+          <span class="map-studio-analysis-art-label">ILLUSTRATIVE TERRAIN PREVIEW · NOT THE MAP GRID</span>
+        </div>
+      </section>
+
+      <section class="map-studio-panel map-studio-analysis-section">
+        <h3>Artifact structure</h3>
+        <div class="map-studio-analysis-stat-grid">
+          <div class="map-studio-analysis-stat"><span>Grid dimensions</span><strong><%= @map[:dimensions] %></strong></div>
+          <div class="map-studio-analysis-stat"><span>Grid cells</span><strong><%= number_with_delimiter(@analysis[:tile_count]) %></strong></div>
+          <div class="map-studio-analysis-stat"><span>Biome categories</span><strong><%= @analysis[:biome_count] %></strong></div>
+          <div class="map-studio-analysis-stat"><span>Source references</span><strong><%= @analysis[:source_count] %></strong></div>
+          <div class="map-studio-analysis-stat"><span>Target body type</span><strong><%= @map[:planet_type] %></strong></div>
+          <div class="map-studio-analysis-stat"><span>Biome focus</span><strong><%= @map[:biome_focus] %></strong></div>
+        </div>
+      </section>
+
+      <section class="map-studio-panel map-studio-analysis-section">
+        <h3>Terrain composition</h3>
+        <% @map[:biome_counts].each do |biome, count| %>
+          <% percentage = total_biomes.positive? ? (count.to_f / total_biomes * 100).round(1) : 0 %>
+          <div class="map-studio-biome-row">
+            <span><%= biome %></span>
+            <div class="map-studio-biome-track"><i style="width:<%= percentage %>%"></i></div>
+            <strong><%= percentage %>%</strong>
+          </div>
+        <% end %>
+      </section>
+    </div>
+
+    <aside class="map-studio-analysis-aside">
+      <section class="map-studio-panel map-studio-analysis-score">
+        <div class="map-studio-analysis-score-value"><%= @map[:quality_score] %><small>/10</small></div>
+        <p><strong>Stored fixture quality score</strong><br>Shown as supplied by the prototype record. It is not a validated scientific or gameplay suitability assessment.</p>
+      </section>
+
+      <section class="map-studio-panel map-studio-analysis-section">
+        <h3>Source material</h3>
+        <div class="map-studio-analysis-sources">
+          <% @map[:source_maps].each do |source| %><span><%= source %></span><% end %>
+        </div>
+      </section>
+
+      <section class="map-studio-analysis-note">
+        <strong>Analysis limits</strong>
+        <p>The legacy analysis action calculates a simple terrain-category ratio, but its resource-balance and strategic-feature routines are placeholders and its overall playability score is hard-coded. Those values are intentionally not presented here as real findings.</p>
+      </section>
+
+      <section class="map-studio-panel map-studio-analysis-section">
+        <h3>Workflow boundary</h3>
+        <p class="map-studio-intro">This is a reusable generated-map artifact, separate from the terrain currently persisted on a celestial body.</p>
+        <p class="map-studio-prototype-disclaimer">Applying a map is a separate operation that updates the target body's Geosphere terrain_map. The prototype does not perform that write.</p>
+        <%= link_to "Return to map library", admin_map_studio_browse_path, class: "map-studio-analysis-link" %>
+      </section>
+    </aside>
+  </div>
+
+  <p class="map-studio-footnote">All analysis records and terrain composition values on this page are illustrative prototype fixtures. The terrain artwork is decorative and is not a rendering of the stored grid.</p>
+</div>
