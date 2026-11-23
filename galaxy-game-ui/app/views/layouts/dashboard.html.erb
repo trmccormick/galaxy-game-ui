@@ -95,6 +95,9 @@
               <li><%= link_to admin_dashboard_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::DashboardController)}" do %>
                 <span>&#x1F3A1;</span> Admin Console
               <% end %></li>
+              <li><%= link_to admin_celestial_bodies_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::CelestialBodiesController)}" do %>
+                <span>&#x1F30D;</span> Celestial Bodies
+              <% end %></li>
             </ul>
             <ul class="gg-nav-list mt-4">
               <li><strong class="px-4 text-[var(--gg-accent-purple)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">AI Manager</strong></li>
