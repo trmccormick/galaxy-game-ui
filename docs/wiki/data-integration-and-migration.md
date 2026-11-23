@@ -6,6 +6,32 @@
 
 ## 1. Immediate prototype data approach
 
+**CURRENT PROTOTYPE DATA ACCESS — main-game JSON tree is mounted read-only for local testing**
+
+The UI prototype follows the main GalaxyGame application's data-root convention. In the main game, `GalaxyGame::Paths::JSON_DATA` resolves from `GALAXY_JSON_DATA_PATH` when configured, otherwise to `Rails.root/app/data`. The prototype now uses the same environment-variable/fallback pattern and mirrors the mission path constants needed by the authoring screens.
+
+For local Docker development, `docker-compose.dev.yml` mounts the sibling main repository's `../galaxyGame/data/json-data` read-only at `/home/galaxy_game/app/data` and sets `GALAXY_JSON_DATA_PATH=/home/galaxy_game/app/data`. This keeps the main repository authoritative, avoids copying or drifting fixture files, and keeps the existing prototype imports mount at `/home/galaxy_game/data` separate.
+
+The path contract intentionally preserves both mission-data families defined by the main game's `config/initializers/game_data_paths.rb`:
+
+| Prototype path constant | Main-game data path | Purpose |
+|---|---|---|
+| `GalaxyGame::Paths::TASKS_V2_PATH` | `missions/tasks_v2/` | Broader reusable V2 task library; draft maturity |
+| `GalaxyGame::Paths::MISSIONS_V2_PATH` | `missions_v2/` | V2 mission test/setup data |
+| `MISSIONS_V2_PROFILES_PATH` | `missions_v2/profiles/` | Profile definitions |
+| `MISSIONS_V2_PHASES_PATH` | `missions_v2/phases/` | Phase definitions |
+| `MISSIONS_V2_PLANS_PATH` | `missions_v2/mission_plans/` | Mission plan definitions |
+| `MISSIONS_V2_TASKS_PATH` | `missions_v2/tasks/` | Task definitions used by the V2 setup |
+| `MISSIONS_V2_REGISTRY_PATH` | `missions_v2/phase_registry.json` | Phase registry |
+| `MISSIONS_V2_MANIFESTS_PATH` | `missions_v2/manifests/` | Mission manifests |
+
+These paths are deliberately distinct. The limited Luna missions/tasks under `missions_v2/` are the current testing setup; `missions/tasks_v2/` is the broader draft task library. Do not merge, rename, or treat one as a replacement for the other. UI fixtures should identify which source and maturity they represent.
+
+The mount is read-only: the prototype may inspect and render source JSON, but must not modify main-game data. Player/Admin editing screens should initially operate on clearly identified in-memory or prototype-owned copies/fixtures. Persisting edits back to the main-game library requires a separately designed, authorized workflow and is not enabled by this mount.
+
+For non-Docker environments, set `GALAXY_JSON_DATA_PATH` to the corresponding JSON-data root. If unset, the initializer falls back to the prototype Rails app's `app/data`, matching the main game's convention.
+
+
 **CURRENT PROTOTYPE SCOPE — temporary data supply for design and API discovery**
 
 The prototype does not need a production API integration to proceed. First get the existing view JavaScript, renderers, dashboard components, and assets in place. Feed them imported JSON from the main GalaxyGame application where available, or clearly identified mock JSON where necessary.
