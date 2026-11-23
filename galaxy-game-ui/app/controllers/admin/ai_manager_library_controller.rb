@@ -5,35 +5,12 @@ class Admin::AiManagerLibraryController < Admin::BaseController
   # The V2 source definitions in the main game are experimental examples,
   # not evidence that this prototype is connected to a live execution engine.
   def tasks
-    @tasks = [
-      {
-        id: "task_venus_harvest_arrival_v2",
-        name: "Venus Atmospheric Harvester Arrival at Luna",
-        category: "Arrival / offload",
-        capability: "Receive and offload harvested atmospheric cargo",
-        dependencies: "Luna tank-farm preparation; inflatable tank deployment",
-        maturity: "Experimental V2 example",
-        source: "Main game: missions_v2/tasks/task_venus_harvest_arrival_v2.json"
-      },
-      {
-        id: "task_site_prep_foundation_v2",
-        name: "Settlement Site Preparation",
-        category: "Infrastructure prerequisite",
-        capability: "Prepare the receiving site for later operations",
-        dependencies: "Target site and required construction assets",
-        maturity: "Referenced prerequisite",
-        source: "Referenced by the Venus arrival task"
-      },
-      {
-        id: "task_print_inflatable_tank_shells_v2",
-        name: "Print Inflatable Tank Shells",
-        category: "Manufacturing prerequisite",
-        capability: "Provide tank shells required by the receiving tank farm",
-        dependencies: "Manufacturing capability and materials",
-        maturity: "Referenced prerequisite",
-        source: "Referenced by the Venus arrival task"
-      }
-    ]
+    @tasks = task_fixtures
+  end
+
+  def task
+    @task = task_fixtures.find { |item| item[:id] == params[:id] }
+    raise ActiveRecord::RecordNotFound unless @task
   end
 
   def missions
@@ -48,6 +25,44 @@ class Admin::AiManagerLibraryController < Admin::BaseController
   end
 
   private
+
+  def task_fixtures
+    [
+      {
+        id: "task_venus_harvest_arrival_v2",
+        name: "Venus Atmospheric Harvester Arrival at Luna",
+        category: "Arrival / offload",
+        capability: "Receive and offload harvested atmospheric cargo",
+        dependencies: ["Luna tank-farm preparation", "Inflatable tank deployment", "Cryogenic receiving capacity"],
+        maturity: "Experimental V2 example",
+        source: "Main game: missions_v2/tasks/task_venus_harvest_arrival_v2.json",
+        notes: "The task represents the receiving/offload operation. It does not define the entire repeatable Venus harvesting mission.",
+        boundary: "A reusable task definition is referenced by mission profiles. A configured execution belongs to a particular run and target."
+      },
+      {
+        id: "task_site_prep_foundation_v2",
+        name: "Settlement Site Preparation",
+        category: "Infrastructure prerequisite",
+        capability: "Prepare the receiving site for later operations",
+        dependencies: ["Target site", "Required construction assets"],
+        maturity: "Referenced prerequisite",
+        source: "Referenced by the Venus arrival task",
+        notes: "The prototype does not yet resolve this reference to a complete authoritative task document.",
+        boundary: "Do not infer a production-ready task definition from this reference alone."
+      },
+      {
+        id: "task_print_inflatable_tank_shells_v2",
+        name: "Print Inflatable Tank Shells",
+        category: "Manufacturing prerequisite",
+        capability: "Provide tank shells required by the receiving tank farm",
+        dependencies: ["Manufacturing capability", "Required materials"],
+        maturity: "Referenced prerequisite",
+        source: "Referenced by the Venus arrival task",
+        notes: "The prototype does not yet resolve this reference to a complete authoritative task document.",
+        boundary: "Do not infer a production-ready task definition from this reference alone."
+      }
+    ]
+  end
 
   def mission_fixtures
     [
