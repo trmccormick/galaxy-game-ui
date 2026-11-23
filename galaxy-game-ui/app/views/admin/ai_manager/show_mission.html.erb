@@ -45,8 +45,8 @@
           <span style="color: var(--gg-primary);"><%= @task_list.length %></span>
         </div>
         <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
-          <span style="color: var(--gg-text-dim);">Current Task</span>
-          <span style="color: var(--gg-accent-cyan);"><%= @current_task_index + 1 %> / <%= @task_list.length %></span>
+          <span style="color: var(--gg-text-dim);">Task Progress</span>
+          <span style="color: var(--gg-accent-cyan);"><%= @mission[:status].to_s == "completed" ? "All #{@task_list.length} complete" : "#{@current_task_index + 1} / #{@task_list.length}" %></span>
         </div>
         <div class="flex justify-between py-1.5 border-b border-[rgba(0,212,255,0.05)]">
           <span style="color: var(--gg-text-dim);">Created</span>
