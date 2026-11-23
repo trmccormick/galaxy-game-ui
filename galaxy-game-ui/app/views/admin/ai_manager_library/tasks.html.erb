@@ -11,7 +11,7 @@
       <tbody>
         <% @tasks.each do |task| %>
           <tr class="border-t align-top" style="border-color:rgba(0,212,255,.12);">
-            <td class="py-3 pr-3"><strong><%= task[:name] %></strong><div class="text-xs font-mono mt-1" style="color:var(--gg-text-dim);"><%= task[:id] %></div><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:source] %></div></td>
+            <td class="py-3 pr-3"><strong><%= link_to task[:name], admin_ai_manager_library_task_path(task[:id]), style: "color:var(--gg-primary);" %></strong><div class="text-xs font-mono mt-1" style="color:var(--gg-text-dim);"><%= task[:id] %></div><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:source] %></div></td>
             <td class="py-3 pr-3"><%= task[:capability] %><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:category] %></div></td>
             <td class="py-3 pr-3"><%= task[:dependencies] %></td>
             <td class="py-3"><span class="text-xs px-2 py-1 rounded" style="background:rgba(255,190,11,.1);color:var(--gg-accent-warning);"><%= task[:maturity] %></span></td>
