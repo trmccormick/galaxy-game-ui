@@ -1,0 +1,23 @@
+<div class="flex flex-wrap justify-between gap-3 mb-5">
+  <div><p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Player / AI Manager / My Missions</p><h1 class="gg-section-title"><%= @mission[:name] %></h1><p class="text-sm" style="color:var(--gg-text-secondary);"><%= @mission[:target] %> · <%= @mission[:status] %></p></div>
+  <%= link_to "← My Missions", player_missions_path, class: "text-xs", style: "color:var(--gg-primary);" %>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <section class="gg-grid-panel lg:col-span-2">
+    <h2 class="gg-section-title text-lg">Objective and guidance</h2>
+    <p class="text-sm mt-2"><%= @mission[:objective] %></p>
+    <p class="text-sm mt-3"><%= @mission[:guidance] %></p>
+    <h3 class="text-xs uppercase tracking-widest mt-5 mb-2" style="color:var(--gg-text-dim);">Player constraints</h3>
+    <ul class="list-disc pl-5 text-sm space-y-1"><% @mission[:constraints].each do |constraint| %><li><%= constraint %></li><% end %></ul>
+  </section>
+  <section class="gg-grid-panel">
+    <h2 class="gg-section-title text-lg">Assigned / eligible assets</h2>
+    <ul class="text-sm mt-2 space-y-2"><% @mission[:assets].each do |asset| %><li class="border-b pb-2" style="border-color:rgba(0,212,255,.1);"><%= asset %></li><% end %></ul>
+  </section>
+</div>
+<section class="gg-grid-panel mt-4">
+  <h2 class="gg-section-title text-lg">AI Manager status</h2>
+  <p class="text-sm mt-2"><%= @mission[:manager_note] || "No current manager update in this fixture." %></p>
+  <p class="text-xs mt-3" style="color:var(--gg-text-dim);">Prototype fixture only. This screen does not read live simulation state or dispatch assets.</p>
+</section>
+<div class="mt-4"><%= link_to "Edit mission guidance →", edit_player_mission_path(@mission[:id]), class: "text-sm", style: "color:var(--gg-primary);" %></div>
