@@ -5,7 +5,7 @@ export default class extends Controller {
 
   connect() {
     this.originalDocument = this.rawTarget.value
-    this.syncStructuredFields()
+    this.updateRaw()
   }
 
   updateStructured() {
