@@ -7,6 +7,7 @@ class Admin::CelestialBodiesController < Admin::BaseController
     @bodies = body_fixtures
     @body_counts = {
       total: @bodies.length,
+      stars: @bodies.count { |body| body[:category] == "Star" },
       planets: @bodies.count { |body| body[:category] == "Planet" },
       moons: @bodies.count { |body| body[:category] == "Moon" },
       minor_bodies: @bodies.count { |body| body[:category] == "Minor body" }
@@ -27,6 +28,13 @@ class Admin::CelestialBodiesController < Admin::BaseController
 
   def body_fixtures
     [
+      {
+        id: "sun", name: "Sun", category: "Star", system: "Sol",
+        status: "Reference star", radius: "695,700 km", gravity: "27.9 g",
+        temperature: "5,772 K", atmosphere: "Stellar plasma", hydrosphere: "Not applicable",
+        geosphere: "Not applicable", biosphere: "Not applicable", settlements: 0,
+        provenance: "Reference fixture", description: "G-type main-sequence star at the center of the Sol system."
+      },
       {
         id: "earth", name: "Earth", category: "Planet", system: "Sol",
         status: "Reference body", radius: "6,371 km", gravity: "1.000 g",
@@ -61,6 +69,13 @@ class Admin::CelestialBodiesController < Admin::BaseController
         temperature: "94 K", atmosphere: "Present · nitrogen", hydrosphere: "Methane / ethane lakes",
         geosphere: "Present", biosphere: "Not established", settlements: 0,
         provenance: "Reference fixture", description: "Large icy moon with a substantial nitrogen atmosphere and surface hydrocarbon cycle."
+      },
+      {
+        id: "ceres", name: "Ceres", category: "Minor body", system: "Sol",
+        status: "Survey reference", radius: "469.7 km", gravity: "0.029 g",
+        temperature: "167 K", atmosphere: "Transient exosphere", hydrosphere: "Water ice / brines",
+        geosphere: "Present", biosphere: "Not established", settlements: 0,
+        provenance: "Reference fixture", description: "Dwarf planet in the asteroid belt, included as a small-body inspection case."
       },
       {
         id: "phobos", name: "Phobos", category: "Minor body", system: "Sol",
