@@ -115,7 +115,8 @@ The user has directed that view construction continue in small pieces without re
 - **Generate Terrain:** ported the existing main-app generation workflow into a compact prototype workspace. It includes target-world selection, map naming and brief, starting-world reference profiles, FreeCiv/Civilization IV source selection, complexity, biome focus, additional instructions, and a configuration preview.
 - **Data boundary:** all targets and source maps on the Generate view are illustrative fixtures. The preview is client-side only; it does not generate files, write map data, or alter celestial bodies.
 - **Source reconciliation note:** the main-app Generate view has inconsistencies with its controller (for example, target parameter naming/requiredness and source-map fields). The prototype uses a coherent required target selection and explicit fixture records rather than copying those broken bindings.
-- **Next contained view:** inspect and port the existing Map Studio Browse generated maps view, then reconcile the Analyze and apply/assignment workflows.
+- **Browse Generated Maps:** inspected and adapted the main-app library workflow into a fixture-backed prototype. Includes search, sorting, biome/complexity/applied-status filters, map cards, metadata inspection modal, and empty/reset state. The main-app Apply action is deliberately not exposed as a live mutation; its current implementation writes terrain into a celestial body's Digital Twin. The prototype labels this integration boundary clearly.
+- **Next contained view:** inspect and port the existing Map Studio Analyze view, then reconcile the select-celestial-body/apply workflow without enabling live writes in the prototype.
 
 ## 4. Current prototype work and existing implementation
 
