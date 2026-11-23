@@ -1,139 +1,102 @@
-<div class="mb-4">
-  <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">AI Manager / Operations / Mission monitoring</p>
-  <h1 class="gg-section-title">Running &amp; Recent Missions</h1>
-  <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Operational oversight: inspect active runs, progress, current tasks, outcomes, and exceptions. These are prototype fixtures, not live simulation telemetry.</p>
-  <div class="flex flex-wrap gap-3 mt-3 text-xs">
-    <%= link_to "Mission Library →", admin_ai_manager_library_missions_path, style: "color:var(--gg-primary);" %>
-    <%= link_to "Task Library →", admin_ai_manager_library_tasks_path, style: "color:var(--gg-primary);" %>
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+  <div>
+    <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Operations</p>
+    <h1 class="gg-section-title">Mission Monitor</h1>
+    <p class="text-sm mt-1" style="color:var(--gg-text-secondary);">Current mission state, exceptions, and completed-run history.</p>
   </div>
+  <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.10);color:var(--gg-accent-warning);">Illustrative prototype data · not live telemetry</span>
 </div>
 
-<!-- Stats Row -->
-<div class="grid grid-cols-3 gap-4 mb-6">
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-primary);"><%= @active_missions.length %></div>
-    <div class="gg-stat-label mt-1">Active</div>
-  </div>
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-accent-success);"><%= @completed_missions.length %></div>
-    <div class="gg-stat-label mt-1">Completed</div>
-  </div>
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-accent-danger);"><%= @failed_missions.length %></div>
-    <div class="gg-stat-label mt-1">Failed / Stalled</div>
-  </div>
+<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 mb-5">
+  <% [
+    ["Active", @active_missions.length, "var(--gg-primary)"],
+    ["Pending", @pending_missions.length, "var(--gg-text-secondary)"],
+    ["Blocked", @blocked_missions.length, "var(--gg-accent-warning)"],
+    ["Completed", @completed_missions.length, "var(--gg-accent-success)"],
+    ["Failed / Stalled", @failed_missions.length, "var(--gg-accent-danger)"]
+  ].each do |label, count, color| %>
+    <div class="gg-grid-panel">
+      <div class="gg-metric" style="color:<%= color %>;"><%= count %></div>
+      <div class="gg-stat-label mt-1"><%= label %></div>
+    </div>
+  <% end %>
 </div>
 
-<!-- Active Missions -->
-<% if @active_missions.any? %>
-  <div class="gg-grid-panel mb-6">
-    <h2 class="gg-section-title text-lg flex items-center gap-2">
-      <span style="color: var(--gg-primary);">⚡</span> Active Missions
-    </h2>
-    <div class="space-y-4 mt-4">
-      <% @active_missions.each do |mission| %>
-        <div class="p-4 rounded-lg border transition-colors hover:border-[rgba(0,212,255,0.5)]" style="background: var(--gg-bg-surface); border-color: rgba(0,212,255,0.2);">
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <h3 class="font-mono text-lg font-bold" style="color: var(--gg-primary);"><%= mission[:identifier] %></h3>
-              <p class="text-sm mt-0.5" style="color: var(--gg-text-secondary);"><%= mission[:settlement] %></p>
-            </div>
-            <span class="px-2 py-1 rounded text-xs font-semibold" style="background: rgba(0,212,255,0.15); color: var(--gg-primary);">
-              <%= mission[:status].to_s.humanize %>
-            </span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-3">
-            <div>
-              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Type</span>
-              <span style="color: var(--gg-text-primary);"><%= mission[:type].to_s.humanize %></span>
-            </div>
-            <div>
-              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Progress</span>
-              <span style="color: var(--gg-primary);"><%= mission[:progress] %>%</span>
-            </div>
-            <div>
-              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Created</span>
-              <span style="color: var(--gg-text-primary);"><%= mission[:created_at].strftime('%Y-%m-%d') %></span>
-            </div>
-            <div>
-              <span class="block text-xs uppercase tracking-wider" style="color: var(--gg-text-dim);">Actions</span>
-              <%= link_to 'View →', admin_ai_manager_show_mission_path(identifier: mission[:identifier]), class: 'text-sm font-medium', style: 'color: var(--gg-primary);' %>
-            </div>
-          </div>
-          <!-- Progress Bar -->
-          <div class="w-full h-2 rounded-full" style="background: rgba(0,212,255,0.1);">
-            <% bar_color = mission[:status] == 'delayed' ? 'var(--gg-accent-warning)' : 'var(--gg-primary)' %>
-            <div class="h-2 rounded-full transition-all" style="width: <%= mission[:progress] %>; background: <%= bar_color %>;"></div>
-          </div>
-        </div>
-      <% end %>
+<section class="gg-grid-panel mb-5">
+  <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+    <div>
+      <h2 class="gg-section-title text-lg mb-0">Active operations</h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Independent missions progress concurrently; blocked work identifies its current constraint.</p>
     </div>
+    <%= link_to "Operations overview →", admin_ai_manager_path, class: "text-xs font-semibold", style: "color:var(--gg-primary);" %>
   </div>
-<% end %>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-xs uppercase" style="color:var(--gg-text-dim);">
+          <th class="py-2 pr-3">Mission</th><th class="py-2 pr-3">Location</th><th class="py-2 pr-3">Status</th><th class="py-2 pr-3">Progress</th><th class="py-2 pr-3">Created</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% (@active_missions + @pending_missions + @blocked_missions).each do |mission| %>
+          <% status_color = mission[:status] == "blocked" ? "var(--gg-accent-warning)" : mission[:status] == "pending" ? "var(--gg-text-dim)" : "var(--gg-primary)" %>
+          <tr class="border-t align-middle" style="border-color:rgba(0,212,255,.10);">
+            <td class="py-3 pr-3 font-mono font-semibold"><%= mission[:identifier] %></td>
+            <td class="py-3 pr-3"><%= mission[:settlement] %></td>
+            <td class="py-3 pr-3"><span class="text-xs font-semibold" style="color:<%= status_color %>;"><%= mission[:status].to_s.humanize %></span><% if mission[:reason].present? %><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= mission[:reason].to_s.humanize %></div><% end %></td>
+            <td class="py-3 pr-3 min-w-28">
+              <div class="text-xs mb-1" style="color:var(--gg-text-secondary);"><%= mission[:progress] || 0 %>%</div>
+              <div class="h-1.5 rounded" style="background:rgba(0,212,255,.10);"><div class="h-1.5 rounded" style="width:<%= mission[:progress] || 0 %>%;background:<%= status_color %>;"></div></div>
+            </td>
+            <td class="py-3 pr-3 text-xs" style="color:var(--gg-text-dim);"><%= mission[:created_at].strftime("%Y-%m-%d") %></td>
+            <td class="py-3 text-right"><%= link_to "Inspect →", admin_ai_manager_show_mission_path(identifier: mission[:identifier]), class: "text-xs font-semibold whitespace-nowrap", style: "color:var(--gg-primary);" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-<!-- Completed Missions -->
-<% if @completed_missions.any? %>
-  <div class="gg-grid-panel mb-6">
-    <h2 class="gg-section-title text-lg flex items-center gap-2">
-      <span style="color: var(--gg-accent-success);">✅</span> Completed Missions
-    </h2>
-    <div class="space-y-2 mt-4">
-      <% @completed_missions.first(5).each do |mission| %>
-        <div class="flex items-center justify-between py-2 px-3 rounded hover:bg-[rgba(0,212,255,0.03)] transition-colors" style="border-bottom: 1px solid rgba(0,212,255,0.05);">
-          <div>
-            <span class="font-mono text-sm font-semibold" style="color: var(--gg-accent-success);"><%= mission[:identifier] %></span>
-            <span class="text-xs ml-3" style="color: var(--gg-text-secondary);"><%= mission[:settlement] %></span>
-          </div>
-          <span class="text-xs" style="color: var(--gg-text-dim);"><%= mission[:completion_date].strftime('%Y-%m-%d') %></span>
-        </div>
-      <% end %>
+<section class="gg-grid-panel mb-5">
+  <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+    <div>
+      <h2 class="gg-section-title text-lg mb-0">Completed missions</h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Open a completed run to inspect its task history and resulting world state.</p>
     </div>
+    <span class="text-xs" style="color:var(--gg-accent-success);">Historical runs</span>
   </div>
-<% end %>
-
-<!-- Failed Missions -->
-<% if @failed_missions.any? %>
-  <div class="gg-grid-panel mb-6" style="border-left: 3px solid var(--gg-accent-danger);">
-    <h2 class="gg-section-title text-lg flex items-center gap-2">
-      <span style="color: var(--gg-accent-danger);">⚠️</span> Failed / Stalled Missions
-    </h2>
-    <div class="space-y-2 mt-4">
-      <% @failed_missions.each do |mission| %>
-        <div class="flex items-center justify-between py-2 px-3 rounded" style="background: rgba(255,0,110,0.05); border: 1px solid rgba(255,0,110,0.15);">
-          <div>
-            <span class="font-mono text-sm font-semibold" style="color: var(--gg-accent-danger);"><%= mission[:identifier] %></span>
-            <span class="text-xs ml-3" style="color: var(--gg-text-secondary);"><%= mission[:settlement] %></span>
-          </div>
-          <div class="text-right">
-            <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(255,0,110,0.15); color: var(--gg-accent-danger);">
-              <%= mission[:status].to_s.humanize %>
-            </span>
-            <div class="text-[10px] mt-1" style="color: var(--gg-text-dim);"><%= mission[:reason]&.to_s.humanize %></div>
-          </div>
+  <div class="divide-y" style="border-color:rgba(0,212,255,.10);">
+    <% @completed_missions.each do |mission| %>
+      <div class="flex flex-wrap items-center justify-between gap-3 py-3">
+        <div>
+          <div class="font-mono text-sm font-semibold" style="color:var(--gg-accent-success);"><%= mission[:identifier] %></div>
+          <div class="text-xs mt-1" style="color:var(--gg-text-secondary);"><%= mission[:settlement] %> · <%= mission[:type].to_s.humanize %></div>
         </div>
-      <% end %>
-    </div>
-  </div>
-<% end %>
-
-<!-- Activity Log -->
-<div class="gg-grid-panel">
-  <h2 class="gg-section-title text-lg flex items-center gap-2">
-    <span style="color: var(--gg-text-secondary);">📜</span> AI Activity Log
-  </h2>
-  <div class="space-y-2 mt-4 max-h-64 overflow-y-auto">
-    <% (@active_missions + @completed_missions).first(10).each do |mission| %>
-      <div class="flex items-center gap-3 py-2 px-3 rounded" style="border-bottom: 1px solid rgba(0,212,255,0.05);">
-        <span class="text-xs font-mono" style="color: var(--gg-text-dim);"><%= mission[:created_at].strftime('%H:%M:%S') %></span>
-        <span class="font-mono text-sm font-semibold" style="color: var(--gg-primary);"><%= mission[:identifier] %></span>
-        <span class="text-xs" style="color: var(--gg-text-secondary);">
-          <%= mission[:status].to_s.humanize %> • <%= mission[:progress] %>%
-        </span>
+        <div class="flex items-center gap-3">
+          <span class="text-xs" style="color:var(--gg-text-dim);"><%= mission[:completion_date].strftime("%Y-%m-%d") %></span>
+          <%= link_to "Review run →", admin_ai_manager_show_mission_path(identifier: mission[:identifier]), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %>
+        </div>
       </div>
     <% end %>
   </div>
-</div>
+</section>
 
-<div class="mt-6 text-center">
-  <%= link_to '← Back to AI Manager Dashboard', admin_ai_manager_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
+<% if @failed_missions.any? %>
+  <section class="gg-grid-panel mb-5" style="border-left:3px solid var(--gg-accent-danger);">
+    <h2 class="gg-section-title text-lg">Failed / stalled missions</h2>
+    <div class="space-y-2 mt-3">
+      <% @failed_missions.each do |mission| %>
+        <div class="flex flex-wrap justify-between gap-2 p-3 rounded" style="background:rgba(255,0,110,.05);">
+          <div><span class="font-mono text-sm font-semibold"><%= mission[:identifier] %></span><span class="text-xs ml-3" style="color:var(--gg-text-secondary);"><%= mission[:settlement] %></span></div>
+          <span class="text-xs" style="color:var(--gg-accent-danger);"><%= mission[:reason].to_s.humanize %></span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<div class="flex flex-wrap gap-3">
+  <%= link_to "Decision log →", admin_ai_manager_decisions_path, class: "text-sm", style: "color:var(--gg-primary);" %>
+  <%= link_to "Task workbench →", admin_ai_manager_workbench_path, class: "text-sm", style: "color:var(--gg-primary);" %>
+  <%= link_to "Mission templates →", admin_ai_manager_library_missions_path, class: "text-sm", style: "color:var(--gg-primary);" %>
 </div>
