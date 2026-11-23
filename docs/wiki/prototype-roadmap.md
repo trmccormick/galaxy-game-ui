@@ -1,6 +1,6 @@
 # UI Prototype Roadmap
 
-**Status:** Active — source reconciliation and existing-view inventory are the next work items  
+**Status:** Active — porting existing views incrementally; broad source inventory remains ongoing  
 **Last updated:** 2026-11-23
 
 This roadmap governs the GalaxyGame UI prototype. The prototype is a UI and workflow shell: it establishes screens, layouts, navigation, and interactions before the production JSON loader and API integration are ready. It is not a second implementation of the GalaxyGame backend.
@@ -105,6 +105,17 @@ Do not double-count Pixel Nexus Dashboard and EVE Dashboard; they refer to the s
 - Never treat local read-only data mounts as the production integration boundary.
 
 **Exit condition:** a narrow, verified integration slice replaces the relevant mock provider without requiring a UI rebuild.
+
+## Current incremental progress
+
+The user has directed that view construction continue in small pieces without requiring phone-based testing. Build on source inspection and fixture data; defer runtime/browser review until a desktop review is practical.
+
+### Map Studio
+- **Overview:** added to the prototype with fixture-backed metrics, source collections, recent activity, and the distinction between initial terrain generation and ongoing Digital Twin simulation.
+- **Generate Terrain:** ported the existing main-app generation workflow into a compact prototype workspace. It includes target-world selection, map naming and brief, starting-world reference profiles, FreeCiv/Civilization IV source selection, complexity, biome focus, additional instructions, and a configuration preview.
+- **Data boundary:** all targets and source maps on the Generate view are illustrative fixtures. The preview is client-side only; it does not generate files, write map data, or alter celestial bodies.
+- **Source reconciliation note:** the main-app Generate view has inconsistencies with its controller (for example, target parameter naming/requiredness and source-map fields). The prototype uses a coherent required target selection and explicit fixture records rather than copying those broken bindings.
+- **Next contained view:** inspect and port the existing Map Studio Browse generated maps view, then reconcile the Analyze and apply/assignment workflows.
 
 ## 4. Current prototype work and existing implementation
 
