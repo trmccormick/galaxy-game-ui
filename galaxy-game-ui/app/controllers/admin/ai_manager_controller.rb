@@ -41,7 +41,7 @@ class Admin::AiManagerController < Admin::BaseController
   end
 
   def show_mission
-    selected = (mock_missions[:active] + mock_missions[:completed] + mock_missions[:failed])
+    selected = (mock_missions[:active] + mock_missions[:pending] + mock_missions[:blocked] + mock_missions[:completed] + mock_missions[:failed])
       .find { |mission| mission[:identifier] == params[:identifier] } || mock_missions[:active].first
 
     @mission = mock_mission_detail.merge(
