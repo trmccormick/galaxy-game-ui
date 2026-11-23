@@ -52,7 +52,16 @@ class Admin::AiManagerController < Admin::BaseController
       mission_type: selected[:type],
       created_at: selected[:created_at]
     )
-    @task_list = mock_task_list
+    if @mission[:identifier] == "MIS-4798"
+      @mission[:manifest] = {
+        target_location: { body: "Luna Base Alpha", coordinates: "Marius Hills region" },
+        mission_objective: "Complete the initial habitat and life-support construction package, commission the supporting equipment, and record the resulting base inventories."
+      }
+      @mission[:operational_data] = { execution_mode: "Accelerated development run", run_status: "Completed", elapsed_simulation: "18.5 game days" }
+      @task_list = mock_completed_task_list
+    else
+      @task_list = mock_task_list
+    end
     @current_task_index = if @mission[:status].to_s == "completed"
       @task_list.length
     else
@@ -186,6 +195,15 @@ class Admin::AiManagerController < Admin::BaseController
       gcc: [{ flow: "Local production credit", amount: "+125 GCC" }, { flow: "Construction and commissioning", amount: "-410 GCC" }],
       note: "Illustrative completed-run snapshot. Values are prototype fixtures, not authoritative simulation results."
     }
+  end
+
+  def mock_completed_task_list
+    [
+      { task_id: "T-4798-A", description: "Prepare the selected habitat site and complete regolith sealing works", type: "site_preparation", resource: "regolith", quantity: 12_400, facility_type: nil, dependencies: [] },
+      { task_id: "T-4798-B", description: "Assemble and commission habitat module H-004", type: "construction", resource: "habitat_module", quantity: 1, facility_type: "habitat", dependencies: ["T-4798-A"] },
+      { task_id: "T-4798-C", description: "Install and commission oxygen processing unit OX-02", type: "commissioning", resource: "oxygen_processor", quantity: 1, facility_type: "life_support", dependencies: ["T-4798-A"] },
+      { task_id: "T-4798-D", description: "Transfer initial water and LOX reserves into commissioned storage", type: "inventory_transfer", resource: "volatiles", quantity: nil, facility_type: "storage", dependencies: ["T-4798-B", "T-4798-C"] }
+    ]
   end
 
   def mock_task_list
