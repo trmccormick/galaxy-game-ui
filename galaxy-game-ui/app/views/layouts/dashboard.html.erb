@@ -99,7 +99,7 @@
             <ul class="gg-nav-list mt-4">
               <li><strong class="px-4 text-[var(--gg-accent-purple)] uppercase tracking-widest text-[10px]" style="letter-spacing: 0.1em;">AI Manager</strong></li>
               <li><%= link_to admin_ai_manager_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerController) && controller.action_name == 'index'}" do %>
-                <span>&#x1F916;</span> Dashboard
+                <span>&#x1F916;</span> Overview
               <% end %></li>
               <li><%= link_to admin_ai_manager_missions_path, class: "gg-nav-link #{'active' if controller.action_name == 'missions'}" do %>
                 <span>&#x1F680;</span> Missions
