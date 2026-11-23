@@ -178,6 +178,8 @@ Only create a formal agent task for substantial, cross-cutting work that benefit
 
 ## 8. Current next step
 
-Continue the active incremental view-building work. The next contained Map Studio item is the select-celestial-body/apply workflow, adapted as a prototype review and confirmation experience only. Preserve the distinction between a generated map artifact and the terrain currently stored on a celestial body's Geosphere. Do not perform live writes.
+**Map Studio destination/apply review:** added a destination selector, current-terrain/source comparison, intended-target mismatch warning, existing-terrain replacement warning, provenance explanation, and a prototype-only confirmation action. The six generated-map fixtures can enter this review from Browse or Analyze. The confirmation route performs no writes and does not access production body records. The view explicitly documents the legacy implementation's destructive `terrain_map` replacement behavior and the separate `CelestialBody.properties['applied_map']` / `map_source` provenance update. This replacement behavior remains a design/code-review issue before production integration.
+
+**Next view:** begin the Admin **Celestial Body View**, following `docs/wiki/ui/05_admin_celestial_body_view.md`. Inspect the legacy catalog, Monitor/Planetary route chain, terrain/sphere data payloads, and existing prototype work before building. Preserve the distinction between Admin inspection, Map Studio initial terrain preparation, TerraSim environmental simulation, and the Digital Twin. Use clearly labeled fixtures and do not add unapproved editing or terraforming controls.
 
 The broader source inventory remains useful ongoing work, but it must not block the user's current direction to build and refine reviewable views. Defer JSON/API integration and runtime/browser review until the appropriate implementation and desktop-review stages.
