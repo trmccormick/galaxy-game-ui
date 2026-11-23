@@ -33,6 +33,18 @@ class Admin::AiManagerWorkbenchController < Admin::BaseController
     @execution = mock_execution(@task)
   end
 
+  def review
+    @task = mock_tasks.find { |task| task[:id] == params[:id] }
+    raise ActiveRecord::RecordNotFound unless @task
+    outcome = params[:outcome].to_s
+    unless %w[approve reject defer].include?(outcome)
+      return redirect_to admin_ai_manager_workbench_plan_path(@task[:id]), alert: "Choose a valid review action."
+    end
+
+    redirect_to admin_ai_manager_workbench_task_path(@task[:id]),
+      notice: "#{outcome.humanize} recorded for this prototype session only; no game state was changed."
+  end
+
   private
 
   def mock_systems
