@@ -1,10 +1,13 @@
-<div class="flex items-start justify-between gap-3 mb-5">
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
   <div>
     <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Task detail / <%= @task[:id] %></p>
     <h1 class="gg-section-title"><%= @task[:title] %></h1>
     <p class="text-sm" style="color:var(--gg-text-secondary);"><%= @system[:name] %> · <%= @task[:target] %> · <%= @task[:target_type] %></p>
   </div>
-  <%= link_to "← Task queue", admin_ai_manager_workbench_path(system: @task[:system_id]), class: "text-xs", style: "color:var(--gg-primary);" %>
+  <div class="flex flex-wrap gap-3">
+    <%= link_to "← Overview", admin_ai_manager_path(system: @task[:system_id]), class: "text-xs", style: "color:var(--gg-primary);" %>
+    <%= link_to "Task queue", admin_ai_manager_workbench_path(system: @task[:system_id]), class: "text-xs", style: "color:var(--gg-primary);" %>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
@@ -20,7 +23,7 @@
   </section>
   <section class="gg-grid-panel">
     <h2 class="gg-section-title text-lg">Task state</h2>
-    <div class="gg-metric text-2xl"><%= @task[:status].humanize %></div>
+    <div class="gg-metric text-2xl"><%= @task[:status_label] %></div>
     <div class="gg-stat-label mt-2">Priority: <%= @task[:priority].humanize %></div>
     <div class="gg-stat-label mt-1">Category: <%= @task[:category] %></div>
     <div class="gg-stat-label mt-3">Target ID</div>
