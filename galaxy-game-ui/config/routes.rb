@@ -29,5 +29,6 @@ Rails.application.routes.draw do
     get "ai_manager/workbench/tasks/:id", to: "ai_manager_workbench#show", as: :ai_manager_workbench_task
     get "ai_manager/workbench/tasks/:id/plan", to: "ai_manager_workbench#plan", as: :ai_manager_workbench_plan
     get "ai_manager/workbench/tasks/:id/execution", to: "ai_manager_workbench#execution", as: :ai_manager_workbench_execution
+    post "ai_manager/workbench/tasks/:id/review", to: "ai_manager_workbench#review", as: :ai_manager_workbench_review
   end
 end
