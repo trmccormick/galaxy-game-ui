@@ -113,6 +113,9 @@
               <li><%= link_to admin_ai_manager_performance_path, class: "gg-nav-link #{'active' if controller.action_name == 'performance'}" do %>
                 <span>&#x1F4C8;</span> Performance
               <% end %></li>
+              <li><%= link_to admin_ai_manager_workbench_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerWorkbenchController)}" do %>
+                <span>&#x1F4CB;</span> Task Workbench
+              <% end %></li>
             </ul>
           <% end %>
         </nav>
