@@ -11,6 +11,8 @@ class Admin::AiManagerController < Admin::BaseController
     @active_missions = mock_missions[:active]
     @completed_missions = mock_missions[:completed]
     @failed_missions = mock_missions[:failed]
+    @pending_missions = mock_missions[:pending]
+    @blocked_missions = mock_missions[:blocked]
   end
 
   def decisions
@@ -53,6 +55,8 @@ class Admin::AiManagerController < Admin::BaseController
     @task_list = mock_task_list
     @current_task_index = [((@mission[:progress].to_i / 25) - 1), 0].max.clamp(0, @task_list.length - 1)
     @manifest = @mission[:manifest]
+    @mission_activity = mock_mission_activity(@mission[:identifier])
+    @mission_results = mock_mission_results(@mission[:identifier], @mission[:status])
   end
 
   def advance_phase
@@ -91,6 +95,12 @@ class Admin::AiManagerController < Admin::BaseController
       failed: [
         { identifier: "MIS-4802", settlement: "Phobos Transfer Station", status: "failed", type: "construction", reason: "resource_shortage", created_at: 20.days.ago },
         { identifier: "MIS-4795", settlement: "Europa Deep Lab", status: "stalled", type: "research", reason: "equipment_failure", created_at: 30.days.ago }
+      ],
+      pending: [
+        { identifier: "MIS-4808", settlement: "Luna Base Alpha", status: "pending", progress: 0, type: "life_support_expansion", created_at: 1.day.ago }
+      ],
+      blocked: [
+        { identifier: "MIS-4806", settlement: "L1 Depot", status: "blocked", progress: 42, type: "depot_construction", reason: "awaiting_high_tech_imports", created_at: 3.days.ago }
       ]
     }
   end
@@ -144,6 +154,33 @@ class Admin::AiManagerController < Admin::BaseController
       mission_type: "resource_extraction", created_at: 5.days.ago, completion_date: nil,
       manifest: { target_location: { body: "Luna Regolith Fields", coordinates: "12.4N 45.8E" }, mission_objective: "Extract and process 15,000 tons of iron-rich regolith for Mars Colony Theta supply chain. Phase 1 complete — site survey and equipment deployment." },
       operational_data: { current_phase: 3, total_phases: 5, fuel_consumed: "2,400 GCC", labor_hours: 18_500 }
+    }
+  end
+
+  def mock_mission_activity(identifier)
+    completed = identifier == "MIS-4798"
+    entries = [
+      { time: "08:14:02", kind: "AI MANAGER", message: "Evaluating Luna base construction objectives", tone: "cyan" },
+      { time: "08:16:41", kind: "TASK COMPLETE", message: "Regolith site preparation accepted", tone: "success" },
+      { time: "08:16:42", kind: "INVENTORY", message: "+12.4 t regolith transferred to construction stockpile", tone: "muted" },
+      { time: "08:22:10", kind: "TASK COMPLETE", message: "Oxygen processing unit commissioned", tone: "success" },
+      { time: "08:22:11", kind: "VOLATILES", message: "+840 kg LOX recorded in storage", tone: "muted" },
+      { time: "08:29:36", kind: "GCC FLOW", message: "125 GCC posted to local production account", tone: "violet" },
+      { time: "08:37:05", kind: "ASSET CREATED", message: "Habitat module H-004 commissioned", tone: "success" }
+    ]
+    entries << { time: "08:41:18", kind: "MISSION COMPLETE", message: "Construction objectives satisfied; final state recorded", tone: "success" } if completed
+    entries
+  end
+
+  def mock_mission_results(identifier, status)
+    return nil unless identifier == "MIS-4798" || status.to_s == "completed"
+
+    {
+      assets: [{ name: "Habitat module H-004", detail: "Commissioned" }, { name: "Oxygen processing unit OX-02", detail: "Operational" }, { name: "Regolith handling line RH-01", detail: "Operational" }],
+      stockpiles: [{ name: "Regolith", quantity: "12.4 t" }, { name: "Processed construction feedstock", quantity: "3.2 t" }],
+      volatiles: [{ name: "LOX", quantity: "840 kg", capacity: "1,200 kg" }, { name: "Water", quantity: "2,150 kg", capacity: "3,000 kg" }, { name: "Hydrogen", quantity: "180 kg", capacity: "500 kg" }],
+      gcc: [{ flow: "Local production credit", amount: "+125 GCC" }, { flow: "Construction and commissioning", amount: "-410 GCC" }],
+      note: "Illustrative completed-run snapshot. Values are prototype fixtures, not authoritative simulation results."
     }
   end
 
