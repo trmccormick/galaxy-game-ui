@@ -1,0 +1,15 @@
+<div class="flex flex-wrap justify-between gap-3 mb-5">
+  <div><p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Player / AI Manager</p><h1 class="gg-section-title">My Missions</h1><p class="text-sm" style="color:var(--gg-text-secondary);">Your operating objectives and guidance for your AI Manager. Shared tasks remain managed by Admin.</p></div>
+  <%= link_to "＋ Create mission", new_player_mission_path, class: "px-3 py-2 rounded text-sm font-semibold", style: "background:rgba(0,212,255,.12);color:var(--gg-primary);border:1px solid rgba(0,212,255,.3);" %>
+</div>
+<div class="space-y-3">
+  <% @missions.each do |mission| %>
+    <section class="gg-grid-panel">
+      <div class="flex flex-wrap justify-between gap-3">
+        <div><h2 class="text-base font-semibold"><%= link_to mission[:name], player_mission_path(mission[:id]), style: "color:var(--gg-primary);" %></h2><p class="text-sm mt-1"><%= mission[:objective] %></p><p class="text-xs mt-2" style="color:var(--gg-text-dim);">Target: <%= mission[:target] %> · Assets: <%= mission[:assets].length %> · <%= mission[:updated] %></p></div>
+        <span class="text-xs px-2 py-1 rounded h-fit" style="background:rgba(0,212,255,.08);color:var(--gg-primary);"><%= mission[:status] %></span>
+      </div>
+    </section>
+  <% end %>
+</div>
+<p class="text-xs mt-4" style="color:var(--gg-text-dim);">Personal mission fixtures only. Creating or editing here does not save a profile or deploy assets.</p>
