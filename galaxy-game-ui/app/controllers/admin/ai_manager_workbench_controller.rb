@@ -24,6 +24,7 @@ class Admin::AiManagerWorkbenchController < Admin::BaseController
     end
 
     @status_options = api.status_options
+    @status_labels = @status_options.index_with { |value| api.status_label(value) }
     @category_options = @all_tasks.map { |task| task[:category] }.uniq.sort
     @counts = api.overview(system_id: @selected_system)[:counts]
   end
