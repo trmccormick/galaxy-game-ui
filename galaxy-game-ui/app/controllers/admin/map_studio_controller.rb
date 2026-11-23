@@ -46,4 +46,24 @@ class Admin::MapStudioController < Admin::BaseController
       { name: "Venus-like", description: "Hot, dense-atmosphere reference", temperature: "737 K", pressure: "92 atm", water: "0%" }
     ]
   end
+
+  # Library fixtures mirror the main Map Studio browse metadata. Applying a
+  # map remains deliberately unavailable in this UI-only prototype.
+  def browse
+    @generated_maps = [
+      { id: "mars_northern_lowlands_20261121.json", name: "Mars · Northern Lowlands", planet: "Mars", planet_type: "Terrestrial", created_at: "2026-11-21T14:32:00Z", quality_score: 8.7, description: "Regional reconstruction emphasizing the northern plains, basin margins and major elevation transitions.", biome_focus: "Arid", complexity: "Complex", applied: false, source_maps: ["FreeCiv · Earth Large", "Civ4 · Highlands"], dimensions: "800 × 400", file_size: "2.4 MB" },
+      { id: "earth_global_baseline_20261120.json", name: "Earth · Global Baseline", planet: "Earth", planet_type: "Terrestrial", created_at: "2026-11-20T09:15:00Z", quality_score: 9.4, description: "Global reference terrain with broad continental structure, ocean basins and varied relief.", biome_focus: "Balanced", complexity: "Complex", applied: true, source_maps: ["FreeCiv · Earth Classic", "Civ4 · Terra"], dimensions: "800 × 400", file_size: "3.1 MB" },
+      { id: "luna_marius_hills_20261118.json", name: "Luna · Marius Hills Region", planet: "Luna", planet_type: "Airless rocky body", created_at: "2026-11-18T18:05:00Z", quality_score: 8.2, description: "Regional lunar terrain reference with volcanic plains, elevated terrain and skylight surroundings.", biome_focus: "Arid", complexity: "Normal", applied: false, source_maps: ["Civ4 · Highlands"], dimensions: "600 × 300", file_size: "1.7 MB" },
+      { id: "venus_global_reference_20261116.json", name: "Venus · Global Reference", planet: "Venus", planet_type: "Terrestrial", created_at: "2026-11-16T12:40:00Z", quality_score: 7.9, description: "Global surface baseline for broad highland regions, volcanic provinces and lowland plains.", biome_focus: "Continental", complexity: "Complex", applied: false, source_maps: ["FreeCiv · Earth Large"], dimensions: "800 × 400", file_size: "2.8 MB" },
+      { id: "eden1_initial_terrain_20261114.json", name: "Eden-1 · Initial Terrain", planet: "Eden-1", planet_type: "Extrasolar terrestrial", created_at: "2026-11-14T16:20:00Z", quality_score: 8.5, description: "Plausible initial landform distribution prepared as a starting terrain state for an extrasolar world.", biome_focus: "Balanced", complexity: "Normal", applied: false, source_maps: ["Civ4 · Terra", "FreeCiv · Highlands"], dimensions: "800 × 400", file_size: "2.2 MB" },
+      { id: "mars_tharsis_test_20261110.json", name: "Mars · Tharsis Test", planet: "Mars", planet_type: "Terrestrial", created_at: "2026-11-10T08:10:00Z", quality_score: 6.8, description: "Earlier terrain reconstruction test covering the Tharsis region and surrounding volcanic uplands.", biome_focus: "Arid", complexity: "Simple", applied: false, source_maps: ["FreeCiv · Highlands"], dimensions: "400 × 200", file_size: "820 KB" }
+    ]
+    @map_stats = {
+      total: @generated_maps.size,
+      applied: @generated_maps.count { |map| map[:applied] },
+      pending: @generated_maps.count { |map| !map[:applied] },
+      average_quality: (@generated_maps.sum { |map| map[:quality_score] } / @generated_maps.size).round(1)
+    }
+  end
+
 end
