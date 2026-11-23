@@ -80,6 +80,20 @@ Do not double-count Pixel Nexus Dashboard and EVE Dashboard; they refer to the s
 
 **Exit condition:** selected existing workflows are navigable and reviewable in the prototype, with their behavior and data limitations clearly represented.
 
+### Interface boundaries — Player Planetary, Admin Celestial Body View, and Digital Twin
+
+These are related world-oriented interfaces, but they serve different users and workflows:
+
+- **Player Planetary:** presents the current world for player understanding and interaction.
+- **Admin Celestial Body View:** inspects the authoritative current body state, its environmental spheres, terrain, geological features, and supporting evidence.
+- **Digital Twin:** a SimEarth-like experimental workspace for controlled terraforming and environmental test runs. Admins and the AI Manager use it to configure scenarios, run projections, observe coupled planetary changes, compare outcomes, and evaluate candidate plans before deciding what to do in the live world.
+
+Digital Twin is not simply a more detailed body-inspection page, and it is not the TerraSim simulation engine itself. TerraSim supplies environmental simulation capability; Digital Twin provides the scenario setup, experiment/run management, visualization, comparison, and planning workspace around that capability. Experiments should be isolated from authoritative live-world state. The AI Manager may use Digital Twin results as evidence when evaluating options, but Digital Twin does not itself own autonomous operational decisions.
+
+The Digital Twin presentation should feel like a planetary systems simulator: world overview, environmental-sphere state, configurable interventions/assumptions, simulation horizon and run controls, time-series/evolution views, scenario comparison, and outcome/risk summaries. The exact control set should follow current TerraSim and terraforming design intent rather than copying legacy stub actions.
+
+The main application's legacy Digital Twin controller/view is only partial implementation evidence. Its current controller contains stubbed simulation behavior and a broad set of legacy intervention names; do not treat those as validated simulation capabilities or the final workflow. The current TerraSim Wiki defines the broader simulation purpose, including natural-state projection, historical/event scenarios, and intentional modification. Older architecture text describing TerraSim primarily as a lush-to-barren regression filter conflicts with that current intent and must not drive the prototype.
+
 ### Part 3 — Polish the shared presentation system
 - Reconcile typography, spacing, density, panel treatment, navigation, responsive behavior, and visual hierarchy.
 - Use the prototype's established dark/cyan visual language.
