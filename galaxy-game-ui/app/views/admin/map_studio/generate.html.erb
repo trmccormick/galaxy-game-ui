@@ -1,0 +1,232 @@
+<% content_for :title, "Generate Terrain | Map Studio" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "pages/map_studio", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="map-studio-page map-studio-generate-page">
+  <div class="map-studio-heading">
+    <div>
+      <div class="map-studio-eyebrow">ADMIN / WORLD TOOLS / MAP STUDIO</div>
+      <h1 class="gg-section-title">Generate Terrain</h1>
+      <p class="map-studio-intro">Prepare an initial terrain map by selecting a target world, reference maps and generation parameters. The resulting terrain is intended as the Digital Twin's starting state—not an ongoing simulation or terraforming operation.</p>
+    </div>
+    <span class="map-studio-prototype-tag">UI PROTOTYPE · FIXTURE DATA</span>
+  </div>
+
+  <div class="map-studio-toolbar">
+    <%= link_to "← Map Studio overview", admin_map_studio_path, class: "map-studio-back-link" %>
+    <span class="map-studio-toolbar-note">Generation pipeline not connected</span>
+  </div>
+
+  <form class="map-studio-generation-form" id="map-studio-generation-form">
+    <div class="map-studio-generation-main">
+      <section class="map-studio-panel map-studio-form-section">
+        <div class="map-studio-form-heading">
+          <span class="map-studio-step">01</span>
+          <div><h2>Target world</h2><p>Choose the celestial body whose initial terrain is being prepared.</p></div>
+        </div>
+
+        <div class="map-studio-form-grid">
+          <label class="map-studio-field map-studio-field-wide">
+            <span>Target celestial body <i>Required</i></span>
+            <select name="target_world" id="map-studio-target" required>
+              <option value="">Select a target world…</option>
+              <% @target_worlds.each do |world| %>
+                <option value="<%= world[:name] %>"><%= world[:name] %> — <%= world[:kind] %></option>
+              <% end %>
+            </select>
+            <small>The prototype uses example targets; no celestial-body records are read or changed.</small>
+          </label>
+
+          <label class="map-studio-field">
+            <span>Map name</span>
+            <input type="text" name="map_name" placeholder="e.g. Mars · Northern Lowlands">
+          </label>
+
+          <label class="map-studio-field">
+            <span>Starting-world template</span>
+            <select name="planet_template" id="map-studio-template">
+              <option value="Custom / target context">Custom / target context</option>
+              <% @planet_templates.each do |template| %>
+                <option value="<%= template[:name] %>"><%= template[:name] %></option>
+              <% end %>
+            </select>
+          </label>
+        </div>
+
+        <label class="map-studio-field map-studio-field-wide">
+          <span>Terrain brief</span>
+          <textarea name="description" rows="3" placeholder="Describe the terrain region, known geology, elevation patterns or other context to consider."></textarea>
+        </label>
+
+        <div class="map-studio-template-reference">
+          <div class="map-studio-template-reference-title">Available reference profiles</div>
+          <div class="map-studio-template-chips">
+            <% @planet_templates.each do |template| %>
+              <div class="map-studio-template-chip">
+                <strong><%= template[:name] %></strong>
+                <span><%= template[:temperature] %> · <%= template[:pressure] %> · water <%= template[:water] %></span>
+              </div>
+            <% end %>
+          </div>
+          <p>These are broad environmental reference profiles from the existing Map Studio controller. They are not a substitute for the target world's actual Digital Twin data.</p>
+        </div>
+      </section>
+
+      <section class="map-studio-panel map-studio-form-section">
+        <div class="map-studio-form-heading">
+          <span class="map-studio-step">02</span>
+          <div><h2>Source map selection</h2><p>Select reference material to guide terrain reconstruction. Multiple sources can be combined.</p></div>
+        </div>
+
+        <div class="map-studio-source-toolbar">
+          <span><strong><%= @source_maps.length %></strong> example sources</span>
+          <span>FreeCiv + Civilization IV</span>
+        </div>
+        <div class="map-studio-source-select-grid">
+          <% @source_maps.each do |map| %>
+            <label class="map-studio-source-option">
+              <input type="checkbox" name="source_maps[]" value="<%= map[:id] %>">
+              <span class="map-studio-source-check" aria-hidden="true"></span>
+              <span class="map-studio-source-option-content">
+                <strong><%= map[:name] %></strong>
+                <span class="map-studio-source-meta"><%= map[:collection] %> · <%= map[:format] %></span>
+                <span class="map-studio-source-detail"><%= map[:detail] %></span>
+                <span class="map-studio-source-dimensions"><%= map[:dimensions] %></span>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <div class="map-studio-selection-footnote">Source names and counts are illustrative fixtures, not a live inventory of files.</div>
+      </section>
+
+      <section class="map-studio-panel map-studio-form-section">
+        <div class="map-studio-form-heading">
+          <span class="map-studio-step">03</span>
+          <div><h2>Generation parameters</h2><p>Set the broad terrain-generation profile and additional guidance.</p></div>
+        </div>
+
+        <div class="map-studio-form-grid">
+          <label class="map-studio-field">
+            <span>Terrain complexity</span>
+            <select name="complexity">
+              <option value="simple">Simple · faster pass</option>
+              <option value="normal" selected>Normal · balanced detail</option>
+              <option value="complex">Complex · higher detail</option>
+            </select>
+          </label>
+          <label class="map-studio-field">
+            <span>Biome focus</span>
+            <select name="biome">
+              <option value="balanced" selected>Balanced</option>
+              <option value="oceanic">Oceanic</option>
+              <option value="continental">Continental</option>
+              <option value="arid">Arid</option>
+              <option value="arctic">Arctic</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="map-studio-field map-studio-field-wide">
+          <span>Additional generation instructions</span>
+          <textarea name="instructions" rows="3" placeholder="Add specific guidance about relief, basin placement, mountain systems, volcanic regions or other terrain features."></textarea>
+        </label>
+
+        <div class="map-studio-generation-specs">
+          <div><span>Target resolution</span><strong>800 px minimum</strong></div>
+          <div><span>Grid handling</span><strong>Adaptive grid</strong></div>
+          <small>These defaults reflect the current main-app generation controller. Actual output is not produced in this prototype.</small>
+        </div>
+      </section>
+    </div>
+
+    <aside class="map-studio-generation-aside">
+      <section class="map-studio-panel map-studio-summary-panel">
+        <div class="map-studio-aside-heading">GENERATION SETUP</div>
+        <h2>Review configuration</h2>
+        <p>Check the target and source material before preparing a generation request.</p>
+        <div class="map-studio-summary-list" id="map-studio-summary">
+          <div><span>Target</span><strong id="summary-target">Not selected</strong></div>
+          <div><span>Map name</span><strong id="summary-name">Untitled map</strong></div>
+          <div><span>Template</span><strong id="summary-template">Custom / target context</strong></div>
+          <div><span>Source maps</span><strong id="summary-sources">0 selected</strong></div>
+          <div><span>Complexity</span><strong id="summary-complexity">Normal</strong></div>
+          <div><span>Biome focus</span><strong id="summary-biome">Balanced</strong></div>
+        </div>
+        <button type="submit" class="map-studio-primary-button">Preview generation setup</button>
+        <p class="map-studio-prototype-disclaimer">Preview only. This action does not generate terrain, create files or modify a celestial body.</p>
+      </section>
+
+      <section class="map-studio-panel map-studio-preview-panel" id="map-studio-preview" hidden aria-live="polite">
+        <div class="map-studio-aside-heading">CONFIGURATION PREVIEW</div>
+        <div class="map-studio-preview-status">READY FOR FUTURE INTEGRATION</div>
+        <h3 id="map-studio-preview-title">Generation setup prepared</h3>
+        <p id="map-studio-preview-copy">Your selections are summarized above.</p>
+        <button type="button" class="map-studio-secondary-button" id="map-studio-edit-setup">Edit configuration</button>
+      </section>
+
+      <section class="map-studio-panel map-studio-context-panel">
+        <div class="map-studio-aside-heading">WORKFLOW CONTEXT</div>
+        <h3>From terrain source to Digital Twin</h3>
+        <ol>
+          <li><strong>Prepare</strong><span>Select source maps and define the target context.</span></li>
+          <li><strong>Generate</strong><span>Reconstruct an initial terrain state.</span></li>
+          <li><strong>Review</strong><span>Inspect the generated map and its source metadata.</span></li>
+          <li><strong>Assign</strong><span>Use the accepted terrain as the world's starting state.</span></li>
+        </ol>
+        <p>Terrain, hydrology and resources continue to evolve in the Digital Twin after initialization.</p>
+      </section>
+    </aside>
+  </form>
+</div>
+
+<script>
+  (() => {
+    const form = document.getElementById("map-studio-generation-form");
+    if (!form || form.dataset.bound === "true") return;
+    form.dataset.bound = "true";
+
+    const value = (selector, fallback) => {
+      const field = form.querySelector(selector);
+      return field && field.value ? field.value : fallback;
+    };
+    const selectedSources = () => Array.from(form.querySelectorAll('input[name="source_maps[]"]:checked'));
+    const updateSummary = () => {
+      document.getElementById("summary-target").textContent = value("#map-studio-target", "Not selected").split(" — ")[0];
+      document.getElementById("summary-name").textContent = value('[name="map_name"]', "Untitled map");
+      document.getElementById("summary-template").textContent = value("#map-studio-template", "Custom / target context");
+      document.getElementById("summary-sources").textContent = selectedSources().length + " selected";
+      document.getElementById("summary-complexity").textContent = value('[name="complexity"]', "normal");
+      document.getElementById("summary-biome").textContent = value('[name="biome"]', "balanced");
+    };
+
+    form.addEventListener("input", updateSummary);
+    form.addEventListener("change", updateSummary);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const target = document.getElementById("map-studio-target");
+      if (!target.value) {
+        target.reportValidity();
+        return;
+      }
+      if (selectedSources().length === 0) {
+        window.alert("Select at least one source map to prepare this configuration.");
+        return;
+      }
+      updateSummary();
+      const preview = document.getElementById("map-studio-preview");
+      document.getElementById("map-studio-preview-title").textContent =
+        (value('[name="map_name"]', "Untitled map")) + " · configuration ready";
+      document.getElementById("map-studio-preview-copy").textContent =
+        selectedSources().length + " source map(s) selected for " +
+        target.options[target.selectedIndex].text + ". This is a saved-in-page preview only.";
+      preview.hidden = false;
+      preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+    document.getElementById("map-studio-edit-setup").addEventListener("click", () => {
+      document.getElementById("map-studio-preview").hidden = true;
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    updateSummary();
+  })();
+</script>
