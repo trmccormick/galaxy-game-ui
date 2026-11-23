@@ -7,7 +7,7 @@
 .cb-header-meta, .cb-detail-status { display:flex; flex-direction:column; align-items:flex-end; gap:.45rem; white-space:nowrap; }
 .cb-data-tag { display:inline-flex; align-items:center; border:1px solid rgba(0,212,255,.35); border-radius:3px; padding:3px 7px; color:var(--gg-primary); font-size:9px; font-weight:700; letter-spacing:.1em; }
 .cb-muted { color:var(--gg-text-dim); font-size:10px; }
-.cb-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.65rem; margin-bottom:1rem; }
+.cb-metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.65rem; margin-bottom:1rem; }
 .cb-metric { display:flex; flex-direction:column; gap:3px; padding:.7rem .85rem; background:var(--gg-bg-surface); border:1px solid rgba(0,212,255,.14); border-radius:5px; }
 .cb-metric-value { color:var(--gg-primary); font-size:1.3rem; line-height:1.1; font-weight:650; font-variant-numeric:tabular-nums; }
 .cb-metric-label { color:var(--gg-text-dim); font-size:10px; text-transform:uppercase; letter-spacing:.07em; }
