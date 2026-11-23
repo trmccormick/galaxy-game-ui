@@ -73,19 +73,6 @@ class Admin::AiManagerController < Admin::BaseController
 
   # ── Mock data helpers ──────────────────────────────────────────────
 
-  def mock_settlements
-    [
-      { name: "Luna Base Alpha", status: "operational", population: 142, systems_count: 3 },
-      { name: "Venus Orbital Station", status: "operational", population: 87, systems_count: 2 },
-      { name: "Mars Colony Theta", status: "expanding", population: 56, systems_count: 1 },
-      { name: "Ceres Outpost Gamma", status: "maintenance", population: 34, systems_count: 1 },
-      { name: "Titan Research Hub", status: "operational", population: 29, systems_count: 0 },
-      { name: "Asteroid Belt Depot Kappa", status: "operational", population: 18, systems_count: 0 },
-      { name: "Phobos Transfer Station", status: "under_construction", population: 12, systems_count: 0 },
-      { name: "Europa Deep Lab", status: "planning", population: 0, systems_count: 0 }
-    ]
-  end
-
   def mock_missions
     {
       active: [
@@ -106,19 +93,6 @@ class Admin::AiManagerController < Admin::BaseController
         { identifier: "MIS-4795", settlement: "Europa Deep Lab", status: "stalled", type: "research", reason: "equipment_failure", created_at: 30.days.ago }
       ]
     }
-  end
-
-  def mock_decisions
-    [
-      { created_at: 1.hour.ago, celestial_body: "Luna", location_context: "Base Alpha ISRU Plant", decision_type: "resource_allocation", reasoning: "Redirected 40% of O2 output to Mars Colony due to emergency supply request", constraints: { budget_limit: 500_000, priority: "critical" }, outcome: "approved", metadata: { lessons_learned: "Early warning system needed for cross-settlement demand spikes" } },
-      { created_at: 3.hours.ago, celestial_body: "Venus", location_context: "Orbital Station Processing", decision_type: "contract_negotiation", reasoning: "Accepted NPC contractor bid 8% below market rate for CNT production facility", constraints: { quality_threshold: 0.95, deadline: "2026-12-15" }, outcome: "approved", metadata: {} },
-      { created_at: 6.hours.ago, celestial_body: "Mars", location_context: "Colony Theta Command", decision_type: "mission_planning", reasoning: "Rescheduled terraforming phase 3 by 14 days due to solar flare disruption", constraints: { max_delay_days: 21, min_progress: 80 }, outcome: "approved", metadata: {} },
-      { created_at: 1.day.ago, celestial_body: "Ceres", location_context: "Outpost Gamma Storage", decision_type: "settlement_operations", reasoning: "Automated reallocation of 12 storage units from surplus to deficit zones", constraints: { min_reserve: 0.15 }, outcome: "approved", metadata: { lessons_learned: "Dynamic allocation reduced waste by 18%" } },
-      { created_at: 2.days.ago, celestial_body: "Titan", location_context: "Research Hub Lab 4", decision_type: "resource_allocation", reasoning: "Prioritized methane extraction over nitrogen due to Mars demand spike", constraints: { max_extraction_rate: 500 }, outcome: "approved", metadata: {} },
-      { created_at: 3.days.ago, celestial_body: "Luna", location_context: "Base Alpha Command", decision_type: "contract_negotiation", reasoning: "Renewed cycler contract with NPC logistics provider at 5% rate increase", constraints: { max_rate_increase: 0.10 }, outcome: "approved", metadata: {} },
-      { created_at: 5.days.ago, celestial_body: "Asteroid Belt", location_context: "Depot Kappa Processing", decision_type: "settlement_operations", reasoning: "Deployed automated mining drones to Sector 7-G after sensor anomaly detected", constraints: { drone_count: 24 }, outcome: "approved", metadata: {} },
-      { created_at: 7.days.ago, celestial_body: "Earth", location_context: "Fallback Command", decision_type: "emergency_response", reasoning: "Initiated Earth supply corridor for Luna O2 critical shortage event", constraints: { max_cost: 2_000_000 }, outcome: "approved", metadata: { lessons_learned: "Lunar storage should maintain 30-day emergency reserve" } }
-    ]
   end
 
   def mock_simulation_result
@@ -162,17 +136,6 @@ class Admin::AiManagerController < Admin::BaseController
       system_uptime: "99.97%", avg_decision_latency_ms: 12, pattern_library_size: 47,
       resource_utilization: { cpu: 34, memory: 67, storage: 45, network: 28 }
     }
-  end
-
-  def mock_quick_actions
-    [
-      { title: "Deploy New Mission", description: "Create and launch a new AI-managed mission to any settlement or celestial body", path: "#", type: "create" },
-      { title: "Review Decisions", description: "Browse the AI decision log and review reasoning for past operational choices", path: admin_ai_manager_decisions_path, type: "review" },
-      { title: "Run Simulation", description: "Configure and run a mission simulation to evaluate outcomes before committing resources", path: admin_ai_manager_planner_path, type: "simulate" },
-      { title: "Pattern Library", description: "View and manage AI mission patterns — activate, deactivate, or test new configurations", path: admin_ai_manager_patterns_path, type: "manage" },
-      { title: "Performance Monitor", description: "Real-time AI performance metrics, system health, and operational efficiency data", path: admin_ai_manager_performance_path, type: "monitor" },
-      { title: "Emergency Override", description: "Manually intervene in active AI operations — pause missions or redirect resources", path: "#", type: "emergency" }
-    ]
   end
 
   def mock_mission_detail
