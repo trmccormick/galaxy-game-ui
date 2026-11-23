@@ -33,9 +33,19 @@ class Admin::AiManagerController < Admin::BaseController
   end
 
   def show_mission
-    @mission = mock_mission_detail
+    selected = (mock_missions[:active] + mock_missions[:completed] + mock_missions[:failed])
+      .find { |mission| mission[:identifier] == params[:identifier] } || mock_missions[:active].first
+
+    @mission = mock_mission_detail.merge(
+      identifier: selected[:identifier],
+      settlement: selected[:settlement],
+      status: selected[:status] || "completed",
+      progress: selected[:progress] || 100,
+      mission_type: selected[:type],
+      created_at: selected[:created_at]
+    )
     @task_list = mock_task_list
-    @current_task_index = 2
+    @current_task_index = [((@mission[:progress].to_i / 25) - 1), 0].max.clamp(0, @task_list.length - 1)
     @manifest = @mission[:manifest]
   end
 
