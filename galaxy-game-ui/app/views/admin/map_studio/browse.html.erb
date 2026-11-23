@@ -121,6 +121,7 @@
           </div>
           <div class="map-studio-map-actions">
             <button type="button" class="map-studio-secondary-button map-studio-preview-map">Inspect details</button>
+            <%= link_to "Open analysis", admin_map_studio_analyze_path(map[:id]), class: "map-studio-analysis-link" %>
             <span class="map-studio-map-action-note">Apply workflow not connected</span>
           </div>
         </div>
