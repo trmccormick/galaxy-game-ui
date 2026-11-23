@@ -66,4 +66,52 @@ class Admin::MapStudioController < Admin::BaseController
     }
   end
 
+  # Fixture-backed inspection of a reusable generated-map artifact.
+  # Metrics that are placeholders in the legacy controller are deliberately
+  # shown as unassessed rather than presented as validated quality findings.
+  def analyze
+    fixtures = {
+      "mars_northern_lowlands_20261121.json" => {
+        name: "Mars · Northern Lowlands", planet: "Mars", planet_type: "Terrestrial",
+        created_at: "2026-11-21 14:32 UTC", quality_score: 8.7,
+        description: "Regional reconstruction emphasizing the northern plains, basin margins and major elevation transitions.",
+        dimensions: "800 × 400", tile_count: 320_000, complexity: "Complex", biome_focus: "Arid",
+        source_maps: ["FreeCiv · Earth Large", "Civ4 · Highlands"],
+        biome_counts: { "Lowland" => 118_400, "Rocky" => 83_200, "Highland" => 64_000, "Dune" => 35_200, "Polar" => 19_200 }
+      },
+      "earth_global_baseline_20261120.json" => {
+        name: "Earth · Global Baseline", planet: "Earth", planet_type: "Terrestrial",
+        created_at: "2026-11-20 09:15 UTC", quality_score: 9.4,
+        description: "Global reference terrain with broad continental structure, ocean basins and varied relief.",
+        dimensions: "800 × 400", tile_count: 320_000, complexity: "Complex", biome_focus: "Balanced",
+        source_maps: ["FreeCiv · Earth Classic", "Civ4 · Terra"],
+        biome_counts: { "Ocean" => 156_800, "Grassland" => 54_400, "Forest" => 38_400, "Desert" => 28_800, "Mountain" => 22_400, "Tundra" => 19_200 }
+      },
+      "luna_marius_hills_20261118.json" => {
+        name: "Luna · Marius Hills Region", planet: "Luna", planet_type: "Airless rocky body",
+        created_at: "2026-11-18 18:05 UTC", quality_score: 8.2,
+        description: "Regional lunar terrain reference with volcanic plains, elevated terrain and skylight surroundings.",
+        dimensions: "600 × 300", tile_count: 180_000, complexity: "Normal", biome_focus: "Arid",
+        source_maps: ["Civ4 · Highlands"],
+        biome_counts: { "Mare basalt" => 72_000, "Highland" => 50_400, "Rugged upland" => 39_600, "Cratered terrain" => 18_000 }
+      }
+    }
+    @map = fixtures[params[:id].to_s]
+    unless @map
+      redirect_to admin_map_studio_browse_path, alert: "That fixture map is not available in the prototype."
+      return
+    end
+
+    @map[:id] = params[:id]
+    @analysis = {
+      biome_count: @map[:biome_counts].size,
+      tile_count: @map[:tile_count],
+      source_count: @map[:source_maps].size,
+      terrain_diversity: (@map[:biome_counts].size / 10.0).round(2),
+      resource_balance: nil,
+      strategic_features: nil,
+      overall_score: nil
+    }
+  end
+
 end
