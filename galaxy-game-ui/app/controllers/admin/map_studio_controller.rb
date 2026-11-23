@@ -37,7 +37,7 @@ class Admin::MapStudioController < Admin::BaseController
       { id: "freeciv:highlands.sav", name: "Highlands", collection: "FreeCiv", format: "Regional map", dimensions: "80 × 50", detail: "Mountain chains, plateaus and uplands" },
       { id: "civ4:terra.Civ4WorldBuilderSave", name: "Terra", collection: "Civilization IV", format: "World Builder", dimensions: "Earth-style", detail: "Large landmasses with varied coastlines" },
       { id: "civ4:highlands.CivBeyondSwordWBSave", name: "Highlands", collection: "Civilization IV", format: "World Builder", dimensions: "Standard", detail: "Rugged relief and inland basins" },
-      { id: "civ4: архipelago.CivWarlordsWBSave", name: "Archipelago", collection: "Civilization IV", format: "World Builder", dimensions: "Standard", detail: "Island chains and fragmented land" }
+      { id: "civ4:archipelago.CivWarlordsWBSave", name: "Archipelago", collection: "Civilization IV", format: "World Builder", dimensions: "Standard", detail: "Island chains and fragmented land" }
     ]
 
     @planet_templates = [
