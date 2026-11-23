@@ -1,0 +1,98 @@
+<% content_for :title, "Map Studio | Galaxy Game" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "pages/map_studio", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="map-studio-page">
+  <div class="map-studio-heading">
+    <div>
+      <div class="map-studio-eyebrow">ADMIN / WORLD TOOLS</div>
+      <h1 class="gg-section-title">Map Studio</h1>
+      <p class="map-studio-intro">Create and reconstruct initial planetary terrain from source maps and world data. Generated terrain becomes the starting state for the Digital Twin; it is not the terraforming or ongoing terrain simulation system.</p>
+    </div>
+    <span class="map-studio-prototype-tag">UI PROTOTYPE · FIXTURE DATA</span>
+  </div>
+
+  <section class="map-studio-metrics" aria-label="Map Studio overview">
+    <% @stats.each do |stat| %>
+      <article class="map-studio-panel map-studio-stat">
+        <div class="map-studio-stat-label"><%= stat[:label] %></div>
+        <div class="map-studio-stat-value tone-<%= stat[:tone] %>"><%= stat[:value] %></div>
+        <div class="map-studio-stat-detail"><%= stat[:detail] %></div>
+      </article>
+    <% end %>
+  </section>
+
+  <section class="map-studio-section">
+    <div class="map-studio-section-heading">
+      <div><h2>Map workflows</h2><p>Stages of the terrain creation and reconstruction process.</p></div>
+    </div>
+    <div class="map-studio-workflows">
+      <article class="map-studio-panel map-studio-workflow">
+        <div class="map-studio-workflow-icon">✦</div>
+        <div class="map-studio-workflow-content">
+          <div class="map-studio-card-kicker">01 / CREATE</div>
+          <h3>Generate terrain</h3>
+          <p>Combine FreeCiv or Civ4 source maps with planetary context to create an initial terrain map for a selected world.</p>
+          <span class="map-studio-coming-soon">Generation view · next porting item</span>
+        </div>
+      </article>
+      <article class="map-studio-panel map-studio-workflow">
+        <div class="map-studio-workflow-icon">▦</div>
+        <div class="map-studio-workflow-content">
+          <div class="map-studio-card-kicker">02 / LIBRARY</div>
+          <h3>Browse generated maps</h3>
+          <p>Review generated terrain, inspect source material and metadata, and compare candidate maps before use.</p>
+          <span class="map-studio-coming-soon">Browse view · not yet ported</span>
+        </div>
+      </article>
+      <article class="map-studio-panel map-studio-workflow">
+        <div class="map-studio-workflow-icon">◎</div>
+        <div class="map-studio-workflow-content">
+          <div class="map-studio-card-kicker">03 / WORLD SETUP</div>
+          <h3>Assign to a celestial body</h3>
+          <p>Choose an appropriate generated terrain baseline for a known planet or other modeled celestial body.</p>
+          <span class="map-studio-coming-soon">Assignment view · not yet ported</span>
+        </div>
+      </article>
+      <%= link_to admin_ai_manager_missions_path, class: "map-studio-panel map-studio-workflow map-studio-workflow-link" do %>
+        <div class="map-studio-workflow-icon">⌁</div>
+        <div class="map-studio-workflow-content">
+          <div class="map-studio-card-kicker">RELATED OPERATIONS</div>
+          <h3>AI Manager missions</h3>
+          <p>Review operational activity related to exploration and world development.</p>
+          <span class="map-studio-link-label">Open mission monitor →</span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="map-studio-lower-grid">
+    <section class="map-studio-panel map-studio-section-panel">
+      <div class="map-studio-section-heading"><div><h2>Source collections</h2><p>Reference material for terrain creation.</p></div></div>
+      <div class="map-studio-source-list">
+        <% @source_collections.each do |collection| %>
+          <div class="map-studio-source-row">
+            <div><strong><%= collection[:name] %></strong><span><%= collection[:format] %></span></div>
+            <div class="map-studio-source-meta"><strong><%= collection[:count] %></strong><span><%= collection[:status] %></span></div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+    <section class="map-studio-panel map-studio-section-panel">
+      <div class="map-studio-section-heading"><div><h2>Recent activity</h2><p>Illustrative records for layout review.</p></div></div>
+      <div class="map-studio-activity-list">
+        <% @recent_activities.each do |activity| %>
+          <div class="map-studio-activity">
+            <div class="map-studio-activity-mark"></div>
+            <div class="map-studio-activity-main">
+              <strong><%= activity[:name] %></strong><span><%= activity[:target] %></span><small><%= activity[:source] %></small>
+            </div>
+            <div class="map-studio-activity-meta"><span><%= activity[:status] %></span><small><%= activity[:time] %></small></div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+  <p class="map-studio-footnote">All counts and activity are illustrative prototype fixtures. This screen does not read, generate, assign, or modify map files.</p>
+</div>
