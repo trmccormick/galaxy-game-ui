@@ -178,6 +178,6 @@ Only create a formal agent task for substantial, cross-cutting work that benefit
 
 ## 8. Current next step
 
-**Start Part 1 only:** reconcile the existing main-app UI, current prototype, earlier UI attempt, Wiki/decisions, and reference material into a screen/workflow inventory. Then review that inventory and select one contained porting item for Part 2.
+Continue the active incremental view-building work. The next contained Map Studio item is the select-celestial-body/apply workflow, adapted as a prototype review and confirmation experience only. Preserve the distinction between a generated map artifact and the terrain currently stored on a celestial body's Geosphere. Do not perform live writes.
 
-Do not start another broad screen-design exercise or begin JSON/API integration before this inventory and the first porting decisions are reviewed.
+The broader source inventory remains useful ongoing work, but it must not block the user's current direction to build and refine reviewable views. Defer JSON/API integration and runtime/browser review until the appropriate implementation and desktop-review stages.
