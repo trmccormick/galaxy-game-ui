@@ -119,6 +119,43 @@ The user has directed that view construction continue in small pieces without re
 - **Analyze generated map:** ported the legacy inspection workflow into a fixture-backed artifact analysis page. It presents grid dimensions, tile count, biome composition, source references, and the stored fixture quality score. The preview art is explicitly illustrative, not a rendering of map data. The legacy controller's resource-balance, strategic-feature, and overall-playability outputs are placeholders; the prototype calls this out and does not portray them as validated analysis. Applying remains a separate, unconnected write to the body's Geosphere `terrain_map`.
 - **Next contained view:** inspect and adapt the select-celestial-body/apply workflow as a safe prototype review/confirmation flow, retaining the distinction between generated artifact and applied body terrain and performing no live writes.
 
+## Terrain data, generation, and visualization quality
+
+**OWNER GUIDANCE — 2026-11-23**
+
+Terrain quality is a distinct, cross-cutting concern. Do not treat a working map canvas, a working GeoTIFF loader, and good generated terrain as interchangeable achievements.
+
+### Related view family
+
+Player Planetary, Admin Celestial Body View, and Digital Twin are related visualization workspaces. They should share and evolve common capabilities where appropriate: terrain/map rendering, elevation and geographic layers, layer controls, map navigation, sphere-data presentation, and contextual body information. They are not interchangeable screens:
+
+- **Player Planetary** presents a player-oriented understanding of a world.
+- **Admin Celestial Body View** supports administrative inspection of a celestial body's authoritative state and available data.
+- **Digital Twin** is the deeper Admin/developer workspace for inspecting, comparing, evaluating, and tuning environmental simulations.
+
+The prototype's current Player Planetary view is a working starting point, but its terrain rendering is poor and the view still needs substantial refinement. Do not treat it as a finished shared component or as an equivalent port of the main application's Admin Planetary page.
+
+### Track three separate quality dimensions
+
+1. **Terrain source and ingestion**
+   - The main application has working GeoTIFF terrain loading and this is valuable existing capability to preserve.
+   - Inspect and document the actual GeoTIFF source, projection/georeferencing, resolution, elevation units, nodata handling, resampling, normalization, and provenance through the complete load-to-view path.
+   - The prototype repository also contains a `PlanetaryTerrainService` for GeoTIFF loading. Verify whether and how the current Player Planetary view consumes it; the existence of a service alone does not prove the displayed prototype terrain comes from GeoTIFF data.
+   - Keep real observed/source terrain distinguishable from generated or illustrative fixture terrain.
+
+2. **Terrain generation quality**
+   - The current main-app automatic terrain generator runs, but its generated terrain quality is inadequate.
+   - Treat generator quality as a separate domain/algorithm investigation, not a UI styling task. Review the generator, its inputs, body-specific constraints, data sources, validation/quality assessment, and known historical terrain fixes before proposing changes.
+   - Do not imply that improving the renderer improves the generated terrain itself, or that GeoTIFF loading validates the generator.
+
+3. **Terrain visualization quality**
+   - The prototype's current terrain rendering is poor despite being functional.
+   - Improve the rendering independently: geographic fidelity, useful elevation relief, appropriate body-specific color treatment, resolution/detail, layer legibility, map controls, and presentation at different scales.
+   - Use the main application's working GeoTIFF path and rendering behavior as evidence and reusable implementation where appropriate, while shaping the presentation for the new shared view family.
+   - Do not replace real terrain with attractive but invented map artwork. Any illustrative preview must be clearly identified as such.
+
+These tracks should be recorded and advanced independently. A shared visualization component should accept well-described terrain data from more than one source (observed/imported GeoTIFF, generated terrain, or clearly labeled fixtures) without taking ownership of terrain generation, simulation, or authoritative persistence.
+
 ## 4. Current prototype work and existing implementation
 
 The prototype already contains Admin AI Manager and Player mission work. These must be included in the inventory and improved in place where appropriate; do not rebuild them from scratch.
@@ -180,6 +217,6 @@ Only create a formal agent task for substantial, cross-cutting work that benefit
 
 **Map Studio destination/apply review:** added a destination selector, current-terrain/source comparison, intended-target mismatch warning, existing-terrain replacement warning, provenance explanation, and a prototype-only confirmation action. The six generated-map fixtures can enter this review from Browse or Analyze. The confirmation route performs no writes and does not access production body records. The view explicitly documents the legacy implementation's destructive `terrain_map` replacement behavior and the separate `CelestialBody.properties['applied_map']` / `map_source` provenance update. This replacement behavior remains a design/code-review issue before production integration.
 
-**Next view:** begin the Admin **Celestial Body View**, following `docs/wiki/ui/05_admin_celestial_body_view.md`. Inspect the legacy catalog, Monitor/Planetary route chain, terrain/sphere data payloads, and existing prototype work before building. Preserve the distinction between Admin inspection, Map Studio initial terrain preparation, TerraSim environmental simulation, and the Digital Twin. Use clearly labeled fixtures and do not add unapproved editing or terraforming controls.
+**Next view:** begin the Admin **Celestial Body View**, following `docs/wiki/ui/05_admin_celestial_body_view.md`. Reconcile the main application's Admin Planetary GeoTIFF/data-loading and rendering path with the working-but-not-yet-good prototype Player Planetary view. Treat Player Planetary, Admin Celestial Body View, and Digital Twin as a related view family with shared visualization capabilities but distinct audiences and responsibilities. Preserve the distinction between Admin inspection, Map Studio initial terrain preparation, TerraSim environmental simulation, and the Digital Twin. Use clearly labeled fixtures and do not add unapproved editing or terraforming controls. Track prototype renderer improvement separately from the main generator's terrain-quality investigation; do not conflate either with GeoTIFF ingestion.
 
 The broader source inventory remains useful ongoing work, but it must not block the user's current direction to build and refine reviewable views. Defer JSON/API integration and runtime/browser review until the appropriate implementation and desktop-review stages.
