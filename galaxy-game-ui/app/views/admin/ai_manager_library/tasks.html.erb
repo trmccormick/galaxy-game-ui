@@ -1,0 +1,24 @@
+<div class="mb-5">
+  <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Shared library</p>
+  <h1 class="gg-section-title">Task Library</h1>
+  <p class="text-sm" style="color:var(--gg-text-secondary);">Individual operational capabilities that AI Managers can combine into repeatable missions.</p>
+  <p class="text-xs mt-2" style="color:var(--gg-accent-warning);">Prototype fixtures · V2 examples are experimental and are not connected to live execution.</p>
+</div>
+<div class="gg-grid-panel">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-xs uppercase" style="color:var(--gg-text-dim);"><th class="py-2 pr-3">Task</th><th class="py-2 pr-3">Capability</th><th class="py-2 pr-3">Dependencies</th><th class="py-2">Maturity</th></tr></thead>
+      <tbody>
+        <% @tasks.each do |task| %>
+          <tr class="border-t align-top" style="border-color:rgba(0,212,255,.12);">
+            <td class="py-3 pr-3"><strong><%= task[:name] %></strong><div class="text-xs font-mono mt-1" style="color:var(--gg-text-dim);"><%= task[:id] %></div><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:source] %></div></td>
+            <td class="py-3 pr-3"><%= task[:capability] %><div class="text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:category] %></div></td>
+            <td class="py-3 pr-3"><%= task[:dependencies] %></td>
+            <td class="py-3"><span class="text-xs px-2 py-1 rounded" style="background:rgba(255,190,11,.1);color:var(--gg-accent-warning);"><%= task[:maturity] %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="mt-4 flex justify-end"><%= link_to "Open task workbench →", admin_ai_manager_workbench_path, class: "text-sm", style: "color:var(--gg-primary);" %></div>
