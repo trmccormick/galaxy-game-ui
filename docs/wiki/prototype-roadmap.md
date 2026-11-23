@@ -54,7 +54,7 @@ Do not double-count Pixel Nexus Dashboard and EVE Dashboard; they refer to the s
 ## 3. Work sequence — one part at a time
 
 ### Part 1 — Reconcile sources and inventory existing UI
-**Next work item.**
+**In progress.** The main Admin celestial-body catalog/profile and prototype Player Planetary view have been compared. The prototype had no Admin celestial-body catalog or profile routes/views; a fixture-backed catalog and profile are now in place. The main app’s planetary and surface workspaces remain to be reconciled and ported.
 
 - Inspect the main GalaxyGame routes, controllers, layouts, views, helpers, JavaScript, styles, and relevant data/fixtures.
 - Inventory the current UI prototype's corresponding files and working navigation.
@@ -68,6 +68,8 @@ Do not double-count Pixel Nexus Dashboard and EVE Dashboard; they refer to the s
 **Exit condition:** a source-grounded inventory showing what already exists and what is actually missing. No claim of completeness until each source category has been checked.
 
 ### Part 2 — Port and reconcile existing views
+**Current UI work:** Admin Celestial Body catalog and body profile are implemented in the prototype with fixture data. Next: port the Admin Planetary inspection workspace as a distinct Admin view, reusing the main app’s useful map/layer/sphere-data presentation without copying its terrain-generation controls.
+
 - Prioritize existing useful main-app views/workflows that are not yet represented in the prototype.
 - Port their purpose, information, and workflow; do not require backend/API wiring first.
 - Reuse existing prototype layouts, components, styles, and JavaScript where possible.
