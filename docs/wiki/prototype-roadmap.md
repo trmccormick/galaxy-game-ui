@@ -1,146 +1,170 @@
-# Prototype Roadmap and Planning Sequence
+# UI Prototype Roadmap
 
-**Status:** First Admin AI Manager workflow selected and partially implemented; live API integration remains deferred  
+**Status:** Active — source reconciliation and existing-view inventory are the next work items  
 **Last updated:** 2026-11-23
 
-This roadmap records the current prototype sequence. It is a planning reference, not blanket authorization for backend implementation. Ordinary screen refinements are built directly in the UI prototype; substantial cross-cutting work may use reviewed Qwen task drafts.
+This roadmap governs the GalaxyGame UI prototype. The prototype is a UI and workflow shell: it establishes screens, layouts, navigation, and interactions before the production JSON loader and API integration are ready. It is not a second implementation of the GalaxyGame backend.
 
-## 1. Planning principles
+Work proceeds in small, reviewable parts. Complete and review one part before moving to the next.
 
-- Keep the project wiki as the durable home for application direction, design decisions and rationale.
-- Keep agent-tasks focused on concise, actionable work orders, review items, status and handoffs.
-- Inspect the live application and current branch before describing implementation as complete.
-- Preserve useful work from the first attempt, but do not inherit its mock-data architecture or stale assumptions.
-- Build one vertical slice at a time and review it before expanding.
-- The main GalaxyGame API is the production integration boundary; this Rails 8 prototype is an API client.
-- The read-only main-game JSON mount is for local testing/source inspection only. Do not duplicate or maintain a second system-data catalog in this repository.
-- Keep the prototype clearly separated from live simulation state. Mock actions must not dispatch assets or mutate the game.
+## 1. Governing principles
 
-## Completion Status (2026-11-23)
+- **Build on existing work.** Do not assume a screen, workflow, component, or interaction is missing until the relevant sources have been inspected.
+- **Port existing views and workflows first.** The main GalaxyGame application may contain useful views even when their data/API wiring is incomplete. Missing wiring is not evidence that a workflow is missing.
+- **Reuse the current prototype.** Inspect its existing views, layouts, styles, routes, controllers, JavaScript, fixtures, and assets before adding or replacing anything.
+- **Recover useful earlier work.** Review the first UI attempt, earlier prototypes, screenshots, and experiments for reusable implementation or design ideas. Reconcile rather than blindly copy.
+- **Use external references as references.** EVE Dashboard (Pixel Nexus Dashboard) and other examples can inform information density, panels, maps, navigation, and interaction patterns. They do not define GalaxyGame mechanics or override its design.
+- **Use the Wiki and prior decisions for intent.** Check current GalaxyGame Wiki pages and relevant historical documentation/discussions. Code establishes what is implemented; current Wiki/design decisions establish intended behavior. Record conflicts instead of silently choosing.
+- **Mock data is acceptable.** Use clearly identified fixtures/mock responses where the JSON loader or API is not ready. Make views realistic enough to review.
+- **Keep data replaceable.** Separate fixture data from presentation so a future JSON/API provider can replace it without rebuilding the screens.
+- **Make prototype interactions meaningful.** Navigation, tabs, filters, detail links, forms, and mock actions should work within the prototype where practical. Clearly label mock actions and never imply they change live game state.
+- **Adapt presentation, not purpose.** Apply the prototype's visual language—dark/cyan styling, compact typography, legible spacing, and consistent panels—while preserving each existing screen's purpose, information, and workflow.
+- **Design genuinely new screens only after reconciliation.** New views should address demonstrated gaps, not duplicate something already present in main, the prototype, or recoverable earlier work.
+- **Verify before committing.** Check routes/helpers, links, controller actions, rendering assumptions, and available tests/runtime checks. State clearly when verification is source-only.
 
-| Stage | Description | Status |
-|-------|-------------|--------|
-| Stage A — Reconcile baseline | Evidence-based snapshot of active main branch, routes/controllers, assets, and verification state | ⚠️ Partially complete |
-| Stage B — Define first workflow | Admin AI Manager operational task workflow selected; initial overview/workbench prototype implemented with fixtures | 🟡 In progress |
-| Stage C — Establish API/JS pattern | Replaceable in-process MockAiManagerApi exists; main-game API client and JSON loader remain deferred | 🟡 Partial foundation only |
-| Stage D — Grow by workflow | Expand after the first workflow is reviewed; do not add page-by-page placeholders in parallel | ⏳ OPEN |
-| Stage E — Review boundary | Reassess frontend/API versus full-app boundary from integration evidence | ⏳ OPEN |
+## 2. Sources to reconcile
 
-**Stage A output:** Screenshot evidence at docs/wiki/assets/screenshots/galaxy-game-ui/ (5 screens captured), EVE reference documentation, and updated screen/workflow/porting pages. Routes and the AI Manager controllers/views have now been inspected for the first workflow. The active main branch contains an Admin AI Manager Overview, Task Workbench, Task Detail, Plan Review, Execution Monitor, and Decision Log using prototype fixtures.
+These are distinct sources of evidence, not a simple list of three interfaces:
 
-**Remaining Stage A work:** Full JavaScript entry-point/Stimulus inventory, copied or adapted EVE reference-code identification, current dashboard/admin/landing/sign-in verification, local Docker/browser verification, tests and standard verification commands, remaining placeholder data sources, and comparison with the archived first attempt. These have not been completed.
+### GalaxyGame implementation and design
+1. Main GalaxyGame repository: Rails views, layouts, controllers, routes, helpers, JavaScript, CSS, assets, and existing data structures.
+2. Current GalaxyGame Wiki: authoritative design intent and architecture.
+3. Older/frozen documentation and migration history: historical decisions and details to harvest, with conflicts identified.
+4. Agent-tasks repository: task drafts, review records, handoffs, and unresolved questions. A historical task is not automatically current authorization.
+5. Prior design discussions and confirmed owner decisions that may not yet have been fully documented.
 
-## 2. Existing proposals to reconcile
+### UI implementation history
+6. Current `galaxy-game-ui` repository: existing prototype views, routes, controllers, layouts, components, styles, JavaScript, fixtures, and assets.
+7. Earlier UI attempt/repository: recoverable views, scripts, assets, layouts, and design experiments.
+8. Prior screenshots, mockups, wireframes, and visual experiments, including catalog, blueprint, and navigation work.
 
-The 2026-11-19 page-by-page AI Manager review drafts (Dashboard, Missions, Mission Detail, Planner, Decisions, Patterns, and Performance) are not the active implementation sequence. The first workflow is now the shared Admin AI Manager operational task workflow described below. Do not dispatch those page-specific drafts in parallel or rebuild screens that already exist on main.
+### External references
+9. EVE Dashboard / Pixel Nexus Dashboard (one project/reference): inspect its JavaScript and useful patterns for panels, maps, navigation, data density, and interactions.
+10. Other identified products and examples, such as EVE Tycoon Market and go-evepraisal, for relevant market/appraisal workflows.
+11. Other dashboard/layout references, including Wealth and Mail, where their patterns solve a concrete presentation problem.
+12. Genre/interface references such as EVE, SimEarth, Civilization, and SimCity for appropriate player-view conventions.
 
-The earlier Create AI Manager Inspection Workspace task exists in review/hold-for-review history. Its inspection intent is now represented by the current workbench and overview. Reconcile or supersede that task history through the normal agent-tasks review process; do not treat duplicate copies as independent active work.
+### Domain and data evidence
+13. Existing blueprints, unit definitions, JSON data, lookup services, and data relationships in GalaxyGame.
+14. Existing missions, tasks, AI Manager capabilities, operational records, and player workflows.
+15. Established Admin, AI Manager, and Player responsibilities, including Planetary, Surface, and Settlement views.
 
-Other candidate cleanup/recovery items—Waypoint JavaScript, sign-in branding, landing logo, and waypoint navigation—remain separate and must be checked against current main before any work is proposed.
+Do not double-count Pixel Nexus Dashboard and EVE Dashboard; they refer to the same reference application.
 
-## 3. Selected first workflow
+## 3. Work sequence — one part at a time
 
-### Stage B — Admin AI Manager operational task workflow
+### Part 1 — Reconcile sources and inventory existing UI
+**Next work item.**
 
-**Owner decision:** the first workflow is the Admin AI Manager operational task workflow for NPC operations, not a Player dashboard and not a general page-by-page port of the old AI Manager screens.
+- Inspect the main GalaxyGame routes, controllers, layouts, views, helpers, JavaScript, styles, and relevant data/fixtures.
+- Inventory the current UI prototype's corresponding files and working navigation.
+- Compare earlier UI attempt material and existing screenshots/mockups.
+- Review the relevant Wiki pages and confirmed design decisions.
+- Review the EVE Dashboard / Pixel Nexus reference and other examples already identified; record which patterns are useful to which GalaxyGame workflows.
+- Build a screen/workflow matrix with source, current location, purpose, implementation status, wiring status, reusable pieces, and gaps.
+- Classify items as implemented, partially implemented, disconnected, mock-only, outdated/conflicting, or genuinely absent.
+- Do not create new screens during this inventory unless a small inspection aid is necessary.
 
-The first prototype slice now includes:
-- system context selection using Sol/Eden fixture contexts;
-- task queue and status counts;
-- task detail with objective, rationale, origin, governing source, authority, target, constraints, and dependencies;
-- proposed plan and resource review;
-- clearly mock approve/reject/defer actions;
-- execution monitor with illustrative activity;
-- overview of current objectives, operating conditions, and recent decision activity;
-- decision records linked back to their operational task.
+**Exit condition:** a source-grounded inventory showing what already exists and what is actually missing. No claim of completeness until each source category has been checked.
 
-The in-process MockAiManagerApi service supplies shared fixture records to the overview, decision log, and workbench. Fixture data is temporary; no live simulation is connected, no task action dispatches assets, and no game state is changed.
+### Part 2 — Port and reconcile existing views
+- Prioritize existing useful main-app views/workflows that are not yet represented in the prototype.
+- Port their purpose, information, and workflow; do not require backend/API wiring first.
+- Reuse existing prototype layouts, components, styles, and JavaScript where possible.
+- Add or adapt fixture data and mock responses for missing data providers.
+- Add prototype routes/controller actions needed to navigate and inspect the views.
+- Record source and mock-data limitations.
+- Avoid parallel replacement screens when an existing implementation can be adapted.
 
-**Remaining workflow work:** deeper result/history presentation, realistic loading/empty/error states, decision/review state transitions within the mock boundary, and owner review of the screen hierarchy. The Player-facing view remains future work.
+**Exit condition:** selected existing workflows are navigable and reviewable in the prototype, with their behavior and data limitations clearly represented.
 
-### Stage C — Establish the smallest production API/JavaScript pattern
+### Part 3 — Polish the shared presentation system
+- Reconcile typography, spacing, density, panel treatment, navigation, responsive behavior, and visual hierarchy.
+- Use the prototype's established dark/cyan visual language.
+- Borrow external reference patterns only where they improve a specific GalaxyGame task.
+- Improve readability; avoid oversized text and crowded/touching content.
+- Keep reusable components consistent without forcing every interface into one layout.
 
-The current MockAiManagerApi is an in-process prototype service, not the production integration pattern. The production boundary is the main GalaxyGame API; the UI prototype is its client.
+**Exit condition:** ported views look and behave as members of the same GalaxyGame prototype.
 
-When this stage is approved:
-- inspect the main-game API/lookup services and their tests;
-- define only the API contract needed by the first Admin workflow;
-- replace the mock provider with an API client/adapter without unnecessarily changing the workflow views;
-- test authorization, loading, empty, error, stale-data, and retry states.
+### Part 4 — Fill verified gaps with new views
+- Revisit the inventory after porting.
+- Identify workflows that have no adequate existing view or recoverable implementation.
+- Confirm purpose and audience from Wiki/decisions.
+- Design one missing workflow at a time, using established layouts and relevant reference patterns.
+- Label speculative concepts and unresolved decisions.
 
-The main game's read-only JSON mount remains a local development/testing aid only. A JSON loader is deferred; do not introduce a second maintained system-data catalog in the UI repository.
+**Exit condition:** each new screen addresses a documented gap and does not duplicate existing work.
 
-**Output:** one verified main-game API integration slice, not a speculative API catalog.
+### Part 5 — Prepare for JSON/API integration
+- Keep mock data behind replaceable providers/adapters.
+- Confirm the main GalaxyGame API and JSON-loader responsibilities before wiring.
+- Replace fixtures incrementally, workflow by workflow.
+- Preserve screen structure where possible as data sources change.
+- Add loading, empty, error, stale-data, retry, and authorization states as appropriate.
+- Never treat local read-only data mounts as the production integration boundary.
 
-### Stage D — Grow by workflow and verified domain capability
+**Exit condition:** a narrow, verified integration slice replaces the relevant mock provider without requiring a UI rebuild.
 
-Multi-system resource coordination remains post-Luna roadmap work. It must not drive or pull forward the current Admin prototype or backend architecture.
+## 4. Current prototype work and existing implementation
 
-For each later workflow:
-- identify the required main-game API/domain capability;
-- confirm that the underlying game behavior and data contract exist;
-- migrate or integrate only the needed behavior;
-- preserve existing behavior and add tests;
-- connect the interface through the API boundary;
-- verify loading, empty, error, authorization, and normal states;
-- record remaining gaps without presenting mock behavior as live.
+The prototype already contains Admin AI Manager and Player mission work. These must be included in the inventory and improved in place where appropriate; do not rebuild them from scratch.
 
-### Stage E — Review architecture boundary as evidence accumulates
+Known existing prototype areas include:
+- Admin dashboard and Admin AI Manager overview.
+- AI Manager mission views, decisions, planner, patterns, and performance views.
+- AI Manager library and workbench views, including task detail, plan, execution, and review.
+- Player planetary view and Player mission index/form/detail views.
+- Shared dashboard/application layouts and branding.
 
-Revisit whether this repository becomes the complete application or remains the frontend/API while some game logic stays in the main app. Make this decision from operational needs and migration evidence, not in advance of the first working integration.
+Some views use fixtures and may be incomplete or disconnected. Their presence and purpose still count as existing work.
 
-## 4. AI Manager architecture boundary
+The Admin AI Manager workflow already has mock overview, task/workbench, plan review, execution/activity, and decision-log work. Existing mission monitor/history views also contain illustrative fixture data. Inspect current main before deciding whether to retain, reconcile, or replace overlapping pieces.
 
-NPC and Player AI Managers use the same capabilities and decision/execution code. They differ through operating policy and authority:
-- NPC operations follow system policy over NPC-controlled assets.
-- A Player AI Manager uses the same capabilities but is limited to player-owned assets and the authority the player delegates.
-- The Admin workspace supervises NPC operations and manages shared operational definitions.
-- The Player-facing workspace is future work; it is not a second AI engine.
+## 5. Data and backend boundary
 
-See AI Manager Missions and Task Library for the task/mission distinction, ownership rules, and prototype screen plan.
+- The prototype exists to establish the UI and user workflows before the JSON loader is ready.
+- Mock data is a normal temporary development technique, not a reason to postpone a screen.
+- Keep fixture data explicit and separate from presentation.
+- Do not duplicate a maintained GalaxyGame system-data catalog in the UI repository.
+- Production integration should use the agreed main GalaxyGame API/data boundary.
+- Local read-only mounts, if present, are for development/source inspection only.
+- Mock approve/reject/dispatch controls must not mutate live simulation state or dispatch real assets.
+- Do not implement backend/gameplay behavior in the prototype merely to make a mock screen appear functional.
 
-## 5. First vertical slice and data boundary
+## 6. Interface audiences and design references
 
-The first UI vertical slice is the Admin AI Manager operational task workflow. The initial version is deliberately mock-only and uses temporary Sol/Eden fixtures through MockAiManagerApi. It is not a live game-data reader and does not imply that backend task planning or execution is operational.
+Maintain the distinction between:
+- **Admin:** supervises/configures/diagnoses shared game operations and tools.
+- **AI Manager:** plans, coordinates, and reviews NPC operations; player AI uses the same capabilities under player objectives and delegated authority.
+- **Player:** interacts with owned assets, missions, and the game world through player-facing views.
 
-The first production API slice remains OPEN. A narrow system/body or task/target lookup may be considered only after the Admin workflow contract is reviewed.
+The Player celestial views include:
+- **Planetary:** high-level world view.
+- **Surface:** settlements, mines, and moving units.
+- **Settlement:** detailed local/terrain/colony management view.
 
-The UI prototype's Docker mount of the main game's data/json-data directory is read-only and for local testing/source inspection. The UI application must use the main game's API for production integration. The possible presence of ignored local JSON copies is recorded in the UI project's NEEDS_REVIEW and must be inspected before any cleanup.
+These are distinct workflows and should not be collapsed into a generic dashboard.
 
-## 6. Decisions and current state
+EVE Dashboard / Pixel Nexus is a reference for presentation and interaction patterns, not a source of GalaxyGame requirements. Other examples should be evaluated against a concrete screen/workflow need rather than added to the design simply because they exist.
 
-| Decision | Current state |
-|---|---|
-| First workflow and audience | **CONFIRMED:** Admin AI Manager task workflow for NPC operations |
-| First screen/workspace | **CONFIRMED:** Overview + Task Workbench (queue, detail, plan review, execution monitor, decision activity) |
-| First mock data/service boundary | **IMPLEMENTED:** in-process MockAiManagerApi with temporary Sol/Eden fixtures |
-| First production reader/API slice | OPEN — select only after workflow review |
-| JSON data access and path precedence | Main-game API for production; read-only main-data mount for local testing; JSON loader deferred |
-| Reader code ownership (adapted vs shared) | OPEN until the first production API slice is selected |
-| Cache lifecycle | OPEN |
-| First API resource contract | OPEN |
-| JavaScript interaction pattern for first production slice | OPEN |
-| Admin/player application boundary | **CONFIRMED:** shared AI Manager capabilities; operating policy and authority differ |
-| Long-term complete-app vs frontend/API boundary | OPEN |
-| Multi-system resource coordination | Post-Luna roadmap; not part of the current prototype slice |
+## 7. Verification and progress tracking
 
-## 7. Task readiness and implementation workflow
+For each small part, record:
+- What source files and reference material were inspected.
+- What was already present and reused.
+- What was ported, adapted, or newly created.
+- Which data is fixture/mock versus live.
+- Routes, links, and interactions checked.
+- Tests/runtime/browser checks actually performed.
+- Known gaps, conflicts, and next small step.
 
-Only create a formal task when the work is substantial, cross-cutting, benefits from an independent agent/review, or has dependencies that need explicit tracking.
+Do not claim runtime or browser verification when only source inspection was possible. Verify route helpers after route changes. Check navigation links against real routes/actions before committing.
 
-Ordinary screen refinements for this prototype are implemented directly in the UI repository; do not create a separate formal task for every view. Use reviewed Qwen task drafts for larger implementation slices, and keep them in drafts until independent review and owner approval. Do not dispatch a draft.
+Only create a formal agent task for substantial, cross-cutting work that benefits from independent review or dependency tracking. Ordinary view porting and styling refinements can be handled directly in the UI repository. Keep task drafts separate from approval and execution.
 
-A task should contain one objective, point to the relevant wiki pages, specify concrete acceptance criteria, and avoid duplicating the rationale here.
+## 8. Current next step
 
-## 8. What this roadmap does not decide
+**Start Part 1 only:** reconcile the existing main-app UI, current prototype, earlier UI attempt, Wiki/decisions, and reference material into a screen/workflow inventory. Then review that inventory and select one contained porting item for Part 2.
 
-This roadmap does not approve:
-- a final navigation/menu structure beyond the current Admin workflow entry points;
-- a final Player AI Manager screen composition;
-- a frontend framework replacement;
-- an API-wide design;
-- a full database/model migration;
-- a fixed order for StarSim, TerraSim, economy, logistics, or wormhole work;
-- any new gameplay rule or operational capability.
-
-Those require evidence and owner review.
+Do not start another broad screen-design exercise or begin JSON/API integration before this inventory and the first porting decisions are reviewed.
