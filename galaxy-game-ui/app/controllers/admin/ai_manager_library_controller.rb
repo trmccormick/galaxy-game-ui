@@ -49,6 +49,55 @@ class Admin::AiManagerLibraryController < Admin::BaseController
         boundary: "A reusable task definition is referenced by mission profiles. A configured execution belongs to a particular run and target."
       },
       {
+        id: "task_titan_harvest_arrival_v2",
+        name: "Titan Atmospheric Harvester Arrival at Luna",
+        category: "Arrival / offload",
+        capability: "Receive and offload harvested methane cargo for Venus-skimmer refueling",
+        dependencies: ["Cryogenic storage capacity", "Receiving site readiness"],
+        maturity: "Experimental V2 example",
+        source: "Main game: missions_v2/tasks/task_titan_harvest_arrival_v2.json",
+        notes: "Checked-in experimental V2 task example; not validated for production execution.",
+        boundary: "This is a reusable task definition, not a configured mission run.",
+        document: {
+          task_id: "titan_harvest_arrival_v2",
+          version: "2.0",
+          name: "Titan Atmospheric Harvester Arrival at Luna",
+          description: "Titan skimmer arrives at Luna with harvested CH₄ payload for Venus skimmer refueling.",
+          launch_window: {
+            departure_body: "TITAN-01",
+            arrival_body: "LUNA-01",
+            transit_days: 730,
+            note: "Titan skimmers are a fleet — multiple departures needed for sustained operations"
+          },
+          payload: {
+            source_gases: ["CH4"],
+            ch4_kg: 50000,
+            lox_for_return_kg: 10000
+          },
+          offload_requirements: {
+            cryo_tanks_deployed: true,
+            minimum_cryo_tank_count: 5
+          },
+          effects: [
+            {
+              action: "add_to_inventory",
+              target: "luna_settlement",
+              items: [{ name: "CH4", amount: 50000, unit: "kg" }]
+            },
+            {
+              action: "set_status_flag",
+              flag: "titan_ch4_delivery_completed",
+              value: true
+            }
+          ],
+          metadata: {
+            template: "task_v2",
+            type: "arrival_offload",
+            craft_type: "titan_harvester_skimmer"
+          }
+        }
+      },
+      {
         id: "task_site_prep_foundation_v2",
         name: "Settlement Site Preparation",
         category: "Infrastructure prerequisite",
