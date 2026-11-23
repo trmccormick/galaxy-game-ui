@@ -1,0 +1,113 @@
+<%= stylesheet_link_tag "pages/admin_celestial_bodies", "data-turbo-track": "reload" %>
+
+<div class="cb-page">
+  <header class="cb-page-header">
+    <div>
+      <div class="cb-eyebrow">ADMINISTRATION / WORLD DATA</div>
+      <h1 class="cb-title">Celestial Bodies</h1>
+      <p class="cb-intro">Select a body to inspect its profile, environmental spheres, terrain, and available evidence.</p>
+    </div>
+    <div class="cb-header-meta">
+      <span class="cb-data-tag">PROTOTYPE DATA</span>
+      <span class="cb-muted"><%= @systems.length %> systems represented</span>
+    </div>
+  </header>
+
+  <section class="cb-metrics" aria-label="Catalog summary">
+    <div class="cb-metric"><span class="cb-metric-value"><%= @body_counts[:total] %></span><span class="cb-metric-label">Catalog entries</span></div>
+    <div class="cb-metric"><span class="cb-metric-value"><%= @body_counts[:planets] %></span><span class="cb-metric-label">Planets</span></div>
+    <div class="cb-metric"><span class="cb-metric-value"><%= @body_counts[:moons] %></span><span class="cb-metric-label">Moons</span></div>
+    <div class="cb-metric"><span class="cb-metric-value"><%= @body_counts[:minor_bodies] %></span><span class="cb-metric-label">Minor bodies</span></div>
+  </section>
+
+  <section class="cb-catalog-panel">
+    <div class="cb-panel-heading">
+      <div>
+        <h2>Body catalog</h2>
+        <p>Administrative inspection entry points</p>
+      </div>
+      <span class="cb-count"><%= @bodies.length %> RECORDS</span>
+    </div>
+
+    <div class="cb-filter-row">
+      <label class="cb-search">
+        <span class="cb-sr-only">Search catalog</span>
+        <input type="search" id="bodySearch" placeholder="Search name, type, or description…" autocomplete="off">
+      </label>
+      <label class="cb-filter">
+        <span class="cb-sr-only">Filter by system</span>
+        <select id="systemFilter">
+          <option value="">All systems</option>
+          <% @systems.each do |system| %>
+            <option value="<%= system.downcase %>"><%= system %></option>
+          <% end %>
+        </select>
+      </label>
+      <label class="cb-filter">
+        <span class="cb-sr-only">Filter by body type</span>
+        <select id="categoryFilter">
+          <option value="">All body types</option>
+          <% @categories.each do |category| %>
+            <option value="<%= category.downcase %>"><%= category %></option>
+          <% end %>
+        </select>
+      </label>
+    </div>
+
+    <div class="cb-body-grid" id="bodyGrid">
+      <% @bodies.each do |body| %>
+        <article class="cb-body-card"
+          data-search="<%= [body[:name], body[:category], body[:system], body[:description]].join(' ').downcase %>"
+          data-system="<%= body[:system].downcase %>"
+          data-category="<%= body[:category].downcase %>">
+          <div class="cb-card-topline">
+            <span class="cb-body-type"><%= body[:category] %></span>
+            <span class="cb-body-system"><%= body[:system] %></span>
+          </div>
+          <h3><%= link_to body[:name], admin_celestial_body_path(body[:id]) %></h3>
+          <p class="cb-description"><%= body[:description] %></p>
+          <div class="cb-card-facts">
+            <div><span>Radius</span><strong><%= body[:radius] %></strong></div>
+            <div><span>Gravity</span><strong><%= body[:gravity] %></strong></div>
+            <div><span>Temperature</span><strong><%= body[:temperature] %></strong></div>
+          </div>
+          <div class="cb-card-footer">
+            <span class="cb-status"><%= body[:status] %></span>
+            <%= link_to "Inspect body", admin_celestial_body_path(body[:id]), class: "cb-inspect-link" %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+    <div class="cb-empty-state" id="bodyEmptyState" hidden>No bodies match these filters.</div>
+  </section>
+
+  <p class="cb-prototype-note">Catalog values are illustrative fixtures. They are not live game records, survey assertions, or authoritative body state.</p>
+</div>
+
+<script>
+  (() => {
+    const search = document.getElementById("bodySearch");
+    const system = document.getElementById("systemFilter");
+    const category = document.getElementById("categoryFilter");
+    const cards = Array.from(document.querySelectorAll(".cb-body-card"));
+    const empty = document.getElementById("bodyEmptyState");
+
+    const filterCards = () => {
+      const query = search.value.trim().toLowerCase();
+      const selectedSystem = system.value;
+      const selectedCategory = category.value;
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const matches = card.dataset.search.includes(query) &&
+          (!selectedSystem || card.dataset.system === selectedSystem) &&
+          (!selectedCategory || card.dataset.category === selectedCategory);
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      empty.hidden = visible !== 0;
+    };
+
+    [search, system, category].forEach((control) => control.addEventListener("input", filterCards));
+  })();
+</script>
