@@ -17,6 +17,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "dashboard", to: "dashboard#index", as: :dashboard
+    get "celestial_bodies", to: "celestial_bodies#index", as: :celestial_bodies
+    get "celestial_bodies/:id", to: "celestial_bodies#show", as: :celestial_body
+
     get "map_studio", to: "map_studio#index", as: :map_studio
     get "map_studio/generate", to: "map_studio#generate", as: :map_studio_generate
     get "map_studio/browse", to: "map_studio#browse", as: :map_studio_browse
