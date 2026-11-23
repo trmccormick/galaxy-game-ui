@@ -9,6 +9,8 @@
 
 The AI Manager uses a mission as reusable operational guidance. It selects, sequences, combines, and adapts available tasks to current conditions, dependencies, resource availability, assets, and mission constraints. Over time, it should learn from outcomes and eventually help develop or refine mission flows. Current `missions_v2` definitions are experimental examples; the prototype must not imply that they are production-ready or successfully executing.
 
+NPC and Player AI Managers use the **same capabilities and decision/execution code**. They differ through operating policy and authority: NPC operations follow system policy over NPC-controlled assets; a Player AI Manager uses the same capabilities but is limited to player-owned assets and the authority the player delegates. Admin oversight is the NPC-operations workspace, not a separate AI engine. The Player-facing view is future work and must not be implemented as a second manager.
+
 ## Ownership and permissions
 
 ### Admin: shared operational library
@@ -39,12 +41,15 @@ Players do **not** author or maintain the shared task library. They do not need 
 
 ### Admin / AI Manager
 
-1. **Task Library** — searchable/filterable catalog; task identity, capability/category, requirements, dependencies, expected effects, maturity/validation status, and detail view.
-2. **Task Detail / Editor** — inspect and prototype editing of task purpose, parameters, preconditions, dependencies, outputs/effects, and validation notes.
-3. **Mission Library** — predefined mission catalog; objective, scope, maturity, linked task count, repeatability, and validation status.
-4. **Mission Detail / Designer** — objective and intended outcome; operational flow visualization; linked tasks and dependencies; sequential/concurrent opportunities; resource/asset requirements; repeat/recovery rules; expected outputs and validation evidence.
-5. **Mission Validation** — identify unresolved task references, dependency gaps, incompatible requirements, and unverified outcomes. Prototype-only until connected to real validators.
-6. **Task Workbench / Execution** — retain as a separate operational inspection experience. It shows task planning/execution evidence, not the mission library itself.
+1. **AI Manager Overview** — selected system context, operating scope/authority, current objectives, operating conditions requiring attention, task-state counts, and recent decision activity. Links directly into the operational workbench.
+2. **Task Workbench / Execution** — separate operational workflow for NPC tasks: system-scoped queue, task detail and provenance, proposed plan/resource review, illustrative operator review actions, execution monitor, and results/history as that workflow is expanded. It is not the shared task-definition library.
+3. **Task Library** — searchable/filterable shared catalog; task identity, capability/category, requirements, dependencies, expected effects, maturity/validation status, and detail view.
+4. **Task Detail / Editor** — inspect and prototype editing of task purpose, parameters, preconditions, dependencies, outputs/effects, and validation notes.
+5. **Mission Library** — predefined mission catalog; objective, scope, maturity, linked task count, repeatability, and validation status.
+6. **Mission Detail / Designer** — objective and intended outcome; operational flow visualization; linked tasks and dependencies; sequential/concurrent opportunities; resource/asset requirements; repeat/recovery rules; expected outputs and validation evidence.
+7. **Mission Validation** — identify unresolved task references, dependency gaps, incompatible requirements, and unverified outcomes. Prototype-only until connected to real validators.
+
+The current Overview, Task Workbench, Task Detail, Plan Review, Execution Monitor, and Decision Log use clearly labeled prototype fixtures. Their mock actions do not alter game state or dispatch assets.
 
 ### Player
 
@@ -56,7 +61,9 @@ Players do **not** author or maintain the shared task library. They do not need 
 
 ## Prototype examples and source boundaries
 
-- The main game defines the JSON data root and mission subpaths in `galaxy_game/config/initializers/game_data_paths.rb`. The UI prototype mirrors the relevant `GalaxyGame::Paths` constants and mounts the main `data/json-data/` tree read-only for local testing.
+- The main game defines the JSON data root and mission subpaths in `galaxy_game/config/initializers/game_data_paths.rb`. The main game's API is the production integration boundary; the UI prototype is an API client.
+- The UI prototype currently uses an in-process `MockAiManagerApi` service with temporary hardcoded Sol/Eden fixtures for the Admin Overview, Decision Log, and Task Workbench. This is replaceable prototype data, not a live API and not a JSON loader. Hardcoded fixture data is accepted for screen refinement; the JSON loader is deferred.
+- The Docker read-only mount of the main `data/json-data/` tree is for local testing/source inspection only. Do not copy or maintain a second system-data catalog in the UI repository; do not use the mount as the production UI integration path.
 - The two V2 locations are intentionally distinct: `data/json-data/missions_v2/` contains the limited Luna mission/task examples assembled for the testing setup; `data/json-data/missions/tasks_v2/` contains the broader reusable task library in draft form. The prototype should use both through the matching path constants and label their source/maturity accurately.
 - The Venus arrival/offload task example belongs to the V2 test/setup task data. It describes a Venus harvester arrival/offload task with N₂/CO₂ payload and Luna tank-farm prerequisites. It is a **task**, not the entire repeatable Venus harvesting mission.
 - The main game also contains `precursor_mission_profile_v1.json`, an experimental phase-oriented profile example that references the Venus arrival task. Treat examples as source material only; do not claim the current V2 engine discovers or executes them successfully.
@@ -65,7 +72,7 @@ Players do **not** author or maintain the shared task library. They do not need 
 
 ## Navigation boundary
 
-Admin AI Manager navigation exposes **Task Library**, **Mission Library**, and operational workbench/oversight. Player navigation exposes **My Missions** and the player's AI Manager/deployment experience. Do not expose shared task authoring to players.
+Admin AI Manager navigation exposes **Overview**, **Task Workbench**, **Task Library**, and **Mission Library**. The Overview is the entry point for NPC operational context and links to task-level evidence. Player navigation exposes **My Missions** and the player's AI Manager/deployment experience. Do not expose shared task authoring to players.
 
 ## Open design questions for review
 
