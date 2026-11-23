@@ -10,6 +10,10 @@ Rails.application.routes.draw do
 
   # Player views
   get "player/planetary", to: "player#planetary", as: :player_planetary
+  get "player/missions", to: "player/missions#index", as: :player_missions
+  get "player/missions/new", to: "player/missions#new", as: :new_player_mission
+  get "player/missions/:id", to: "player/missions#show", as: :player_mission
+  get "player/missions/:id/edit", to: "player/missions#edit", as: :edit_player_mission
 
   namespace :admin do
     get "dashboard", to: "dashboard#index", as: :dashboard
@@ -23,6 +27,11 @@ Rails.application.routes.draw do
     get "ai_manager/show_mission", to: "ai_manager#show_mission", as: :ai_manager_show_mission
     post "ai_manager/advance_phase/:mission_id", to: "ai_manager#advance_phase", as: :ai_manager_advance_phase
     post "ai_manager/reset_mission/:mission_id", to: "ai_manager#reset_mission", as: :ai_manager_reset_mission
+
+    # Shared task and repeatable mission library (fixture-backed UI prototype).
+    get "ai_manager/library/tasks", to: "ai_manager_library#tasks", as: :ai_manager_library_tasks
+    get "ai_manager/library/missions", to: "ai_manager_library#missions", as: :ai_manager_library_missions
+    get "ai_manager/library/missions/:id", to: "ai_manager_library#mission", as: :ai_manager_library_mission
 
     # Fixture-backed AI Manager task workbench (independent of world JSON loading).
     get "ai_manager/workbench", to: "ai_manager_workbench#index", as: :ai_manager_workbench
