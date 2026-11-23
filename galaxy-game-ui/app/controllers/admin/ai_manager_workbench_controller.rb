@@ -5,7 +5,8 @@ class Admin::AiManagerWorkbenchController < Admin::BaseController
   # loader; replace the fixture provider when the mock API is introduced.
   def index
     @systems = mock_systems
-    @selected_system = params[:system].presence || "sol"
+    requested_system = params[:system].presence
+    @selected_system = mock_systems.any? { |system| system[:id] == requested_system } ? requested_system : "sol"
     @tasks = mock_tasks.select { |task| task[:system_id] == @selected_system }
     @counts = {
       attention: @tasks.count { |task| %w[blocked awaiting_review].include?(task[:status]) },
