@@ -4,7 +4,10 @@
     <h1 class="gg-section-title">Operations Overview</h1>
     <p class="text-sm" style="color:var(--gg-text-secondary);">Shared AI Manager capabilities · Admin oversight of NPC operations</p>
   </div>
-  <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.12);color:var(--gg-accent-warning);"><%= @overview[:source_label] %></span>
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.12);color:var(--gg-accent-warning);"><%= @overview[:source_label] %></span>
+    <%= link_to "Mission monitor &amp; run history →", admin_ai_manager_missions_path, class: "text-xs font-semibold px-3 py-2 rounded", style: "background:rgba(0,212,255,.10);color:var(--gg-primary);border:1px solid rgba(0,212,255,.24);" %>
+  </div>
 </div>
 
 <section class="gg-grid-panel mb-5">
