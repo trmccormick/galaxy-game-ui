@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "dashboard", to: "dashboard#index", as: :dashboard
+    get "map_studio", to: "map_studio#index", as: :map_studio
 
     get "ai_manager", to: "ai_manager#index", as: :ai_manager
     get "ai_manager/missions", to: "ai_manager#missions", as: :ai_manager_missions
