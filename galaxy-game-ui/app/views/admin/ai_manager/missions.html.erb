@@ -1,4 +1,12 @@
-<h1 class="gg-section-title">AI Manager — Missions</h1>
+<div class="mb-4">
+  <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">AI Manager / Operations / Mission monitoring</p>
+  <h1 class="gg-section-title">Running &amp; Recent Missions</h1>
+  <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Operational oversight: inspect active runs, progress, current tasks, outcomes, and exceptions. These are prototype fixtures, not live simulation telemetry.</p>
+  <div class="flex flex-wrap gap-3 mt-3 text-xs">
+    <%= link_to "Mission Library →", admin_ai_manager_library_missions_path, style: "color:var(--gg-primary);" %>
+    <%= link_to "Task Library →", admin_ai_manager_library_tasks_path, style: "color:var(--gg-primary);" %>
+  </div>
+</div>
 
 <!-- Stats Row -->
 <div class="grid grid-cols-3 gap-4 mb-6">
