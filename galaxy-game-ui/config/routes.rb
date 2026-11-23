@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     # Shared task and repeatable mission library (fixture-backed UI prototype).
     get "ai_manager/library/tasks", to: "ai_manager_library#tasks", as: :ai_manager_library_tasks
     get "ai_manager/library/tasks/:id", to: "ai_manager_library#task", as: :ai_manager_library_task
+    get "ai_manager/library/tasks/:id/edit", to: "ai_manager_library#edit_task", as: :edit_ai_manager_library_task
     get "ai_manager/library/missions", to: "ai_manager_library#missions", as: :ai_manager_library_missions
     get "ai_manager/library/missions/:id", to: "ai_manager_library#mission", as: :ai_manager_library_mission
 
