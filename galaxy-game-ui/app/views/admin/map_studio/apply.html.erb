@@ -1,0 +1,109 @@
+<% content_for :title, "Review Map Application | Map Studio" %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "pages/map_studio", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="map-studio-page map-studio-apply-page">
+  <div class="map-studio-heading">
+    <div>
+      <div class="map-studio-eyebrow">ADMIN / WORLD TOOLS / MAP STUDIO / DESTINATION REVIEW</div>
+      <h1 class="gg-section-title">Review terrain assignment</h1>
+      <p class="map-studio-intro">Choose the celestial body that will receive this generated terrain artifact, then review the current terrain state and replacement implications.</p>
+    </div>
+    <span class="map-studio-prototype-tag">UI PROTOTYPE · FIXTURE DATA</span>
+  </div>
+
+  <div class="map-studio-toolbar">
+    <%= link_to "← Generated map library", admin_map_studio_browse_path, class: "map-studio-back-link" %>
+    <%= link_to "Open map analysis", admin_map_studio_analyze_path(@map[:id]), class: "map-studio-action-link" %>
+  </div>
+
+  <% if @simulation_result %>
+    <section class="map-studio-simulation-result">
+      <strong>Prototype confirmation completed — no terrain was changed</strong>
+      <p>This interaction demonstrates the review/confirmation workflow only. No celestial-body record, Geosphere, or Digital Twin data was read or modified.</p>
+    </section>
+  <% end %>
+
+  <section class="map-studio-panel map-studio-apply-artifact">
+    <div>
+      <span class="map-studio-aside-heading">SELECTED GENERATED ARTIFACT</span>
+      <h2><%= @map[:name] %></h2>
+      <p>Intended target: <strong><%= @map[:target] %></strong> · <%= @map[:dimensions] %> · <%= @map[:file_size] %></p>
+      <div class="map-studio-apply-sources">
+        <span>Source references</span>
+        <% @map[:sources].each do |source| %><b><%= source %></b><% end %>
+      </div>
+    </div>
+    <div class="map-studio-apply-artifact-mark">MAP<br>ARTIFACT</div>
+  </section>
+
+  <section class="map-studio-panel map-studio-apply-selection">
+    <div class="map-studio-section-heading">
+      <div><span class="map-studio-aside-heading">STEP 1 / DESTINATION</span><h2>Choose a celestial body</h2></div>
+      <span class="map-studio-small-status">Fixture directory</span>
+    </div>
+    <%= form_with url: admin_map_studio_apply_path(@map[:id]), method: :get, local: true, class: "map-studio-destination-form" do %>
+      <label for="body_id">Destination body</label>
+      <%= select_tag :body_id,
+          options_for_select(@destination_bodies.map { |body| ["#{body[:name]} — #{body[:kind]}", body[:id]] }, @selected_body&.dig(:id)),
+          prompt: "Select a celestial body",
+          required: true,
+          class: "map-studio-destination-select" %>
+      <button type="submit" class="map-studio-primary-button">Review destination</button>
+    <% end %>
+    <p class="map-studio-footnote">The legacy controller currently lists all celestial bodies without filtering by terrain suitability. This prototype keeps the choice visible and flags target mismatches for review rather than silently restricting the list.</p>
+  </section>
+
+  <% if @selected_body %>
+    <section class="map-studio-panel map-studio-destination-review">
+      <div class="map-studio-section-heading">
+        <div><span class="map-studio-aside-heading">STEP 2 / CURRENT BODY STATE</span><h2><%= @selected_body[:name] %></h2></div>
+        <span class="map-studio-small-status"><%= @selected_body[:kind] %></span>
+      </div>
+      <div class="map-studio-destination-state-grid">
+        <div><span>Current terrain</span><strong><%= @selected_body[:terrain] %></strong></div>
+        <div><span>Current source</span><strong><%= @selected_body[:source] %></strong></div>
+        <div><span>Artifact target</span><strong><%= @map[:target] %></strong></div>
+        <div><span>Target match</span><strong class="<%= @target_matches ? 'is-compatible' : 'is-warning' %>"><%= @target_matches ? "Matches intended target" : "Different from intended target" %></strong></div>
+      </div>
+
+      <% unless @target_matches %>
+        <div class="map-studio-apply-warning">
+          <strong>Destination differs from the artifact's intended target</strong>
+          <p>The artifact was prepared for <%= @map[:target] %>, but the selected body is <%= @selected_body[:name] %>. Differences in body size, surface conditions, and terrain interpretation need review before any real application.</p>
+        </div>
+      <% end %>
+
+      <% if @has_existing_terrain %>
+        <div class="map-studio-apply-warning">
+          <strong>Existing terrain would be replaced</strong>
+          <p>The legacy apply method assigns a new Geosphere <code>terrain_map</code> containing only the terrain grid, width, height, and biome counts. It does not merge with the current map. Richer stored layers or metadata could therefore be lost.</p>
+        </div>
+      <% else %>
+        <div class="map-studio-apply-info">
+          <strong>No existing terrain is recorded in this fixture</strong>
+          <p>This appears to be an initial terrain assignment, but destination compatibility and artifact completeness still require review.</p>
+        </div>
+      <% end %>
+
+      <div class="map-studio-apply-provenance">
+        <strong>Provenance behavior in the legacy code</strong>
+        <p>After writing the terrain map, the controller records the artifact metadata in <code>CelestialBody.properties['applied_map']</code> and sets <code>map_source</code> to <code>ai_generated</code>. This is separate from the Geosphere terrain payload.</p>
+      </div>
+
+      <div class="map-studio-apply-confirm">
+        <div><strong>STEP 3 / CONFIRMATION PREVIEW</strong><p>Continue to demonstrate the confirmation state. This prototype action will not apply or persist terrain.</p></div>
+        <%= button_to "Simulate confirmation (no writes)", admin_map_studio_simulate_apply_path(@map[:id]), method: :post, params: { body_id: @selected_body[:id] }, class: "map-studio-primary-button" %>
+      </div>
+    </section>
+  <% else %>
+    <section class="map-studio-panel map-studio-apply-empty">
+      <div class="map-studio-empty-symbol">◎</div>
+      <h2>Destination review required</h2>
+      <p>Select a body above to compare its current terrain state with the generated artifact before proceeding.</p>
+    </section>
+  <% end %>
+
+  <p class="map-studio-footnote">All destination states are illustrative fixtures. This workflow does not access live celestial bodies, create a Geosphere, alter <code>terrain_map</code>, or update the Digital Twin.</p>
+</div>
