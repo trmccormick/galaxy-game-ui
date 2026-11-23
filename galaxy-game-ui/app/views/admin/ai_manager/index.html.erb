@@ -1,145 +1,144 @@
-<h1 class="gg-section-title">AI Manager — Dashboard</h1>
-
-<!-- System Status Banner -->
-<div class="gg-grid-panel mb-6 flex items-center justify-between" style="border-left: 3px solid var(--gg-accent-success);">
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
   <div>
-    <span class="text-sm text-[var(--gg-text-secondary)] uppercase tracking-wider">System Status</span>
-    <h2 class="text-xl font-bold mt-1" style="color: var(--gg-primary);">OPERATIONAL</h2>
-    <p class="text-xs text-[var(--gg-text-dim)] mt-1">All AI subsystems active • Version 1.0.0-alpha</p>
+    <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager</p>
+    <h1 class="gg-section-title">Operations Overview</h1>
+    <p class="text-sm" style="color:var(--gg-text-secondary);">Shared AI Manager capabilities · Admin oversight of NPC operations</p>
   </div>
-  <div class="text-right">
-    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(6,255,165,0.1); color: var(--gg-accent-success);">
-      <span class="w-2 h-2 rounded-full" style="background: var(--gg-accent-success); animation: pulse 2s infinite;"></span>
-      All Systems Nominal
-    </span>
-  </div>
+  <span class="text-xs px-3 py-1 rounded" style="background:rgba(255,214,10,.12);color:var(--gg-accent-warning);"><%= @overview[:source_label] %></span>
 </div>
 
-<!-- KPI Row -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric"><%= @system_status[:active_missions] %></div>
-    <div class="gg-stat-label mt-1">Active Missions</div>
+<section class="gg-grid-panel mb-5">
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-end">
+    <div>
+      <h2 class="gg-section-title text-lg">System context</h2>
+      <p class="text-sm font-semibold" style="color:var(--gg-primary);"><%= @overview[:system][:name] %></p>
+      <p class="text-xs mt-1" style="color:var(--gg-text-secondary);"><%= @overview[:system][:description] %></p>
+      <p class="text-sm mt-3"><%= @overview[:system][:focus] %></p>
+      <div class="flex flex-wrap gap-2 mt-3 text-xs">
+        <span class="px-2 py-1 rounded" style="background:rgba(0,212,255,.08);color:var(--gg-text-secondary);">Scope: <%= @overview[:system][:scope] %></span>
+        <span class="px-2 py-1 rounded" style="background:rgba(0,212,255,.08);color:var(--gg-text-secondary);">Authority: Admin oversight</span>
+        <span class="px-2 py-1 rounded" style="background:rgba(0,212,255,.08);color:var(--gg-text-secondary);">Data: illustrative fixtures</span>
+      </div>
+    </div>
+    <%= form_with url: admin_ai_manager_path, method: :get, local: true, class: "flex flex-wrap items-end gap-2" do %>
+      <div>
+        <%= label_tag :system, "Change system", class: "block text-xs mb-1", style: "color:var(--gg-text-dim);" %>
+        <%= select_tag :system, options_for_select(@systems.map { |system| [system[:name], system[:id]] }, @selected_system), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+      </div>
+      <%= submit_tag "Load context", class: "px-4 py-2 rounded text-sm font-semibold", style: "background:rgba(0,212,255,.14);color:var(--gg-primary);border:1px solid rgba(0,212,255,.3);" %>
+    <% end %>
   </div>
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-accent-success);"><%= @system_status[:completed_missions] %></div>
-    <div class="gg-stat-label mt-1">Completed Missions</div>
-  </div>
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-accent-danger);"><%= @system_status[:failed_missions] %></div>
-    <div class="gg-stat-label mt-1">Failed Missions</div>
-  </div>
-  <div class="gg-grid-panel text-center">
-    <div class="gg-metric" style="color: var(--gg-accent-warning);"><%= @system_status[:total_settlements] %></div>
-    <div class="gg-stat-label mt-1">Settlements</div>
-  </div>
+</section>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 mb-5">
+  <% [
+    ["Needs attention", @overview[:counts][:attention]],
+    ["Queued", @overview[:counts][:queued]],
+    ["Active", @overview[:counts][:active]],
+    ["Blocked", @overview[:counts][:blocked]],
+    ["Completed", @overview[:counts][:completed]]
+  ].each do |label, value| %>
+    <div class="gg-grid-panel">
+      <div class="gg-metric"><%= value %></div>
+      <div class="gg-stat-label"><%= label %></div>
+    </div>
+  <% end %>
 </div>
 
-<!-- Quick Actions -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-  <div class="gg-grid-panel">
-    <h2 class="gg-section-title text-lg">Quick Actions</h2>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-5">
+  <section class="gg-grid-panel">
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+      <div>
+        <h2 class="gg-section-title text-lg mb-0">Current objectives</h2>
+        <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Active and pending operational work in this context</p>
+      </div>
+      <%= link_to "Open workbench →", admin_ai_manager_workbench_path(system: @selected_system), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %>
+    </div>
     <div class="space-y-3">
-      <% @quick_actions.each do |action| %>
-        <div class="flex items-start justify-between py-3 border-b border-[rgba(0,212,255,0.1)] last:border-b-0">
-          <div>
-            <div class="font-semibold text-sm" style="color: var(--gg-primary);"><%= action[:title] %></div>
-            <div class="text-xs mt-1" style="color: var(--gg-text-secondary);"><%= action[:description] %></div>
+      <% @overview[:objectives].each do |task| %>
+        <article class="rounded p-3" style="background:var(--gg-bg-surface);border:1px solid rgba(0,212,255,.12);">
+          <div class="flex flex-wrap justify-between gap-2">
+            <h3 class="text-sm font-semibold"><%= task[:title] %></h3>
+            <span class="text-xs" style="color:var(--gg-accent-warning);"><%= task[:status_label] %></span>
           </div>
-          <% if action[:path] != '#' %>
-            <%= link_to 'Go →', action[:path], class: 'text-xs px-3 py-1 rounded transition-colors', style: 'background: rgba(0,212,255,0.1); color: var(--gg-primary);' %>
-          <% else %>
-            <span class="text-xs px-3 py-1 rounded" style="background: rgba(0,212,255,0.05); color: var(--gg-text-dim);">Prototype</span>
-          <% end %>
-        </div>
+          <p class="text-xs mt-2" style="color:var(--gg-text-secondary);"><%= task[:objective] %></p>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs" style="color:var(--gg-text-dim);">
+            <span>Target: <%= task[:target] %></span>
+            <span>Priority: <%= task[:priority].humanize %></span>
+            <span>Origin: <%= task[:origin] %></span>
+          </div>
+          <div class="mt-3">
+            <%= link_to "Inspect task →", admin_ai_manager_workbench_task_path(task[:id]), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %>
+          </div>
+        </article>
+      <% end %>
+      <% if @overview[:objectives].empty? %>
+        <p class="text-sm py-4" style="color:var(--gg-text-dim);">No open objectives in this fixture context.</p>
       <% end %>
     </div>
-  </div>
+  </section>
 
-  <!-- Recent Activity -->
-  <div class="gg-grid-panel">
-    <h2 class="gg-section-title text-lg">Recent Mission Activity</h2>
+  <section class="gg-grid-panel">
+    <div class="mb-3">
+      <h2 class="gg-section-title text-lg mb-0">Current operating conditions</h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Conditions requiring review or preventing work from proceeding</p>
+    </div>
     <div class="space-y-3">
-      <% if @active_missions.any? %>
-        <% @active_missions.first(5).each do |mission| %>
-          <div class="flex items-center justify-between py-2 border-b border-[rgba(0,212,255,0.05)] last:border-b-0">
-            <div>
-              <div class="font-mono text-sm font-semibold" style="color: var(--gg-primary);"><%= mission[:identifier] %></div>
-              <div class="text-xs mt-0.5" style="color: var(--gg-text-secondary);">
-                <%= mission[:settlement] %> • <%= mission[:type].to_s.humanize %>
-              </div>
-            </div>
-            <div class="text-right">
-              <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: rgba(0,212,255,0.1); color: var(--gg-primary);">
-                <%= mission[:progress] %>%
-              </span>
-              <div class="text-[10px] mt-1" style="color: var(--gg-text-dim);"><%= time_ago_in_words(mission[:created_at]) %> ago</div>
-            </div>
+      <% @overview[:conditions].each do |condition| %>
+        <article class="rounded p-3" style="background:var(--gg-bg-surface);border-left:3px solid <%= condition[:status] == 'blocked' ? 'var(--gg-accent-danger)' : 'var(--gg-accent-warning)' %>;">
+          <div class="flex flex-wrap justify-between gap-2">
+            <h3 class="text-sm font-semibold"><%= condition[:target] %></h3>
+            <span class="text-xs" style="color:var(--gg-text-dim);"><%= condition[:status_label] %></span>
           </div>
-        <% end %>
-      <% else %>
-        <div class="text-center py-8">
-          <div class="text-3xl mb-2">📋</div>
-          <div class="text-sm" style="color: var(--gg-text-secondary);">No active missions</div>
-          <div class="text-xs mt-1" style="color: var(--gg-text-dim);">Start a new mission to see activity here</div>
-        </div>
+          <p class="text-sm mt-2"><%= condition[:rationale] %></p>
+          <p class="text-xs mt-2" style="color:var(--gg-text-dim);"><%= condition[:title] %> · <%= condition[:priority].humanize %> priority</p>
+          <%= link_to "Open related task →", admin_ai_manager_workbench_task_path(condition[:id]), class: "inline-block mt-2 text-xs font-semibold", style: "color:var(--gg-primary);" %>
+        </article>
+      <% end %>
+      <% if @overview[:conditions].empty? %>
+        <p class="text-sm py-4" style="color:var(--gg-text-dim);">No conditions require attention in this fixture context.</p>
       <% end %>
     </div>
+  </section>
+</div>
+
+<section class="gg-grid-panel mb-5">
+  <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+    <div>
+      <h2 class="gg-section-title text-lg mb-0">Recent decision activity</h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Illustrative records linked to the operational task context</p>
+    </div>
+    <%= link_to "Decision log →", admin_ai_manager_decisions_path(system: @selected_system), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %>
   </div>
-</div>
-
-<!-- Settlement Overview -->
-<div class="gg-grid-panel">
-  <h2 class="gg-section-title text-lg">Settlement Network</h2>
-  <div class="overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead>
-        <tr class="border-b border-[rgba(0,212,255,0.15)]">
-          <th class="text-left py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Settlement</th>
-          <th class="text-center py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Status</th>
-          <th class="text-center py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Population</th>
-          <th class="text-center py-2 px-3 text-xs uppercase tracking-wider" style="color: var(--gg-text-secondary);">Systems</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @settlements.each do |settlement| %>
-          <tr class="border-b border-[rgba(0,212,255,0.05)] hover:bg-[rgba(0,212,255,0.03)] transition-colors">
-            <td class="py-2 px-3 font-medium" style="color: var(--gg-text-primary);"><%= settlement[:name] %></td>
-            <td class="py-2 px-3 text-center">
-              <span class="inline-block px-2 py-0.5 rounded text-xs font-medium" style="background: <%= case settlement[:status]
-                when 'operational' then 'rgba(6,255,165,0.15)'
-                when 'expanding' then 'rgba(0,212,255,0.15)'
-                when 'maintenance' then 'rgba(255,214,10,0.15)'
-                when 'under_construction' then 'rgba(157,78,221,0.15)'
-                when 'planning' then 'rgba(136,146,176,0.15)'
-                else 'rgba(136,146,176,0.15)'
-              end %>; color: <%= case settlement[:status]
-                when 'operational' then 'var(--gg-accent-success)'
-                when 'expanding' then 'var(--gg-primary)'
-                when 'maintenance' then 'var(--gg-accent-warning)'
-                when 'under_construction' then 'var(--gg-accent-purple)'
-                when 'planning' then 'var(--gg-text-secondary)'
-                else 'var(--gg-text-secondary)'
-              end %>;">
-                <%= settlement[:status].to_s.humanize %>
-              </span>
-            </td>
-            <td class="py-2 px-3 text-center" style="color: var(--gg-text-primary);"><%= settlement[:population] %></td>
-            <td class="py-2 px-3 text-center" style="color: var(--gg-text-primary);"><%= settlement[:systems_count] %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+    <% @overview[:recent_decisions].each do |decision| %>
+      <article class="rounded p-3" style="background:var(--gg-bg-surface);border:1px solid rgba(0,212,255,.12);">
+        <div class="flex flex-wrap justify-between gap-2">
+          <h3 class="text-sm font-semibold"><%= decision[:title] %></h3>
+          <span class="text-xs" style="color:var(--gg-accent-warning);"><%= decision[:outcome] %></span>
+        </div>
+        <p class="text-xs mt-2" style="color:var(--gg-text-secondary);"><%= decision[:reasoning] %></p>
+        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs" style="color:var(--gg-text-dim);">
+          <span><%= decision[:decision_type] %></span>
+          <span>Source: <%= decision[:source] %></span>
+          <span>Authority: <%= decision[:authority] %></span>
+          <span><%= decision[:recorded_label] %></span>
+        </div>
+        <%= link_to "Open related task →", admin_ai_manager_workbench_task_path(decision[:task_id]), class: "inline-block mt-3 text-xs font-semibold", style: "color:var(--gg-primary);" %>
+      </article>
+    <% end %>
+    <% if @overview[:recent_decisions].empty? %>
+      <p class="text-sm py-4" style="color:var(--gg-text-dim);">No decision examples are available for this fixture context.</p>
+    <% end %>
   </div>
-</div>
+</section>
 
-<div class="mt-6 text-center">
-  <%= link_to '← Back to Admin Dashboard', admin_dashboard_path, class: 'inline-block px-4 py-2 rounded transition-colors text-sm', style: 'background: rgba(0,212,255,0.08); color: var(--gg-text-secondary); border: 1px solid rgba(0,212,255,0.2);' %>
-</div>
-
-<style>
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-</style>
+<section class="gg-grid-panel">
+  <h2 class="gg-section-title text-lg">Admin workspaces</h2>
+  <div class="flex flex-wrap gap-2">
+    <%= link_to "Task Workbench", admin_ai_manager_workbench_path(system: @selected_system), class: "px-3 py-2 rounded text-sm", style: "background:rgba(0,212,255,.12);color:var(--gg-primary);border:1px solid rgba(0,212,255,.25);" %>
+    <%= link_to "Shared Task Library", admin_ai_manager_library_tasks_path, class: "px-3 py-2 rounded text-sm", style: "border:1px solid rgba(0,212,255,.2);color:var(--gg-text-secondary);" %>
+    <%= link_to "Mission Template Library", admin_ai_manager_library_missions_path, class: "px-3 py-2 rounded text-sm", style: "border:1px solid rgba(0,212,255,.2);color:var(--gg-text-secondary);" %>
+  </div>
+  <p class="text-xs mt-3" style="color:var(--gg-text-dim);">The Player-facing AI Manager will reuse these capabilities with a narrower player-owned asset scope and delegated authority. It is not part of this Admin workspace.</p>
+</section>
