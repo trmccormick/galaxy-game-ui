@@ -9,9 +9,7 @@
 
 <div class="flex flex-wrap gap-2 mb-5">
   <% @systems.each do |system| %>
-    <%= link_to system[:name], admin_ai_manager_workbench_path(system: system[:id]),
-      class: "px-4 py-2 rounded text-sm border",
-      style: "border-color:#{@selected_system == system[:id] ? 'var(--gg-primary)' : 'rgba(0,212,255,.2)'};background:#{@selected_system == system[:id] ? 'rgba(0,212,255,.12)' : 'var(--gg-bg-panel)'};color:var(--gg-text-primary);" %>
+    <%= link_to system[:name], admin_ai_manager_workbench_path(system: system[:id]), class: "px-4 py-2 rounded text-sm border", style: "border-color:#{@selected_system == system[:id] ? 'var(--gg-primary)' : 'rgba(0,212,255,.2)'};background:#{@selected_system == system[:id] ? 'rgba(0,212,255,.12)' : 'var(--gg-bg-panel)'};color:var(--gg-text-primary);" %>
   <% end %>
 </div>
 
@@ -22,10 +20,25 @@
 </div>
 
 <div class="gg-grid-panel mb-5">
-  <div class="flex justify-between items-center gap-3 mb-3">
-    <h2 class="gg-section-title text-lg mb-0">Task queue · <%= @systems.find { |s| s[:id] == @selected_system }[:name] %></h2>
-    <span class="text-xs" style="color:var(--gg-text-dim);"><%= @tasks.length %> illustrative tasks</span>
+  <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
+    <div>
+      <h2 class="gg-section-title text-lg mb-0">Task queue · <%= @systems.find { |s| s[:id] == @selected_system }[:name] %></h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Work generated from objectives, policies, instructions, conditions, and AI Manager decisions</p>
+    </div>
+    <span class="text-xs" style="color:var(--gg-text-dim);"><%= @tasks.length %> of <%= @all_tasks.length %> tasks</span>
   </div>
+
+  <%= form_with url: admin_ai_manager_workbench_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-4 gap-2 mb-4" do %>
+    <%= hidden_field_tag :system, @selected_system %>
+    <%= text_field_tag :q, @filters[:query], placeholder: "Search tasks or targets", class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+    <%= select_tag :status, options_for_select([["All statuses", ""]] + @status_options.map { |value| [value.humanize, value] }, @filters[:status]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+    <%= select_tag :category, options_for_select([["All categories", ""]] + @category_options.map { |value| [value, value] }, @filters[:category]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-bg-base);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+    <div class="flex gap-2">
+      <%= submit_tag "Filter", class: "px-4 py-2 rounded text-sm font-semibold", style: "background:rgba(0,212,255,.14);color:var(--gg-primary);border:1px solid rgba(0,212,255,.3);" %>
+      <%= link_to "Clear", admin_ai_manager_workbench_path(system: @selected_system), class: "px-4 py-2 rounded text-sm", style: "color:var(--gg-text-secondary);border:1px solid rgba(0,212,255,.18);" %>
+    </div>
+  <% end %>
+
   <div class="overflow-x-auto">
     <table class="w-full text-sm">
       <thead><tr class="text-left text-xs uppercase" style="color:var(--gg-text-dim);">
@@ -41,8 +54,11 @@
             <td class="py-3 text-right whitespace-nowrap"><%= link_to "Open →", admin_ai_manager_workbench_task_path(task[:id]), class: "text-xs font-semibold", style: "color:var(--gg-primary);" %></td>
           </tr>
         <% end %>
+        <% if @tasks.empty? %>
+          <tr><td colspan="6" class="py-6 text-center text-sm" style="color:var(--gg-text-dim);">No tasks match these filters.</td></tr>
+        <% end %>
       </tbody>
     </table>
   </div>
 </div>
-<p class="text-xs" style="color:var(--gg-text-dim);">Sol and Eden are named context fixtures only at this stage. The screen uses controller-owned examples and does not load or parse either system's JSON.</p>
+<p class="text-xs" style="color:var(--gg-text-dim);">Sol and Eden are named context fixtures only. The queue uses controller-owned examples and does not load either system's JSON.</p>
