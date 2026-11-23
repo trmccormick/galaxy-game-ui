@@ -1,0 +1,54 @@
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+  <div>
+    <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Shared Task Library</p>
+    <h1 class="gg-section-title"><%= @task[:name] %></h1>
+    <p class="text-sm" style="color:var(--gg-text-secondary);"><%= @task[:category] %> · <span class="font-mono"><%= @task[:id] %></span></p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <%= link_to "← Task Library", admin_ai_manager_library_tasks_path, class: "text-xs px-3 py-2 rounded border", style: "border-color:rgba(0,212,255,.22);color:var(--gg-primary);" %>
+    <span class="text-xs px-3 py-2 rounded" style="background:rgba(255,190,11,.10);color:var(--gg-accent-warning);">Read-only prototype fixture</span>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)] gap-4 mb-4">
+  <section class="gg-grid-panel">
+    <h2 class="gg-section-title text-lg">Capability</h2>
+    <p class="text-sm"><%= @task[:capability] %></p>
+    <div class="mt-4">
+      <div class="gg-stat-label mb-1">Task definition source</div>
+      <p class="text-xs font-mono break-all" style="color:var(--gg-text-secondary);"><%= @task[:source] %></p>
+    </div>
+    <div class="mt-4">
+      <div class="gg-stat-label mb-1">Definition boundary</div>
+      <p class="text-sm" style="color:var(--gg-text-secondary);"><%= @task[:boundary] %></p>
+    </div>
+  </section>
+  <section class="gg-grid-panel">
+    <h2 class="gg-section-title text-lg">Definition status</h2>
+    <div class="text-sm font-semibold" style="color:var(--gg-accent-warning);"><%= @task[:maturity] %></div>
+    <div class="gg-stat-label mt-4 mb-1">Category</div>
+    <div class="text-sm"><%= @task[:category] %></div>
+    <div class="gg-stat-label mt-4 mb-1">Editing</div>
+    <div class="text-sm">Not available in this prototype checkpoint</div>
+  </section>
+</div>
+
+<section class="gg-grid-panel mb-4">
+  <h2 class="gg-section-title text-lg">Prerequisites and dependencies</h2>
+  <ul class="space-y-2 text-sm">
+    <% @task[:dependencies].each do |dependency| %>
+      <li class="flex gap-2"><span style="color:var(--gg-primary);">›</span><span><%= dependency %></span></li>
+    <% end %>
+  </ul>
+</section>
+
+<section class="gg-grid-panel">
+  <h2 class="gg-section-title text-lg">Source and maturity notes</h2>
+  <p class="text-sm" style="color:var(--gg-text-secondary);"><%= @task[:notes] %></p>
+  <p class="text-xs mt-3" style="color:var(--gg-text-dim);">This page inspects a replaceable example record. It does not edit the shared JSON definition, validate a production schema, create a mission profile, or change an executing run.</p>
+</section>
+
+<div class="mt-4 flex flex-wrap gap-3">
+  <%= link_to "Open operational workbench →", admin_ai_manager_workbench_path, class: "text-sm font-semibold", style: "color:var(--gg-primary);" %>
+  <%= link_to "Mission Template Library →", admin_ai_manager_library_missions_path, class: "text-sm", style: "color:var(--gg-text-secondary);" %>
+</div>
