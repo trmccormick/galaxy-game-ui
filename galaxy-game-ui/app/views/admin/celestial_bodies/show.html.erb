@@ -1,0 +1,64 @@
+<%= stylesheet_link_tag "pages/admin_celestial_bodies", "data-turbo-track": "reload" %>
+
+<div class="cb-page">
+  <nav class="cb-breadcrumb" aria-label="Breadcrumb">
+    <%= link_to "Celestial Bodies", admin_celestial_bodies_path %>
+    <span>/</span>
+    <span><%= @celestial_body[:name] %></span>
+  </nav>
+
+  <header class="cb-detail-header">
+    <div>
+      <div class="cb-eyebrow">ADMIN BODY PROFILE / <%= @celestial_body[:category].upcase %></div>
+      <h1 class="cb-title"><%= @celestial_body[:name] %></h1>
+      <p class="cb-intro"><%= @celestial_body[:description] %></p>
+    </div>
+    <div class="cb-detail-status">
+      <span class="cb-data-tag">FIXTURE RECORD</span>
+      <span class="cb-muted"><%= @celestial_body[:system] %> system</span>
+      <span class="cb-status"><%= @celestial_body[:status] %></span>
+    </div>
+  </header>
+
+  <section class="cb-profile-grid">
+    <article class="cb-profile-panel cb-primary-profile">
+      <div class="cb-panel-heading"><div><h2>Physical profile</h2><p>Basic body characteristics</p></div></div>
+      <dl class="cb-property-grid">
+        <div><dt>Body category</dt><dd><%= @celestial_body[:category] %></dd></div>
+        <div><dt>System</dt><dd><%= @celestial_body[:system] %></dd></div>
+        <div><dt>Mean radius</dt><dd><%= @celestial_body[:radius] %></dd></div>
+        <div><dt>Surface gravity</dt><dd><%= @celestial_body[:gravity] %></dd></div>
+        <div><dt>Temperature reference</dt><dd><%= @celestial_body[:temperature] %></dd></div>
+        <div><dt>Settlements</dt><dd><%= @celestial_body[:settlements] %></dd></div>
+      </dl>
+    </article>
+
+    <article class="cb-profile-panel">
+      <div class="cb-panel-heading"><div><h2>Environmental spheres</h2><p>Presence and summary only</p></div></div>
+      <dl class="cb-sphere-list">
+        <% [:atmosphere, :hydrosphere, :geosphere, :biosphere].each do |sphere| %>
+          <div><dt><%= sphere.to_s.humanize %></dt><dd><%= @celestial_body[sphere] %></dd></div>
+        <% end %>
+      </dl>
+    </article>
+
+    <article class="cb-profile-panel cb-provenance-panel">
+      <div class="cb-panel-heading"><div><h2>Data provenance</h2><p>How to interpret this record</p></div></div>
+      <div class="cb-provenance-copy">
+        <span class="cb-data-tag"> <%= @celestial_body[:provenance].upcase %> </span>
+        <p>This prototype record is a display fixture. A production inspection view should distinguish generated properties, calculations, survey observations, inferred estimates, and accepted body state, with confidence and source context where available.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="cb-next-views">
+    <div class="cb-panel-heading"><div><h2>Inspection workspaces</h2><p>Related views are being ported separately</p></div></div>
+    <div class="cb-workspace-grid">
+      <div class="cb-workspace-card"><strong>Planetary inspection</strong><p>Terrain and environmental layer visualization.</p><span>Next view in progress</span></div>
+      <div class="cb-workspace-card"><strong>Surface inspection</strong><p>Regional terrain, surface features, and local detail.</p><span>Separate workspace</span></div>
+      <div class="cb-workspace-card"><strong>Digital Twin</strong><p>Deeper simulation inspection, comparison, and evaluation.</p><span>Separate Admin workspace</span></div>
+    </div>
+  </section>
+
+  <p class="cb-prototype-note">This is a fixture-backed UI profile. No game data is edited or persisted from this page.</p>
+</div>
