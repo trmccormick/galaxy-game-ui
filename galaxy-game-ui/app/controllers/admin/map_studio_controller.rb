@@ -94,6 +94,30 @@ class Admin::MapStudioController < Admin::BaseController
         dimensions: "600 × 300", tile_count: 180_000, complexity: "Normal", biome_focus: "Arid",
         source_maps: ["Civ4 · Highlands"],
         biome_counts: { "Mare basalt" => 72_000, "Highland" => 50_400, "Rugged upland" => 39_600, "Cratered terrain" => 18_000 }
+      },
+      "venus_global_reference_20261116.json" => {
+        name: "Venus · Global Reference", planet: "Venus", planet_type: "Terrestrial",
+        created_at: "2026-11-16 12:40 UTC", quality_score: 7.9,
+        description: "Global surface baseline for broad highland regions, volcanic provinces and lowland plains.",
+        dimensions: "800 × 400", tile_count: 320_000, complexity: "Complex", biome_focus: "Continental",
+        source_maps: ["FreeCiv · Earth Large"],
+        biome_counts: { "Volcanic plains" => 128_000, "Lowland" => 83_200, "Tessera highland" => 64_000, "Rift zone" => 44_800 }
+      },
+      "eden1_initial_terrain_20261114.json" => {
+        name: "Eden-1 · Initial Terrain", planet: "Eden-1", planet_type: "Extrasolar terrestrial",
+        created_at: "2026-11-14 16:20 UTC", quality_score: 8.5,
+        description: "Plausible initial landform distribution prepared as a starting terrain state for an extrasolar world.",
+        dimensions: "800 × 400", tile_count: 320_000, complexity: "Normal", biome_focus: "Balanced",
+        source_maps: ["Civ4 · Terra", "FreeCiv · Highlands"],
+        biome_counts: { "Ocean" => 112_000, "Temperate plain" => 76_800, "Upland" => 57_600, "Dry basin" => 44_800, "Cold region" => 28_800 }
+      },
+      "mars_tharsis_test_20261110.json" => {
+        name: "Mars · Tharsis Test", planet: "Mars", planet_type: "Terrestrial",
+        created_at: "2026-11-10 08:10 UTC", quality_score: 6.8,
+        description: "Earlier terrain reconstruction test covering the Tharsis region and surrounding volcanic uplands.",
+        dimensions: "400 × 200", tile_count: 80_000, complexity: "Simple", biome_focus: "Arid",
+        source_maps: ["FreeCiv · Highlands"],
+        biome_counts: { "Volcanic upland" => 32_000, "Rocky plain" => 24_000, "Basin" => 16_000, "Cratered terrain" => 8_000 }
       }
     }
     @map = fixtures[params[:id].to_s]
