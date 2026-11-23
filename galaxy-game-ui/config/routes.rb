@@ -5,8 +5,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "dashboard", to: "dashboard#index", as: :dashboard
-  get   "about",     to: "landing#about"
-  root  "landing#index"
+  get "about", to: "landing#about"
+  root "landing#index"
 
   # Player views
   get "player/planetary", to: "player#planetary", as: :player_planetary
@@ -23,5 +23,11 @@ Rails.application.routes.draw do
     get "ai_manager/show_mission", to: "ai_manager#show_mission", as: :ai_manager_show_mission
     post "ai_manager/advance_phase/:mission_id", to: "ai_manager#advance_phase", as: :ai_manager_advance_phase
     post "ai_manager/reset_mission/:mission_id", to: "ai_manager#reset_mission", as: :ai_manager_reset_mission
+
+    # Fixture-backed AI Manager task workbench (independent of world JSON loading).
+    get "ai_manager/workbench", to: "ai_manager_workbench#index", as: :ai_manager_workbench
+    get "ai_manager/workbench/tasks/:id", to: "ai_manager_workbench#show", as: :ai_manager_workbench_task
+    get "ai_manager/workbench/tasks/:id/plan", to: "ai_manager_workbench#plan", as: :ai_manager_workbench_plan
+    get "ai_manager/workbench/tasks/:id/execution", to: "ai_manager_workbench#execution", as: :ai_manager_workbench_execution
   end
 end
