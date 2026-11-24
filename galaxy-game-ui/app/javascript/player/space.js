@@ -10,10 +10,12 @@
   const byId = (items, id) => items.find((item) => item.id === id);
   let selectedCraft = byId(data.craft, data.selected_craft_id) || data.craft[0];
   let selectedSystem = data.selected_system_id;
-  const galaxyRecordForFocus = () => (data.galaxy_catalog?.systems || []).find((item) =>
-    item.id === selectedSystem || item.seed_identifier === selectedSystem
-  ) || null;
-  let selectedGalaxySystemId = selectedSystem === "SOL" ? "SOL" : (galaxyRecordForFocus()?.id || null);
+  const neighborhoodForFocus = () => {
+    const catalog = data.galaxy_catalog;
+    return catalog?.reference_system_id === selectedSystem && Array.isArray(catalog.systems) ? catalog : null;
+  };
+  const nearbySystemsForFocus = () => (neighborhoodForFocus()?.systems || []).filter((item) => item.position?.cartesian_ly);
+  let selectedGalaxySystemId = selectedSystem;
   let showOrbitReferences = true;
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
@@ -113,28 +115,21 @@
   const constellationWorld = constellationSvg ? attachMapControls(constellationSvg, "galaxy-sky") : null;
 
   function updateGalaxySelection() {
-    const system = galaxyRecordForFocus();
     const name = document.getElementById("galaxy-selection-name");
     const details = document.getElementById("galaxy-selection-details");
     if (!name || !details) return;
-    if (selectedSystem === "SOL") {
-      name.textContent = "Sol";
-      details.textContent = "Reference origin · 0.00 ly";
-      return;
-    }
-    if (!system) {
-      const focused = data.universe.systems.find((item) => item.id === selectedSystem);
-      name.textContent = focused?.name || selectedSystem || "System focus unavailable";
+    const focused = data.universe.systems.find((item) => item.id === selectedSystem);
+    const focusedName = focused?.name || data.system.name || selectedSystem || "System focus unavailable";
+    const catalog = neighborhoodForFocus();
+    const nearby = nearbySystemsForFocus();
+    name.textContent = focusedName;
+    if (!catalog || nearby.length === 0) {
       details.textContent = "Neighborhood data unavailable · no sourced positions for nearby systems are available.";
       return;
     }
-    const constellation = (data.constellation_catalog?.constellations || []).find((item) => item.id === system.constellation);
-    name.textContent = system.name;
-    details.textContent = [
-      `${system.position.distance_ly.toFixed(2)} ly from Sol`,
-      constellation ? `${constellation.name} (provisional)` : "Constellation unknown",
-      system.seed_file
-    ].join(" · ");
+    details.textContent = selectedSystem === "SOL"
+      ? `Reference origin · 0.00 ly · ${nearby.length} nearby systems`
+      : `${nearby.length} nearby systems · neighborhood centered on ${focusedName}`;
   }
 
   function chooseGalaxySystem(system) {
@@ -152,20 +147,40 @@
   function renderGalaxySpatial() {
     if (!galaxySpatialWorld) return;
     galaxySpatialWorld.replaceChildren();
-    const focused = selectedSystem === "SOL" || galaxyRecordForFocus()?.position?.cartesian_ly;
+    const catalog = neighborhoodForFocus();
+    const systems = nearbySystemsForFocus();
+    const focused = Boolean(catalog && systems.length);
+    const focusedName = data.universe.systems.find((item) => item.id === selectedSystem)?.name || data.system.name || selectedSystem;
     const stage = root.querySelector('[data-galaxy-canvas="spatial"]');
     const canvas = stage?.querySelector(".space-map-canvas");
     const unavailable = stage?.querySelector('[data-galaxy-unavailable="spatial"]');
     if (canvas) canvas.hidden = !focused;
     if (unavailable) {
-      unavailable.hidden = Boolean(focused);
-      unavailable.textContent = `Neighborhood data unavailable for ${data.universe.systems.find((item) => item.id === selectedSystem)?.name || selectedSystem}. No sourced positions for nearby systems are available, so the neighborhood map cannot be populated.`;
+      unavailable.hidden = focused;
+      unavailable.textContent = `Neighborhood data unavailable for ${focusedName}. No sourced positions for nearby systems are available, so the neighborhood map cannot be populated.`;
     }
     const footnote = stage?.querySelector(".galaxy-map-footnote");
-    if (footnote) footnote.hidden = !focused;
+    if (footnote) {
+      footnote.hidden = !focused;
+      if (selectedSystem === "SOL") {
+        footnote.textContent = "Local Bubble is a physical interstellar region. Its boundary is intentionally not drawn because this catalog does not include a sourced 3D boundary model.";
+      } else {
+        footnote.textContent = `This map is centered on ${focusedName}. It includes only nearby systems with sourced positions relative to this system; missing positions are not inferred.`;
+      }
+    }
+    const caption = stage?.querySelector("[data-galaxy-caption='spatial']");
+    if (caption) caption.textContent = selectedSystem === "SOL"
+      ? "SOL-CENTERED NEIGHBORHOOD · EQUATORIAL CARTESIAN PROJECTION · LIGHT-YEARS"
+      : `${focusedName.toUpperCase()}-CENTERED NEIGHBORHOOD · LOCAL CARTESIAN PROJECTION · LIGHT-YEARS`;
     if (!focused) return;
-    const systems = data.galaxy_catalog?.systems || [];
-    const objects = [{ id: "SOL", name: "Sol", position: { cartesian_ly: { x: 0, y: 0, z: 0 }, distance_ly: 0 } }, ...systems];
+
+    const center = {
+      id: selectedSystem,
+      name: focusedName,
+      isCenter: true,
+      position: { cartesian_ly: { x: 0, y: 0, z: 0 }, distance_ly: 0 }
+    };
+    const objects = [center, ...systems];
     const project = (position) => {
       const p = position?.cartesian_ly;
       if (!p) return null;
@@ -184,36 +199,36 @@
 
     const galaxyLabelBoxes = [];
     const labelCandidates = projected.slice().sort((a, b) => {
-      const score = (entry) => entry.item.id === selectedGalaxySystemId ? -10000 : entry.item.id === "SOL" ? -9000 : entry.item.position.distance_ly;
+      const score = (entry) => entry.item.isCenter ? -10000 : entry.item.id === selectedGalaxySystemId ? -9000 : entry.item.position.distance_ly;
       return score(a) - score(b);
     });
     const labelableIds = new Set();
     labelCandidates.forEach(({ item, point }) => {
       if (labelableIds.size >= 15) return;
       const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
-      const label = item.id === "SOL" ? "Sol" : item.name + " · " + item.position.distance_ly.toFixed(1) + " ly";
+      const label = item.isCenter ? focusedName : item.name + " · " + item.position.distance_ly.toFixed(1) + " ly";
       if (addDeclutteredLabel(galaxySpatialWorld, label, p.x, p.y, "space-map-label galaxy-system-label", galaxyLabelBoxes, { fontSize: 11, gap: 8 })) {
         labelableIds.add(item.id);
       }
     });
 
-    // A faint origin cross indicates Sol's reference position, not a second system.
+    // The selected system is the origin of its own local neighborhood frame.
     galaxySpatialWorld.appendChild(element("line", { x1: 500, y1: 35, x2: 500, y2: 435, class: "galaxy-axis" }));
     galaxySpatialWorld.appendChild(element("line", { x1: 80, y1: 235, x2: 920, y2: 235, class: "galaxy-axis" }));
     projected.forEach(({ item, point }) => {
       const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
-      const isSol = item.id === "SOL";
+      const isCenter = Boolean(item.isCenter);
       const selected = item.id === selectedGalaxySystemId;
-      const node = element("g", { class: `space-map-node galaxy-system-node ${selected || isSol ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${item.name}` });
+      const node = element("g", { class: `space-map-node galaxy-system-node ${selected || isCenter ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": isCenter ? `${item.name}, neighborhood center` : `Select ${item.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
-      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isSol ? 6 : 4.5, class: isSol ? "galaxy-sol-point" : "galaxy-star-point" }));
-      node.appendChild(element("title", {}, item.name + (isSol ? "" : " · " + item.position.distance_ly.toFixed(2) + " ly")));
-      const choose = () => { if (isSol) { selectedGalaxySystemId = null; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); } else { chooseGalaxySystem(item); } };
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isCenter ? 6 : 4.5, class: isCenter ? "galaxy-center-point" : "galaxy-star-point" }));
+      node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center" : " · " + item.position.distance_ly.toFixed(2) + " ly")));
+      const choose = () => { if (!isCenter) chooseGalaxySystem(item); };
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
       galaxySpatialWorld.appendChild(node);
     });
-    galaxySpatialWorld.appendChild(element("text", { x: 18, y: 482, class: "space-map-subtitle" }, "Isometric projection of equatorial Cartesian positions · depth compressed for display"));
+    galaxySpatialWorld.appendChild(element("text", { x: 18, y: 482, class: "space-map-subtitle" }, "System-centered Cartesian neighborhood · depth compressed for display"));
   }
 
   function renderGalaxySky() {
@@ -367,14 +382,18 @@
         ? { x: Number(p.x), y: Number(p.y), z: 0 }
         : null;
     };
-    const starById = new Map(stars.map((item) => [item.id, item]));
-    const starByName = new Map(stars.map((item) => [item.name, item]));
+    const objectById = new Map(systemObjects.map((item) => [item.id, item]));
+    const objectByName = new Map(systemObjects.map((item) => [item.name, item]));
     const orbitFor = (body) => {
       if (body.orbit) return body.orbit;
       if (Array.isArray(body.orbits) && body.orbits.length) return body.orbits[0];
       return null;
     };
-    const parentStarFor = (body, orbit) => starById.get(body.parent_star || orbit?.around) || starByName.get(orbit?.around) || null;
+    const parentObjectFor = (body, orbit) => {
+      const reference = body.parent_id || body.parent_star || orbit?.around;
+      return objectById.get(reference) || objectByName.get(reference) ||
+        (reference === "Primary Star" || !reference ? stars[0] : null);
+    };
 
     const positioned = objects.map((item) => ({ item, position: positionFor(item) })).filter(({ position }) => position);
     if (!positioned.length) {
@@ -397,33 +416,36 @@
     const scale = Math.min(820 / spanX, 390 / spanY);
     const offsetX = 500 - ((minX + maxX) / 2) * scale;
     const offsetY = 245 + ((minY + maxY) / 2) * scale;
+    const primaryStarPosition = stars[0] ? positionFor(stars[0]) : null;
+    const displayOffsetX = primaryStarPosition ? 500 - primaryStarPosition.x * 10 : 0;
+    const displayOffsetY = primaryStarPosition ? 250 - primaryStarPosition.y * 5 : 0;
     const screenPoint = (item) => {
       const position = positionFor(item);
       if (!position) return null;
       const x = position.x - (hasSpatialFrame ? originX : 0);
       const y = position.y - (hasSpatialFrame ? originY : 0);
       if (hasSpatialFrame) return { x: offsetX + x * scale, y: offsetY - y * scale };
-      return { x: x * 10, y: y * 5 };
+      return { x: x * 10 + displayOffsetX, y: y * 5 + displayOffsetY };
     };
 
-    // The current Sol UI fixture has display positions but no orbital elements.
-    // These rings retain the earlier renderer's visual convention while remaining
-    // explicitly schematic rather than implying physical semi-major axes.
-    if (!hasSpatialFrame && showOrbitReferences && !bodies.some((body) => orbitFor(body))) {
-      const star = stars[0];
-      const center = star && screenPoint(star);
-      if (center) {
-        bodies.forEach((body) => {
-          const point = screenPoint(body);
-          if (!point) return;
-          const radius = Math.hypot(point.x - center.x, point.y - center.y);
-          if (radius < 12) return;
-          world.appendChild(element("circle", {
-            cx: center.x, cy: center.y, r: radius.toFixed(2),
-            class: "space-orbit-reference", "data-orbit-body": body.id
-          }));
-        });
-      }
+    // When orbital elements are absent, retain clearly schematic guide rings
+    // from fixture display positions. Planets orbit the primary star; moons
+    // use their declared parent body. These guides are not physical elements.
+    if (!hasSpatialFrame && showOrbitReferences) {
+      bodies.forEach((body) => {
+        if (orbitFor(body)) return;
+        const parent = parentObjectFor(body, null);
+        const center = parent && screenPoint(parent);
+        const point = screenPoint(body);
+        if (!center || !point) return;
+        const radius = Math.hypot(point.x - center.x, point.y - center.y);
+        if (radius < 12) return;
+        world.appendChild(element("circle", {
+          cx: center.x, cy: center.y, r: radius.toFixed(2),
+          class: "space-orbit-reference", "data-orbit-body": body.id,
+          "data-orbit-parent": parent.id || parent.name
+        }));
+      });
     }
 
     // Draw parent-centered orbital paths from source orbital elements. These
@@ -442,7 +464,7 @@
     });
     if (showOrbitReferences) bodies.forEach((body) => {
       const orbit = orbitFor(body);
-      const parent = orbit && parentStarFor(body, orbit);
+      const parent = orbit && parentObjectFor(body, orbit);
       if (!orbit || !parent || !Number.isFinite(orbitScale)) return;
       const a = Number(orbit.semi_major_axis_au ?? orbit.source_distance_au);
       if (!Number.isFinite(a) || a <= 0) return;
@@ -475,7 +497,7 @@
     const orbitDisplayPoint = (body) => {
       if (hasSpatialFrame || !system.display_layout?.phase_values_are_illustrative) return null;
       const orbit = orbitFor(body);
-      const parent = orbit && parentStarFor(body, orbit);
+      const parent = orbit && parentObjectFor(body, orbit);
       const center = parent && screenPoint(parent);
       const a = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au);
       if (!center || !Number.isFinite(a) || a <= 0) return null;
@@ -493,7 +515,7 @@
       const p = hasSpatialFrame
         ? { x: offsetX, y: offsetY }
         : origin.map_position
-          ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
+          ? { x: Number(origin.map_position.x) * 10 + displayOffsetX, y: Number(origin.map_position.y) * 5 + displayOffsetY }
           : null;
       if (p) {
         world.appendChild(element("path", {
@@ -546,8 +568,8 @@
     const trajectoryPoints = (trajectory?.points || []).map((point) => {
       const x = Number(point.x_coordinate), y = Number(point.y_coordinate);
       if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
-      const px = hasSpatialFrame ? offsetX + (x - originX) * scale : x * 10;
-      const py = hasSpatialFrame ? offsetY - (y - originY) * scale : y * 5;
+      const px = hasSpatialFrame ? offsetX + (x - originX) * scale : x * 10 + displayOffsetX;
+      const py = hasSpatialFrame ? offsetY - (y - originY) * scale : y * 5 + displayOffsetY;
       return [px, py];
     }).filter(Boolean);
     if (trajectoryPoints.length > 1) {
@@ -570,7 +592,7 @@
     }
     selectedCraft = nextCraft;
     root.querySelectorAll("[data-craft-id]").forEach((button) => button.classList.toggle("is-selected", button.dataset.craftId === id));
-    selectedGalaxySystemId = selectedSystem === "SOL" ? "SOL" : (galaxyRecordForFocus()?.id || null);
+    selectedGalaxySystemId = selectedSystem;
     updateInspector();
     renderNetwork();
     renderSystem();
