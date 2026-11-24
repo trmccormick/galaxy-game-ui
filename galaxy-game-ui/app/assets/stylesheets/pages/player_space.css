@@ -222,3 +222,8 @@
 .legend-dot.stellar-unknown { background:#778795; }
 .network-map-legend { gap:.4rem .65rem; }
 .network-map-legend .legend-note { color:var(--gg-text-dim); }
+
+.legend-ring { display:inline-block; width:9px; height:9px; border:1.3px solid; border-radius:50%; }
+.legend-ring.baseline { border-color:#36a9f5; }
+.legend-ring.natural-access { border-color:#43d39a; }
+.legend-ring.no-access { border-color:#778795; border-style:dashed; }
