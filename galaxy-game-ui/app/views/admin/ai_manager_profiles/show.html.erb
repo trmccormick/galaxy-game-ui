@@ -56,7 +56,7 @@
   <section class="gg-grid-panel">
     <h2 class="gg-section-title text-lg">Draft boundary</h2>
     <p class="text-sm mt-2" style="color:var(--gg-text-secondary);">This profile is stored in the Rails browser session only. It is not written to the GalaxyGame database, does not create a mission run, and does not dispatch or modify any game assets.</p>
-    <p class="text-xs mt-3" style="color:var(--gg-text-dim);">Created <%= Time.iso8601(@profile["created_at"]).strftime("%Y-%m-%d %H:%M UTC") %></p>
+    <p class="text-xs mt-3" style="color:var(--gg-text-dim);">Created <%= @profile["created_at"] %></p>
   </section>
 </div>
 
