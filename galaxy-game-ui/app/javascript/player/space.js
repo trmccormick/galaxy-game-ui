@@ -125,7 +125,7 @@
     if (!system) {
       const focused = data.universe.systems.find((item) => item.id === selectedSystem);
       name.textContent = focused?.name || selectedSystem || "System focus unavailable";
-      details.textContent = "Galactic position unavailable · no sourced galactic coordinates are available for this system.";
+      details.textContent = "Neighborhood data unavailable · no sourced positions for nearby systems are available.";
       return;
     }
     const constellation = (data.constellation_catalog?.constellations || []).find((item) => item.id === system.constellation);
