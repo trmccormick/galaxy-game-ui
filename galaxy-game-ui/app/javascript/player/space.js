@@ -200,6 +200,7 @@
       id: selectedSystem,
       name: focusedName,
       isCenter: true,
+      primary_star: data.universe.systems.find((item) => item.id === selectedSystem)?.primary_star,
       position: { cartesian_ly: { x: 0, y: 0, z: 0 }, distance_ly: 0 }
     };
     const objects = [center, ...systems];
@@ -242,7 +243,8 @@
       const selected = item.id === selectedGalaxySystemId;
       const node = element("g", { class: `space-map-node galaxy-system-node ${selected || isCenter ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": isCenter ? `${item.name}, neighborhood center` : `Select ${item.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
-      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isCenter ? 6 : 4.5, class: isCenter ? "galaxy-center-point" : "galaxy-star-point" }));
+      const starRecord = stellarRecordFor(item);
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isCenter ? 6 : 4.5, class: (isCenter ? "galaxy-center-point " : "galaxy-star-point ") + stellarNodeClass(starRecord) }));
       node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center" : " · " + item.position.distance_ly.toFixed(2) + " ly")));
       const choose = () => { if (!isCenter) chooseGalaxySystem(item); };
       node.addEventListener("click", choose);
@@ -351,7 +353,7 @@
       const p = point(system);
       const node = element("g", { class: `space-map-node ${system.id === selectedSystem ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 22, class: "node-halo" }));
-      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 9 : 7, fill: system.id === "SOL" ? "#36a9f5" : system.access === "natural_connection" ? "#43d39a" : "#778795", stroke: "#d6e5ef", "stroke-width": "1.2" }));
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 9 : 7, fill: stellarTypeColor(system), stroke: "#d6e5ef", "stroke-width": "1.2" }));
       if (routeIds.has(system.id)) node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 14, fill: "none", stroke: "#eab65c", "stroke-width": "1.2", "stroke-dasharray": "3 3" }));
       node.appendChild(element("text", { x: p.x, y: p.y + 29, class: "space-map-label", "text-anchor": "middle" }, system.name));
       node.appendChild(element("text", { x: p.x, y: p.y + 43, class: "space-map-subtitle", "text-anchor": "middle" }, system.subtitle || system.id));
