@@ -87,6 +87,31 @@
     </aside>
 
     <div class="space-maps-column">
+      <section class="space-map-panel galaxy-map-panel">
+        <div class="space-map-heading">
+          <div><span class="space-eyebrow">ASTRONOMICAL NEIGHBORHOOD</span><h2>Galaxy View · Sol</h2><p>Real nearby-system positions · sky boundaries shown separately from physical space</p></div>
+          <div class="space-map-actions galaxy-mode-actions">
+            <button type="button" data-galaxy-mode="spatial" aria-pressed="true">Spatial</button>
+            <button type="button" data-galaxy-mode="sky" aria-pressed="false">Constellations</button>
+            <button type="button" data-map-reset="galaxy-spatial">Reset</button>
+          </div>
+        </div>
+        <div class="galaxy-map-stage" data-galaxy-canvas="spatial">
+          <div class="galaxy-map-caption">PHYSICAL NEIGHBORHOOD · EQUATORIAL CARTESIAN PROJECTION · LIGHT-YEARS</div>
+          <div class="space-map-canvas galaxy-spatial-canvas"><svg id="space-galaxy-map" role="img" aria-label="Three-dimensional spatial projection of Sol's nearby star systems"></svg></div>
+          <div class="galaxy-map-footnote">Local Bubble is a physical interstellar region. Its boundary is intentionally not drawn here because this fixture does not include a sourced 3D boundary model.</div>
+        </div>
+        <div class="galaxy-map-stage" data-galaxy-canvas="sky" hidden>
+          <div class="galaxy-map-caption">SOL OBSERVING SKY · RIGHT ASCENSION / DECLINATION · IAU BOUNDARIES</div>
+          <div class="space-map-actions galaxy-sky-reset"><button type="button" data-map-reset="galaxy-sky">Reset sky view</button></div>
+          <div class="space-map-canvas galaxy-sky-canvas"><svg id="space-constellation-map" role="img" aria-label="IAU constellation boundaries and nearby star systems as seen from Sol"></svg></div>
+          <div class="galaxy-map-footnote">Constellations are angular sky regions, not 3D stellar neighborhoods. Positions are source-derived; the nearby-star source does not state its coordinate epoch, so boundary matches remain provisional.</div>
+        </div>
+        <div class="galaxy-selection-details">
+          <strong id="galaxy-selection-name">Select a nearby system</strong>
+          <span id="galaxy-selection-details">31 curated real-system seeds in this UI catalog</span>
+        </div>
+      </section>
       <section class="space-map-panel">
         <div class="space-map-heading">
           <div><span class="space-eyebrow">INTER-SYSTEM</span><h2>Wormhole Network</h2><p>Network topology · known systems and configured connections</p></div>
@@ -134,7 +159,7 @@
     </aside>
   </div>
 
-  <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, system: @system_data, craft: @craft, operations: @operations, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
+  <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, galaxy_catalog: @galaxy_catalog, system: @system_data, craft: @craft, operations: @operations, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
 </section>
 
 <%= javascript_import_module_tag "player/space" %>
