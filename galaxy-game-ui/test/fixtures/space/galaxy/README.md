@@ -4,7 +4,7 @@ These files are presentation fixtures for the separate GalaxyGame UI prototype. 
 
 ## Files
 
-- `sol_neighborhood.min.json` joins the current curated real-system seed selection to nearby-star astrometry and derived equatorial Cartesian positions.
+- `sol_neighborhood.min.json` joins the current curated real-system seed selection to nearby-star astrometry and derived equatorial Cartesian positions. When a selected real system has a position in this shared frame, the controller derives its own neighborhood by subtracting that system’s Cartesian vector from each neighbor; it does not display the Sol-centered map unchanged.
 - `constellations.sol.min.json` contains the subset of IAU constellation metadata and boundary polygons intersected by the current seed selection.
 - `THIRD_PARTY_NOTICES.md` carries the BSD-3-Clause notice for the redistributed D3-Celestial boundary geometry.
 
@@ -23,4 +23,4 @@ These files are presentation fixtures for the separate GalaxyGame UI prototype. 
 
 When the curated real-system seed library expands, add only systems that actually exist in that seed collection, join them to a cited astrometric source, and extend the constellation subset to include any newly intersected IAU regions. Record source epoch, reference frame, uncertainty, and proper motion whenever available. Do not assume that a system needs a complete planetary inventory to appear in Galaxy View.
 
-The eventual main-application catalog and persistence model remain open. These UI fixtures may be replaced or migrated after that design is reviewed.
+Generated systems such as the current Aki Gaia fixture are not assigned invented coordinates in this real-star catalog. Until a sourced or generated local-neighborhood dataset exists for them, Galaxy View reports neighborhood data unavailable. The eventual main-application catalog and persistence model remain open. These UI fixtures may be replaced or migrated after that design is reviewed.
