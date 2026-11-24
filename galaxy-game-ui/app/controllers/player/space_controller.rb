@@ -11,7 +11,7 @@ class Player::SpaceController < ApplicationController
     # data tree; keep the full source arrays intact for the client renderer.
     lookup = Lookup::StarSystemLookupService.new
     @systems = @universe.fetch("systems").map do |system|
-      source = lookup.fetch(system["id"])
+      source = lookup.fetch(system["id"]) || lookup.fetch(system["name"])
       stars = source&.fetch("stars", nil) || []
       system.merge("stars" => stars, "source_type" => source&.fetch("_source_type", nil))
     end
@@ -105,7 +105,7 @@ class Player::SpaceController < ApplicationController
   end
 
   def normalize_system_data(source, system_id)
-    stars = source["stars"].is_a?(Array) ? source["stars"] : []
+    stars = source["stars"].is_a?(Array) ? source["stars"] : Array(source.dig("solar_system", "stars"))
     bodies = flatten_records(source["celestial_bodies"])
     stations = %w[stations orbital_facilities space_stations].flat_map do |key|
       flatten_records(source[key])
@@ -114,7 +114,8 @@ class Player::SpaceController < ApplicationController
     {
       "fixture" => false,
       "system_id" => source.dig("solar_system", "identifier") || source["id"] || system_id,
-      "name" => source.dig("solar_system", "name") || source["name"] || @selected_system["name"],
+      "name" => @selected_system["name"] || source.dig("solar_system", "name") || source["name"],
+      "source_name" => source.dig("solar_system", "name") || source["name"],
       "stars" => stars,
       "bodies" => bodies,
       "stations" => stations,
