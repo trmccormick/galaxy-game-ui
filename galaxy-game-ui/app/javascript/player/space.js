@@ -90,7 +90,7 @@
       details.textContent = "31 curated real-system seeds in this UI catalog";
       return;
     }
-    const constellation = (data.galaxy_catalog.constellations || []).find((item) => item.id === system.constellation);
+    const constellation = (data.constellation_catalog?.constellations || []).find((item) => item.id === system.constellation);
     name.textContent = system.name;
     details.textContent = [
       `${system.position.distance_ly.toFixed(2)} ly from Sol`,
@@ -143,8 +143,8 @@
   function renderGalaxySky() {
     if (!constellationWorld) return;
     constellationWorld.replaceChildren();
-    const catalog = data.galaxy_catalog || {};
-    const features = catalog.constellation_boundaries?.features || [];
+    const catalog = data.constellation_catalog || {};
+    const features = catalog.boundaries?.features || [];
     const project = (ra, dec) => {
       let longitude = Number(ra);
       while (longitude < -180) longitude += 360;
