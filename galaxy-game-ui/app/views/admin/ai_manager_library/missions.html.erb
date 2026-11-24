@@ -3,6 +3,7 @@
   <h1 class="gg-section-title">Mission Library</h1>
   <p class="text-sm" style="color:var(--gg-text-secondary);">Predefined repeatable operational flows built from shared tasks. Missions guide planning; they are not rigid execution scripts.</p>
   <p class="text-xs mt-2" style="color:var(--gg-accent-warning);">Prototype examples · experimental source definitions are clearly identified.</p>
+  <div class="mt-3"><%= link_to "Build a mission profile →", admin_ai_manager_new_profile_path, class: "inline-block rounded px-3 py-2 text-xs font-semibold", style: "background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.24);color:var(--gg-primary);" %></div>
 </div>
 <div class="space-y-3">
   <% @missions.each do |mission| %>
