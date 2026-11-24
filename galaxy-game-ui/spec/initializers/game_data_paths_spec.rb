@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe GalaxyGame::Paths do
+  describe "star system data locations" do
+    it "exposes curated and generated systems under the shared JSON data root" do
+      expect(described_class::STAR_SYSTEMS_PATH).to eq(described_class::JSON_DATA.join("star_systems"))
+      expect(described_class::GENERATED_STAR_SYSTEMS_PATH).to eq(described_class::JSON_DATA.join("generated_star_systems"))
+    end
+  end
+
   describe "mission data locations" do
     it "keeps the draft task library separate from the V2 test/setup data" do
       expect(described_class::TASKS_V2_PATH).to eq(
