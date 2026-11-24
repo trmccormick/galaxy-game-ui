@@ -234,11 +234,9 @@
     if (origin.type === "barycenter") {
       const p = hasSpatialFrame
         ? { x: offsetX, y: offsetY }
-        : system.display_layout?.mode === "schematic"
-          ? { x: 500, y: 245 }
-          : origin.map_position
-            ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
-            : null;
+        : origin.map_position
+          ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
+          : null;
       if (p) {
         world.appendChild(element("path", {
           d: `M ${p.x - 7} ${p.y} H ${p.x + 7} M ${p.x} ${p.y - 7} V ${p.y + 7}`,
