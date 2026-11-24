@@ -306,7 +306,7 @@
       const p = project(system.position.right_ascension_degrees, system.position.declination_degrees);
       const selected = system.id === selectedGalaxySystemId;
       const node = element("g", { class: `space-map-node galaxy-sky-node ${selected ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
-      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 8 : 4, class: "galaxy-sky-point" }));
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 8 : 4, class: "galaxy-sky-point " + stellarNodeClass(stellarRecordFor(system)) }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 12, class: "node-halo" }));
       node.appendChild(element("title", {}, `${system.name} · ${system.position.distance_ly.toFixed(2)} ly`));
       const choose = () => chooseGalaxySystem(system);
