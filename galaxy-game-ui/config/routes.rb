@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   # Player views
   get "player/planetary", to: "player#planetary", as: :player_planetary
   get "player/space", to: "player/space#show", as: :player_space
+  get "player/fleet-manager", to: "player/space#show", as: :player_fleet_manager, defaults: { workspace: "fleet_manager" }
   get "player/missions", to: "player/missions#index", as: :player_missions
   get "player/missions/new", to: "player/missions#new", as: :new_player_mission
   get "player/missions/:id", to: "player/missions#show", as: :player_mission
