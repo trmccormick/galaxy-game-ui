@@ -21,7 +21,7 @@
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
   function stellarTypeKey(system) {
-    const star = system?.primary_star || system?.star || {};
+    const star = system?.stars?.[0] || system?.primary_star || system?.star || {};
     const raw = String(star.spectral_type || star.classification || star.type || "").trim().toUpperCase();
     if (!raw) return "unknown";
     if (raw.includes("WHITE DWARF") || /^(?:D[ABCOQZ]\b|WD\b)/.test(raw)) return "white-dwarf";
@@ -39,7 +39,7 @@
 
   function stellarRecordFor(item) {
     const record = data.universe.systems.find((entry) => entry.id === item.id || entry.id === item.seed_identifier);
-    return record?.primary_star ? { ...item, primary_star: record.primary_star } : item;
+    return record?.stars?.length ? { ...item, stars: record.stars } : item;
   }
 
   function element(name, attrs = {}, text = null) {
