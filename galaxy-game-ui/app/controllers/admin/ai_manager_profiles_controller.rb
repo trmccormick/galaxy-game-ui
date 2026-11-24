@@ -26,6 +26,7 @@ class Admin::AiManagerProfilesController < Admin::BaseController
     raise ActiveRecord::RecordNotFound unless template
 
     selected_names = Array(attributes[:task_names])
+    assignments = attributes[:assignments] || {}
     tasks = template[:tasks].each_with_index.filter_map do |task, index|
       next unless selected_names.include?(task[:name])
 
@@ -33,7 +34,7 @@ class Admin::AiManagerProfilesController < Admin::BaseController
         "name" => task[:name],
         "role" => task[:role],
         "status" => task[:status],
-        "assigned_asset" => attributes[:assignments][index.to_s].presence || "Unassigned"
+        "assigned_asset" => assignments[index.to_s].presence || "Unassigned"
       }
     end
 
