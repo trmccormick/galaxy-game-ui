@@ -1,0 +1,101 @@
+<div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+  <div>
+    <p class="text-xs uppercase tracking-widest" style="color:var(--gg-text-dim);">Admin / AI Manager / Mission planning</p>
+    <h1 class="gg-section-title">Mission Profile Builder</h1>
+    <p class="text-sm" style="color:var(--gg-text-secondary);">Instantiate a target-specific mission profile from a reusable template, then review its task composition and proposed assignments.</p>
+  </div>
+  <span class="text-xs px-3 py-2 rounded" style="background:rgba(255,190,11,.10);color:var(--gg-accent-warning);">Prototype draft · no live game actions</span>
+</div>
+
+<section class="gg-grid-panel mb-4">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="gg-section-title text-lg">Start from a mission template</h2>
+      <p class="text-xs mt-1" style="color:var(--gg-text-dim);">Templates are reusable patterns. The profile created below is a target-specific draft.</p>
+    </div>
+    <%= form_with url: admin_ai_manager_new_profile_path, method: :get, local: true, class: "flex flex-wrap items-end gap-2" do %>
+      <label class="block">
+        <span class="gg-stat-label block mb-1">Template</span>
+        <%= select_tag :template_id, options_for_select(@templates.map { |item| [item[:name], item[:id]] }, @template[:id]), class: "rounded px-3 py-2 text-sm", style: "background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+      </label>
+      <%= submit_tag "Load template", class: "rounded px-3 py-2 text-sm font-semibold", style: "background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.25);color:var(--gg-primary);" %>
+    <% end %>
+  </div>
+</section>
+
+<%= form_with scope: :mission_profile, url: admin_ai_manager_profiles_path, method: :post, local: true do |form| %>
+  <%= form.hidden_field :template_id, value: @template[:id] %>
+  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.5fr)_minmax(280px,1fr)] gap-4">
+    <section class="gg-grid-panel space-y-4">
+      <div>
+        <h2 class="gg-section-title text-lg">Mission definition</h2>
+        <p class="text-xs mt-1" style="color:var(--gg-text-dim);">The AI Manager would normally populate these values from the objective and current world assessment. They are editable prototype inputs here.</p>
+      </div>
+      <label class="block">
+        <span class="gg-stat-label block mb-1">Profile name</span>
+        <%= form.text_field :name, value: @template[:name], required: true, class: "w-full rounded px-3 py-2 text-sm", style: "background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+      </label>
+      <label class="block">
+        <span class="gg-stat-label block mb-1">Operational objective</span>
+        <%= form.text_area :objective, value: @template[:objective], rows: 3, required: true, class: "w-full rounded px-3 py-2 text-sm", style: "background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+      </label>
+      <label class="block">
+        <span class="gg-stat-label block mb-1">Target body / operating area</span>
+        <%= form.text_field :target_body, value: @template[:scope], required: true, class: "w-full rounded px-3 py-2 text-sm", style: "background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+      </label>
+      <div class="border-t pt-4" style="border-color:rgba(0,212,255,.12);">
+        <div class="flex flex-wrap justify-between gap-2 mb-3">
+          <h2 class="gg-section-title text-lg">Task composition</h2>
+          <span class="text-xs" style="color:var(--gg-text-dim);"><%= @template[:tasks].length %> template groupings</span>
+        </div>
+        <%= hidden_field_tag "mission_profile[task_names][]", "" %>
+        <div class="space-y-3">
+          <% @template[:tasks].each_with_index do |task, index| %>
+            <div class="rounded border p-3" style="border-color:rgba(0,212,255,.14);background:rgba(0,212,255,.025);">
+              <div class="flex items-start gap-3">
+                <%= check_box_tag "mission_profile[task_names][]", task[:name], true, id: "profile_task_#{index}", class: "mt-1" %>
+                <label for="profile_task_<%= index %>" class="flex-1 min-w-0">
+                  <span class="block text-sm font-semibold"><%= task[:name] %></span>
+                  <span class="block text-xs mt-1" style="color:var(--gg-text-dim);"><%= task[:role] %> · <%= task[:status] %></span>
+                </label>
+              </div>
+              <label class="block mt-3 ml-6">
+                <span class="gg-stat-label block mb-1">Proposed assignment</span>
+                <%= select_tag "mission_profile[assignments][#{index}]", options_for_select(@available_assets.map { |asset| [asset, asset] }, @available_assets.first), class: "w-full rounded px-3 py-2 text-xs", style: "background:var(--gg-panel);border:1px solid rgba(0,212,255,.2);color:var(--gg-text-primary);" %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-end gap-2 pt-2">
+        <%= link_to "Cancel", admin_ai_manager_library_missions_path, class: "rounded px-4 py-2 text-sm border", style: "border-color:rgba(0,212,255,.2);color:var(--gg-text-secondary);" %>
+        <%= form.submit "Create profile draft", class: "rounded px-4 py-2 text-sm font-semibold", style: "background:rgba(0,212,255,.14);border:1px solid rgba(0,212,255,.3);color:var(--gg-primary);" %>
+      </div>
+    </section>
+
+    <aside class="space-y-4">
+      <section class="gg-grid-panel">
+        <h2 class="gg-section-title text-lg">Template reference</h2>
+        <div class="gg-stat-label mt-3 mb-1">Selected template</div>
+        <p class="text-sm font-semibold"><%= @template[:name] %></p>
+        <div class="gg-stat-label mt-3 mb-1">Template maturity</div>
+        <p class="text-sm" style="color:var(--gg-accent-warning);"><%= @template[:maturity] %></p>
+        <div class="gg-stat-label mt-3 mb-1">Template scope</div>
+        <p class="text-sm"><%= @template[:scope] %></p>
+      </section>
+      <section class="gg-grid-panel">
+        <h2 class="gg-section-title text-lg">What this prototype does</h2>
+        <ul class="space-y-2 text-xs" style="color:var(--gg-text-secondary);">
+          <li>• Creates a target-specific profile draft from a reusable template.</li>
+          <li>• Lets the operator select task groupings and propose asset assignments.</li>
+          <li>• Stores the draft in this browser session so it can be reopened during this session.</li>
+          <li>• Does not load authoritative planetary state, resolve task dependencies, save to the game database, or dispatch assets.</li>
+        </ul>
+      </section>
+      <section class="gg-grid-panel">
+        <h2 class="gg-section-title text-lg">Next integration boundary</h2>
+        <p class="text-xs" style="color:var(--gg-text-secondary);">Replace the template fixtures with the shared mission-template source, assess the selected target using authoritative game data, and validate task references before the AI Manager proposes an executable profile.</p>
+      </section>
+    </aside>
+  </div>
+<% end %>
