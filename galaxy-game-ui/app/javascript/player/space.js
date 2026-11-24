@@ -172,15 +172,19 @@
     };
 
     // A barycenter is a coordinate origin, not an additional star to draw.
-    if (hasSpatialFrame && origin.type === "barycenter") {
+    if (origin.type === "barycenter") {
       const p = hasSpatialFrame
         ? { x: offsetX, y: offsetY }
-        : { x: 500, y: 245 };
-      world.appendChild(element("path", {
-        d: `M ${p.x - 7} ${p.y} H ${p.x + 7} M ${p.x} ${p.y - 7} V ${p.y + 7}`,
-        class: "space-system-origin"
-      }));
-      world.appendChild(element("text", { x: p.x + 10, y: p.y - 10, class: "space-map-subtitle" }, origin.name || "System barycenter"));
+        : origin.map_position
+          ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
+          : null;
+      if (p) {
+        world.appendChild(element("path", {
+          d: `M ${p.x - 7} ${p.y} H ${p.x + 7} M ${p.x} ${p.y - 7} V ${p.y + 7}`,
+          fill: "none", stroke: "#9aaebc", "stroke-width": "1.2", "stroke-dasharray": "2 3"
+        }));
+        world.appendChild(element("text", { x: p.x + 10, y: p.y - 10, class: "space-map-subtitle" }, origin.name || "System barycenter"));
+      }
     }
 
     positioned.forEach(({ item }) => {
