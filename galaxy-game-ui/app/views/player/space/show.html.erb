@@ -1,11 +1,11 @@
 <%= stylesheet_link_tag "pages/player_space", "data-turbo-track": "reload" %>
 
-<section class="space-workspace" data-space-root>
+<section class="space-workspace" data-space-root data-workspace="<%= @fleet_manager ? "fleet_manager" : "space" %>">
   <header class="space-heading">
     <div>
       <div class="space-eyebrow">PLAYER OPERATIONS / SPACE</div>
-      <h1>Space Operations</h1>
-      <p>Track autonomous craft across the wormhole network and within a selected star system.</p>
+      <h1><%= @fleet_manager ? "Fleet Manager" : "Space Operations" %></h1>
+      <p><%= @fleet_manager ? "Coordinate fleet groupings and independently dispatched craft across systems." : "Track an individual spacecraft across the wormhole network and within its current star system." %></p>
     </div>
     <div class="space-heading-status"><span class="space-live-dot"></span> PROTOTYPE TELEMETRY <span class="space-fixture-tag">FIXTURE DATA</span></div>
   </header>
@@ -27,10 +27,11 @@
   <div class="space-main-grid">
     <aside class="space-craft-panel space-operations-panel">
       <div class="space-panel-heading">
-        <div><span class="space-eyebrow">ASSET CONTROL</span><h2>Operations</h2></div>
+        <div><span class="space-eyebrow"><%= @fleet_manager ? "OPERATIONAL GROUPS" : "ASSET CONTROL" %></span><h2><%= @fleet_manager ? "Operations" : "Craft" %></h2></div>
         <span class="space-count"><%= @operations.length %></span>
       </div>
 
+      <% if @fleet_manager %>
       <section class="space-operation-group">
         <div class="space-operation-group-heading">
           <span>FLEET OPERATIONS</span>
@@ -71,6 +72,18 @@
         <% end %>
       </section>
       <div class="space-panel-footnote">Fleets group craft around a shared objective. Independent robotic missions are dispatched and tracked directly; no one-craft fleet is required.</div>
+      <% else %>
+        <div class="space-craft-list" role="list">
+          <% @craft.each do |craft| %>
+            <button class="space-craft-item <%= "is-selected" if craft[:id] == @selected_craft[:id] %>" type="button" data-craft-id="<%= craft[:id] %>" role="listitem">
+              <span class="space-craft-indicator <%= craft[:status] == "Operating" ? "is-operating" : "" %>"></span>
+              <span class="space-craft-copy"><strong><%= craft[:name] %></strong><small><%= craft[:type] %></small><small><%= craft[:location] %></small></span>
+              <span class="space-craft-chevron">›</span>
+            </button>
+          <% end %>
+        </div>
+        <div class="space-panel-footnote">Craft operate autonomously. Select one to inspect its current system, routes, and reported status.</div>
+      <% end %>
     </aside>
 
     <div class="space-maps-column">
