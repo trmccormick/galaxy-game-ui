@@ -20,6 +20,28 @@
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
+  function stellarTypeKey(system) {
+    const star = system?.primary_star || system?.star || {};
+    const raw = String(star.spectral_type || star.classification || star.type || "").trim().toUpperCase();
+    if (!raw) return "unknown";
+    if (raw.includes("WHITE DWARF")) return "white-dwarf";
+    if (raw.includes("BROWN DWARF") || /^[LTY]/.test(raw)) return "brown-dwarf";
+    const match = raw.match(/\b([OBAFGKM])(?:\d)?/);
+    return match ? match[1].toLowerCase() : "unknown";
+  }
+
+  function stellarTypeColor(system) {
+    const colors = { o: "#6f9fff", b: "#8fbaff", a: "#dce9f5", f: "#f3e5a4", g: "#f0c75e", k: "#e99a58", m: "#d96e73", "brown-dwarf": "#a58a78", "white-dwarf": "#b9d9f5", unknown: "#778795" };
+    return colors[stellarTypeKey(system)] || colors.unknown;
+  }
+
+  function stellarNodeClass(system) { return "stellar-node-" + stellarTypeKey(system); }
+
+  function stellarRecordFor(item) {
+    const record = data.universe.systems.find((entry) => entry.id === item.id || entry.id === item.seed_identifier);
+    return record?.primary_star ? { ...item, primary_star: record.primary_star } : item;
+  }
+
   function element(name, attrs = {}, text = null) {
     const node = document.createElementNS(svgNS, name);
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
