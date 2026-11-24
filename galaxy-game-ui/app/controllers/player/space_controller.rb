@@ -9,9 +9,8 @@ class Player::SpaceController < ApplicationController
     # The fixture universe currently supplies map topology and display metadata.
     # Enrich each system with its authoritative star records from the shared JSON
     # data tree; keep the full source arrays intact for the client renderer.
-    lookup = Lookup::StarSystemLookupService.new
     @systems = @universe.fetch("systems").map do |system|
-      source = lookup.fetch(system["id"]) || lookup.fetch(system["name"])
+      source = star_system_lookup.fetch(system["id"]) || star_system_lookup.fetch(system["name"])
       stars = source&.fetch("stars", nil) || []
       system.merge("stars" => stars, "source_type" => source&.fetch("_source_type", nil))
     end
@@ -95,10 +94,14 @@ class Player::SpaceController < ApplicationController
     nil
   end
 
+  def star_system_lookup
+    @star_system_lookup ||= Lookup::StarSystemLookupService.new
+  end
+
   # Load the canonical source JSON first. The normalized view object is a thin
   # presentation adapter; the original star/body records remain unmodified.
   def read_system_data(system_id)
-    source = Lookup::StarSystemLookupService.new.fetch(system_id)
+    source = star_system_lookup.fetch(system_id)
     return normalize_system_data(source, system_id) if source
 
     read_system_fixture(system_id)
