@@ -50,6 +50,7 @@
 .legend-dot.station { background:#43d39a; }
 .legend-dot.craft { background:#ffb45c; }
 .legend-line { display:inline-block; width:14px; border-top:2px solid #36a9f5; }
+.legend-line.orbit { border-top:1px dashed #8aa7ba; }
 .space-inspector { display:grid; gap:.7rem; }
 .space-inspector-card { padding:.75rem; }
 .space-status-pill { padding:.2rem .4rem; border:1px solid #8c713c; border-radius:4px; color:#e5bd70; font-size:.59rem; white-space:nowrap; }
