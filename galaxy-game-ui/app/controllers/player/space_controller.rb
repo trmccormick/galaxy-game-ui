@@ -107,12 +107,15 @@ class Player::SpaceController < ApplicationController
     read_system_fixture(system_id)
   end
 
+  ASTRONOMICAL_UNIT_METERS = 149_597_870_700.0
+
   def normalize_system_data(source, system_id)
     stars = source["stars"].is_a?(Array) ? source["stars"] : Array(source.dig("solar_system", "stars"))
-    bodies = flatten_records(source["celestial_bodies"])
+    stars = stars.map { |star| normalize_source_identity(star) }
+    bodies = flatten_records(source["celestial_bodies"]).uniq { |body| body["id"] || body["name"] }
     stations = %w[stations orbital_facilities space_stations].flat_map do |key|
       flatten_records(source[key])
-    end.uniq
+    end.uniq { |record| record["id"] || record["name"] }
 
     {
       "fixture" => false,
@@ -130,21 +133,60 @@ class Player::SpaceController < ApplicationController
     }
   end
 
-  # Celestial body data may be grouped by category in the source JSON. Flatten
-  # only the grouping containers; retain each body hash and all nested fields.
-  def flatten_records(value)
+  # Give source records a stable renderer key without replacing their canonical
+  # identifier or otherwise rewriting the source's scientific fields.
+  def normalize_source_identity(record)
+    normalized = record.deep_dup
+    normalized["id"] ||= normalized["identifier"]
+    normalized
+  end
+
+  # Curated systems group bodies by category; generated systems may additionally
+  # nest moons under their parent planet. Preserve both forms and annotate the
+  # presentation copy with category and parent metadata.
+  def flatten_records(value, category = nil, parent = nil)
     case value
     when Array
-      value.flat_map { |item| flatten_records(item) }
+      value.flat_map { |item| flatten_records(item, category, parent) }
     when Hash
-      if value.key?("id") || value.key?("name")
-        [value]
+      if value.key?("name") && (value.key?("identifier") || value.key?("id") || value.key?("type"))
+        body = normalize_source_identity(value)
+        body["source_category"] ||= category
+        if parent
+          body["parent_body"] ||= parent["name"]
+          body["parent_id"] ||= parent["id"] || parent["identifier"]
+        end
+        body["orbits"] = normalized_orbits(body) unless body["orbits"].is_a?(Array) && body["orbits"].any?
+
+        nested_moons = Array(value["moons"]).flat_map do |moon|
+          flatten_records(moon, "nested_moons", body)
+        end
+        [body] + nested_moons
       else
-        value.values.flat_map { |item| flatten_records(item) }
+        value.flat_map { |key, item| flatten_records(item, key, parent) }
       end
     else
       []
     end
+  end
+
+  # The legacy orbital_elements schema stores semi_major_axis in meters and
+  # inclination in degrees. The renderer's shared orbit contract is AU/degrees.
+  # Do not infer orbital elements from star_distances: those are distance
+  # measurements, not a complete orbit definition.
+  def normalized_orbits(body)
+    elements = body["orbital_elements"]
+    return [] unless elements.is_a?(Hash) && elements["semi_major_axis"].present?
+
+    orbit = {
+      "around" => body["parent_body"] || body["parent_star"] || "Primary Star",
+      "semi_major_axis_au" => elements["semi_major_axis"].to_f / ASTRONOMICAL_UNIT_METERS,
+      "eccentricity" => elements["eccentricity"],
+      "inclination_deg" => elements["inclination"],
+      "mean_anomaly_deg" => elements["mean_anomaly"],
+      "source" => "orbital_elements"
+    }
+    [orbit]
   end
 
   def read_system_fixture(system_id)
