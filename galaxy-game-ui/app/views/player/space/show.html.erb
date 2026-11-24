@@ -28,7 +28,7 @@
     <aside class="space-craft-panel space-operations-panel">
       <div class="space-panel-heading">
         <div><span class="space-eyebrow"><%= @fleet_manager ? "OPERATIONAL GROUPS" : "ASSET CONTROL" %></span><h2><%= @fleet_manager ? "Operations" : "Craft" %></h2></div>
-        <span class="space-count"><%= @operations.length %></span>
+        <span class="space-count"><%= @fleet_manager ? @operations.length : @craft.length %></span>
       </div>
 
       <% if @fleet_manager %>
