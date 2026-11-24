@@ -10,6 +10,7 @@
   const byId = (items, id) => items.find((item) => item.id === id);
   let selectedCraft = byId(data.craft, data.selected_craft_id) || data.craft[0];
   let selectedSystem = data.selected_system_id;
+  const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
   function element(name, attrs = {}, text = null) {
@@ -76,7 +77,7 @@
       if (routeIds.has(system.id)) node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 14, fill: "none", stroke: "#eab65c", "stroke-width": "1.2", "stroke-dasharray": "3 3" }));
       node.appendChild(element("text", { x: p.x, y: p.y + 29, class: "space-map-label", "text-anchor": "middle" }, system.name));
       node.appendChild(element("text", { x: p.x, y: p.y + 43, class: "space-map-subtitle", "text-anchor": "middle" }, system.subtitle || system.id));
-      const select = () => { window.location.assign(`/player/space?system_id=${encodeURIComponent(system.id)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`); };
+      const select = () => { window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(system.id)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`); };
       node.addEventListener("click", select);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); select(); } });
       world.appendChild(node);
@@ -140,7 +141,7 @@
     const nextCraft = byId(data.craft, id);
     if (!nextCraft) return;
     if (nextCraft.location_system_id && nextCraft.location_system_id !== selectedSystem) {
-      window.location.assign(`/player/space?system_id=${encodeURIComponent(nextCraft.location_system_id)}&craft_id=${encodeURIComponent(nextCraft.id)}`);
+      window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(nextCraft.location_system_id)}&craft_id=${encodeURIComponent(nextCraft.id)}`);
       return;
     }
     selectedCraft = nextCraft;
@@ -183,7 +184,7 @@
 
   root.querySelectorAll("[data-craft-id]").forEach((button) => button.addEventListener("click", () => selectCraft(button.dataset.craftId)));
   root.querySelector("#space-system-select")?.addEventListener("change", (event) => {
-    window.location.assign(`/player/space?system_id=${encodeURIComponent(event.target.value)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
+    window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(event.target.value)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
   });
 
   renderNetwork();
