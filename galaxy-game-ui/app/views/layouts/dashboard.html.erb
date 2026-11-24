@@ -129,6 +129,9 @@
               <li><%= link_to admin_ai_manager_library_missions_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerLibraryController) && %w[missions mission].include?(action_name)}" do %>
                 <span>&#x1F5C2;</span> Mission Library
               <% end %></li>
+              <li><%= link_to admin_ai_manager_new_profile_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerProfilesController)}" do %>
+                <span>&#x1F4DD;</span> Profile Builder
+              <% end %></li>
               <li class="px-4 pt-3 pb-1 text-[10px] uppercase tracking-widest" style="color:var(--gg-text-dim);">Operations / Oversight</li>
               <li><%= link_to admin_ai_manager_workbench_path, class: "gg-nav-link #{'active' if controller.is_a?(Admin::AiManagerWorkbenchController)}" do %>
                 <span>&#x1F4CB;</span> Task Workbench
