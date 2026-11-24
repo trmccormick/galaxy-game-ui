@@ -11,7 +11,7 @@
   </header>
 
   <div class="space-toolbar">
-    <span class="space-toolbar-meta">ACTIVE CRAFT FOCUS</span>
+    <span class="space-toolbar-meta" id="space-focus-mode"><%= @selected_craft[:location_system_id] == @selected_system["id"] ? "ACTIVE CRAFT FOCUS" : "SYSTEM INSPECTION" %></span>
     <strong id="space-focus-label"><%= @selected_craft[:name] %> · <%= @selected_system["name"] %></strong>
     <span class="space-toolbar-divider"></span>
     <span class="space-toolbar-meta"><%= @systems.length %> systems in test universe</span>
