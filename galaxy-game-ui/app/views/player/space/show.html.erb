@@ -125,8 +125,8 @@
 
       <section class="space-map-panel">
         <div class="space-map-heading">
-          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Illustrative spatial layout · bodies, infrastructure, and craft locations</p></div>
-          <div class="space-map-actions"><button type="button" data-map-reset="system">Reset view</button></div>
+          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Illustrative spatial layout · schematic orbit references · bodies, infrastructure, and craft locations</p></div>
+          <div class="space-map-actions"><button type="button" data-toggle-orbit-references aria-pressed="true">Hide orbits</button><button type="button" data-map-reset="system">Reset view</button></div>
         </div>
         <div class="space-map-canvas system-canvas" data-map="system">
           <svg id="space-system-map" role="img" aria-label="Selected star system navigation map"></svg>
