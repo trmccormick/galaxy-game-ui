@@ -39,21 +39,28 @@ class Player::SpaceController < ApplicationController
         operation_id: "LUNA-INFRASTRUCTURE", assignment_type: "Fleet member",
         status: "In transit", location_system_id: "SOL", location: "Earth–Luna transfer",
         destination: "Luna Base", destination_system_id: "SOL", operation: "Luna infrastructure and resupply",
-        route: ["SOL"], progress: 68, updated: "Prototype telemetry"
+        route: ["SOL"], local_route: ["EARTH", "LUNA-BASE"], map_position: { x: 45, y: 45 }, progress: 68, updated: "Prototype telemetry"
       },
       {
         id: "VENUS-SKIMMER-01", name: "Venus Gas Harvester 01", type: "Robotic atmospheric skimmer", role: "Independent autonomous mission",
         operation_id: "VENUS-GAS-LOOP", assignment_type: "Independent dispatch",
         status: "Operating", location_system_id: "SOL", location: "Venus atmosphere",
         destination: "Luna Base", destination_system_id: "SOL", operation: "Recurring Luna–Venus gas delivery",
-        route: ["SOL"], progress: 42, updated: "Prototype telemetry"
+        route: ["SOL"], local_route: ["LUNA-BASE", "VENUS", "LUNA-BASE"], map_position: { x: 29, y: 38 }, progress: 42, updated: "Prototype telemetry"
       },
       {
         id: "EDEN-SCOUT-01", name: "Eden Scout 01", type: "Survey craft", role: "Independent survey dispatch",
         operation_id: "EDEN-SURVEY", assignment_type: "Independent dispatch",
         status: "Awaiting dispatch", location_system_id: "AOL-732356", location: "Aki Gaia",
         destination: "Aki Gaia survey region", destination_system_id: "AOL-732356", operation: "Aki Gaia reconnaissance",
-        route: ["SOL", "AOL-732356"], progress: 0, updated: "Prototype telemetry"
+        route: ["SOL", "AOL-732356"], local_route: ["AKI-GAIA-1", "AKI-GAIA-2A"], map_position: { x: 31, y: 42 }, progress: 0, updated: "Prototype telemetry"
+      },
+      {
+        id: "LUNA-CONSTRUCTION-01", name: "Luna Construction Tug 01", type: "Construction support craft", role: "Orbital construction support",
+        operation_id: "LUNA-INFRASTRUCTURE", assignment_type: "Fleet member",
+        status: "Working", location_system_id: "SOL", location: "Luna Base",
+        destination: "Luna Base", destination_system_id: "SOL", operation: "Luna infrastructure and resupply",
+        route: ["SOL"], local_route: ["LUNA-BASE"], map_position: { x: 48, y: 44 }, progress: 31, updated: "Prototype telemetry"
       }
     ]
   end
@@ -64,7 +71,7 @@ class Player::SpaceController < ApplicationController
       {
         id: "LUNA-INFRASTRUCTURE", name: "Luna Infrastructure", kind: "fleet",
         objective: "Coordinate Luna base construction and resupply",
-        status: "Active", craft_ids: ["LUNA-TRANSFER-01"]
+        status: "Active", craft_ids: ["LUNA-TRANSFER-01", "LUNA-CONSTRUCTION-01"]
       },
       {
         id: "VENUS-GAS-LOOP", name: "Venus Gas Delivery", kind: "independent",
