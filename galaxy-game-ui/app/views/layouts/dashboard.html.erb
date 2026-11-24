@@ -55,8 +55,11 @@
             <li><%= link_to player_planetary_path, class: "gg-nav-link#{' active' if controller.is_a?(PlayerController) and action_name == 'planetary'}" do %>
               <span>&#x1F310;</span> Planetary
             <% end %></li>
-            <li><%= link_to player_space_path, class: "gg-nav-link#{' active' if controller.is_a?(Player::SpaceController)}" do %>
+            <li><%= link_to player_space_path, class: "gg-nav-link#{' active' if controller.is_a?(Player::SpaceController) && !@fleet_manager}" do %>
               <span>&#x2728;</span> Space Operations
+            <% end %></li>
+            <li><%= link_to player_fleet_manager_path, class: "gg-nav-link#{' active' if controller.is_a?(Player::SpaceController) && @fleet_manager}" do %>
+              <span>&#x1F6F8;</span> Fleet Manager
             <% end %></li>
             <li><%= link_to player_missions_path, class: "gg-nav-link#{' active' if controller.is_a?(Player::MissionsController)}" do %>
               <span>&#x1F680;</span> My Missions
