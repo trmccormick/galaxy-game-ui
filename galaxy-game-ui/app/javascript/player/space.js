@@ -10,7 +10,10 @@
   const byId = (items, id) => items.find((item) => item.id === id);
   let selectedCraft = byId(data.craft, data.selected_craft_id) || data.craft[0];
   let selectedSystem = data.selected_system_id;
-  let selectedGalaxySystemId = data.galaxy_catalog?.systems?.[0]?.id || null;
+  const galaxyRecordForFocus = () => (data.galaxy_catalog?.systems || []).find((item) =>
+    item.id === selectedSystem || item.seed_identifier === selectedSystem
+  ) || null;
+  let selectedGalaxySystemId = selectedSystem === "SOL" ? "SOL" : (galaxyRecordForFocus()?.id || null);
   let showOrbitReferences = true;
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
@@ -110,13 +113,19 @@
   const constellationWorld = constellationSvg ? attachMapControls(constellationSvg, "galaxy-sky") : null;
 
   function updateGalaxySelection() {
-    const system = (data.galaxy_catalog?.systems || []).find((item) => item.id === selectedGalaxySystemId);
+    const system = galaxyRecordForFocus();
     const name = document.getElementById("galaxy-selection-name");
     const details = document.getElementById("galaxy-selection-details");
     if (!name || !details) return;
+    if (selectedSystem === "SOL") {
+      name.textContent = "Sol";
+      details.textContent = "Reference origin · 0.00 ly";
+      return;
+    }
     if (!system) {
-      name.textContent = "Select a nearby system";
-      details.textContent = "31 curated real-system seeds in this UI catalog";
+      const focused = data.universe.systems.find((item) => item.id === selectedSystem);
+      name.textContent = focused?.name || selectedSystem || "System focus unavailable";
+      details.textContent = "Galactic position unavailable · no sourced galactic coordinates are available for this system.";
       return;
     }
     const constellation = (data.constellation_catalog?.constellations || []).find((item) => item.id === system.constellation);
@@ -130,9 +139,9 @@
 
   function chooseGalaxySystem(system) {
     selectedGalaxySystemId = system.id;
-    const systemEntry = data.universe.systems.find((item) => item.id === system.seed_identifier);
+    const systemEntry = data.universe.systems.find((item) => item.id === system.seed_identifier || item.id === system.id);
     if (systemEntry && systemEntry.id !== selectedSystem) {
-      window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(systemEntry.id)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
+      window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(systemEntry.id)}`);
       return;
     }
     renderGalaxySpatial();
@@ -143,6 +152,18 @@
   function renderGalaxySpatial() {
     if (!galaxySpatialWorld) return;
     galaxySpatialWorld.replaceChildren();
+    const focused = selectedSystem === "SOL" || galaxyRecordForFocus()?.position?.cartesian_ly;
+    const stage = root.querySelector('[data-galaxy-canvas="spatial"]');
+    const canvas = stage?.querySelector(".space-map-canvas");
+    const unavailable = stage?.querySelector('[data-galaxy-unavailable="spatial"]');
+    if (canvas) canvas.hidden = !focused;
+    if (unavailable) {
+      unavailable.hidden = Boolean(focused);
+      unavailable.textContent = `Galactic position unavailable for ${data.universe.systems.find((item) => item.id === selectedSystem)?.name || selectedSystem}. No sourced galactic coordinates are available, so this system is not plotted on the Sol neighborhood map.`;
+    }
+    const footnote = stage?.querySelector(".galaxy-map-footnote");
+    if (footnote) footnote.hidden = !focused;
+    if (!focused) return;
     const systems = data.galaxy_catalog?.systems || [];
     const objects = [{ id: "SOL", name: "Sol", position: { cartesian_ly: { x: 0, y: 0, z: 0 }, distance_ly: 0 } }, ...systems];
     const project = (position) => {
@@ -198,6 +219,18 @@
   function renderGalaxySky() {
     if (!constellationWorld) return;
     constellationWorld.replaceChildren();
+    const stage = root.querySelector('[data-galaxy-canvas="sky"]');
+    const canvas = stage?.querySelector(".space-map-canvas");
+    const unavailable = stage?.querySelector('[data-galaxy-unavailable="sky"]');
+    const solObserverContext = selectedSystem === "SOL";
+    if (canvas) canvas.hidden = !solObserverContext;
+    if (unavailable) {
+      unavailable.hidden = solObserverContext;
+      unavailable.textContent = `Constellation sky context unavailable for ${data.universe.systems.find((item) => item.id === selectedSystem)?.name || selectedSystem}. The loaded IAU boundary chart is specifically the sky as observed from Sol; no observer-specific chart is supplied for this system.`;
+    }
+    const footnote = stage?.querySelector(".galaxy-map-footnote");
+    if (footnote) footnote.hidden = !solObserverContext;
+    if (!solObserverContext) return;
     const catalog = data.constellation_catalog || {};
     const features = catalog.boundaries?.features || [];
     const project = (ra, dec) => {
@@ -525,7 +558,9 @@
     }
     selectedCraft = nextCraft;
     root.querySelectorAll("[data-craft-id]").forEach((button) => button.classList.toggle("is-selected", button.dataset.craftId === id));
+    selectedGalaxySystemId = selectedSystem === "SOL" ? "SOL" : (galaxyRecordForFocus()?.id || null);
     updateInspector();
+    renderGalaxy();
     renderNetwork();
     renderSystem();
   }
@@ -568,10 +603,6 @@
     event.currentTarget.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
     renderSystem();
   });
-  root.querySelector("#space-system-select")?.addEventListener("change", (event) => {
-    window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(event.target.value)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
-  });
-
   renderGalaxy();
   renderNetwork();
   renderSystem();
