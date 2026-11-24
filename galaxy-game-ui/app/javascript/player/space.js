@@ -402,6 +402,7 @@
     };
 
     const positioned = objects.map((item) => ({ item, position: positionFor(item) })).filter(({ position }) => position);
+    const localCraftIds = new Set(craftWithLocalPositions.map((craft) => craft.id));
     if (!positioned.length) {
       world.appendChild(element("text", { x: 500, y: 250, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial positions reported for this system"));
       return;
@@ -538,6 +539,7 @@
 
     const systemLabelBoxes = [];
     positioned.forEach(({ item }) => {
+      if (localCraftIds.has(item.id)) return;
       const p = orbitDisplayPoint(item) || screenPoint(item);
       if (!p) return;
       const isStar = item.kind === "star" || item.type === "star" || stars.some((starItem) => starItem.id === item.id);
