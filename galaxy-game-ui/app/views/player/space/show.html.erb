@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="galaxy-map-stage" data-galaxy-canvas="spatial">
-          <div class="galaxy-map-caption">PHYSICAL NEIGHBORHOOD · EQUATORIAL CARTESIAN PROJECTION · LIGHT-YEARS</div>
+          <div class="galaxy-map-caption" data-galaxy-caption="spatial">SYSTEM-CENTERED NEIGHBORHOOD · LOCAL CARTESIAN PROJECTION · LIGHT-YEARS</div>
           <div class="space-map-canvas galaxy-spatial-canvas"><svg id="space-galaxy-map" role="img" aria-label="Spatial neighborhood map for the active craft system"></svg></div>
           <div class="galaxy-position-unavailable" data-galaxy-unavailable="spatial" hidden></div>
           <div class="galaxy-map-footnote">Local Bubble is a physical interstellar region. Its boundary is intentionally not drawn here because this fixture does not include a sourced 3D boundary model. Real systems without a loaded local-system fixture remain catalog entries; Alpha Centauri can open its existing System View fixture.</div>
@@ -123,7 +123,7 @@
 
       <section class="space-map-panel">
         <div class="space-map-heading">
-          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Illustrative spatial layout · schematic orbit references · bodies, infrastructure, and craft locations</p></div>
+          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Primary star centered · sourced orbital paths where available · schematic guides otherwise</p></div>
           <div class="space-map-actions"><button type="button" data-toggle-orbit-references aria-pressed="true">Hide orbits</button><button type="button" data-map-reset="system">Reset view</button></div>
         </div>
         <div class="space-map-canvas system-canvas" data-map="system">
