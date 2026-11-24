@@ -137,7 +137,13 @@
   }
 
   function selectCraft(id) {
-    selectedCraft = byId(data.craft, id) || selectedCraft;
+    const nextCraft = byId(data.craft, id);
+    if (!nextCraft) return;
+    if (nextCraft.location_system_id && nextCraft.location_system_id !== selectedSystem) {
+      window.location.assign(`/player/space?system_id=${encodeURIComponent(nextCraft.location_system_id)}&craft_id=${encodeURIComponent(nextCraft.id)}`);
+      return;
+    }
+    selectedCraft = nextCraft;
     root.querySelectorAll("[data-craft-id]").forEach((button) => button.classList.toggle("is-selected", button.dataset.craftId === id));
     updateInspector();
     renderNetwork();
