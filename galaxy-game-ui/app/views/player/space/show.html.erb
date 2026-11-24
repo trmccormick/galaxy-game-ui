@@ -104,12 +104,13 @@
           <div><dt>Class</dt><dd id="space-inspector-type"><%= @selected_craft[:type] %></dd></div>
           <div><dt>Current location</dt><dd id="space-inspector-location"><%= @selected_craft[:location] %></dd></div>
           <div><dt>Destination</dt><dd id="space-inspector-destination"><%= @selected_craft[:destination] %></dd></div>
-          <div><dt>Assigned operation</dt><dd id="space-inspector-operation"><%= @selected_craft[:operation] %></dd></div>
+          <div><dt>Assignment</dt><dd id="space-inspector-operation"><%= @selected_craft[:assignment_type] %> · <%= @selected_craft[:operation] %></dd></div>
           <div><dt>Telemetry</dt><dd id="space-inspector-updated"><%= @selected_craft[:updated] %></dd></div>
         </dl>
         <div class="space-progress-label"><span>Mission progress</span><strong id="space-inspector-progress"><%= @selected_craft[:progress] %>%</strong></div>
         <div class="space-progress-track"><span id="space-progress-fill" style="width:<%= @selected_craft[:progress] %>%"></span></div>
         <div class="space-route-block"><h3>Ordered route</h3><ol id="space-route-list"><% @selected_craft[:route].each do |system_id| %><li><%= @systems.find { |system| system["id"] == system_id }&.fetch("name", system_id) || system_id %></li><% end %></ol></div>
+        <div class="space-route-block"><h3>In-system itinerary</h3><ol id="space-local-route-list"><% (@selected_craft[:local_route] || []).each do |location_id| %><li><%= location_id.tr("-", " ").titleize %></li><% end %></ol></div>
       </section>
       <section class="space-inspector-card space-system-card">
         <span class="space-eyebrow">SYSTEM CONTEXT</span>
