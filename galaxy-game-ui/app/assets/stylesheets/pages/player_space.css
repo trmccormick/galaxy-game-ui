@@ -165,3 +165,12 @@
 /* Selected map labels remain legible over dense marker clusters. */
 .space-map-label-selected { fill:#e7f8ff; font-weight:700; paint-order:stroke; stroke:#07111b; stroke-width:3px; stroke-linejoin:round; }
 .galaxy-system-label { fill:#c9dce8; font-size:11px; paint-order:stroke; stroke:#07111b; stroke-width:2.6px; stroke-linejoin:round; }
+
+.space-orbit-reference {
+  fill: none;
+  stroke: rgba(115, 157, 184, .38);
+  stroke-width: 1.15;
+  stroke-dasharray: 3 6;
+  pointer-events: none;
+}
+.space-orbit-path { pointer-events: none; }
