@@ -160,3 +160,8 @@
 .galaxy-selection-details span { color:var(--gg-text-secondary); font-size:.62rem; }
 .galaxy-map-footnote { padding:.45rem .75rem .6rem; color:var(--gg-text-dim); font-size:.59rem; line-height:1.45; }
 @media (max-width:760px) { .galaxy-spatial-canvas,.galaxy-sky-canvas { height:260px; } .galaxy-mode-actions { justify-content:flex-start; } }
+
+
+/* Selected map labels remain legible over dense marker clusters. */
+.space-map-label-selected { fill:#e7f8ff; font-weight:700; paint-order:stroke; stroke:#07111b; stroke-width:3px; stroke-linejoin:round; }
+.galaxy-system-label { fill:#c9dce8; font-size:11px; paint-order:stroke; stroke:#07111b; stroke-width:2.6px; stroke-linejoin:round; }
