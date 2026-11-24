@@ -1,7 +1,7 @@
 # Interface and Workflow Direction
 
 **Status:** Prototype guidance aligned to established product intent  
-**Last updated:** 2026-11-11  
+**Last updated:** 2026-11-24  
 **Scope:** Application interface, player/admin workflows, navigation and screen responsibilities.
 
 This page describes the interface direction for the new Galaxy Game UI. It is not a final screen specification, visual design system, or implementation task list.
@@ -79,6 +79,23 @@ When a screen depends on context, make the scope visible. Examples include:
 - an asset's physical location versus the page currently being viewed.
 
 The exact rules for each workflow must come from the main game's current code/data and established domain intent. Do not invent location or ownership semantics to simplify a screen.
+
+### Active craft focus in Space Operations
+
+**ESTABLISHED UI DIRECTION — 2026-11-24**
+
+Space Operations is a craft-centered workspace. Selecting a craft changes the context of the workspace as a whole; it is not merely a highlighted row or a right-hand inspector update.
+
+- The selected craft's **reported current system** drives the System View, Galaxy View, Wormhole Network emphasis, system summary, and other context-dependent panels.
+- The craft's destination and ordered route remain separate mission information. Do not substitute a destination for its current location.
+- The system selector must not compete with craft focus as a second independent source of context. Use the craft list and contextual map selection to navigate; keep the active craft/system context visible in the toolbar.
+- Galaxy View must use sourced spatial coordinates for the focused system. If its galactic position is unknown, show an explicit unavailable state and do not leave the Sol neighborhood map displayed as though it represented that system.
+- Constellation boundaries are observer-dependent. The current prototype chart is specifically the sky as observed from Sol; when another system is focused, do not present that chart as though it were observed from the selected system. Show that observer-specific sky data is unavailable until it exists.
+- System View must load the focused system's own data. If the fixture/source has no local bodies, facilities, or spatial positions, show that limitation rather than retaining objects from the previous system or inventing positions.
+- Wormhole Network may continue to show the broader configured topology, but it must emphasize the focused system and the selected craft's route. A wormhole route is not the craft's physical galactic position.
+- If the selected craft has no reported current system, do not infer one from its destination or route; show location/context as unavailable.
+
+The current UI fixtures are illustrative. This interaction contract does not establish live telemetry, actual craft movement, or a production data/API schema. The main game remains authoritative for craft location and system state.
 
 ## 4. Existing world-inspection capabilities
 
