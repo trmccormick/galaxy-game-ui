@@ -14,6 +14,10 @@ module GalaxyGame
 
     TEMPLATE_PATH = JSON_DATA.join("templates").freeze
 
+    # Curated and procedurally generated star-system records.
+    STAR_SYSTEMS_PATH = JSON_DATA.join("star_systems").freeze
+    GENERATED_STAR_SYSTEMS_PATH = JSON_DATA.join("generated_star_systems").freeze
+
     # Legacy/draft task library paths (same names as the main game).
     MISSIONS_PATH = JSON_DATA.join("missions").freeze
     TASKS_V2_PATH = MISSIONS_PATH.join("tasks_v2").freeze
