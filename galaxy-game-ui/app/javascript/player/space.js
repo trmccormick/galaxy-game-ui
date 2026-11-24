@@ -342,11 +342,23 @@
     const bodies = system.bodies || [];
     const stations = system.stations || [];
     const stars = system.stars || (system.star ? [system.star] : []);
+    const systemObjects = [...stars, ...bodies, ...stations];
+    const hasSystemSpatialData = systemObjects.some((item) => {
+      if (spatialCoordinates(item)) return true;
+      const p = item.display_position || item.map_position;
+      return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y));
+    });
+    if (!hasSystemSpatialData) {
+      world.appendChild(element("text", {
+        x: 500, y: 250, class: "space-map-subtitle", "text-anchor": "middle"
+      }, `System spatial data unavailable for ${system.name || selectedSystem}. No celestial-body or facility positions are supplied.`));
+      return;
+    }
 
     // Never mix coordinate systems on one canvas. Use authoritative SpatialLocation
     // coordinates only when every displayed object has a valid location in this
     // frame; otherwise use the explicitly schematic fixture/display layout.
-    const objects = [...stars, ...bodies, ...stations, ...localCraft];
+    const objects = [...systemObjects, ...localCraft];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
     const positionFor = (item) => {
       if (hasSpatialFrame) return spatialCoordinates(item);
