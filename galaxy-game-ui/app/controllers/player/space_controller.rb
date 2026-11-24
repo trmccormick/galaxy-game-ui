@@ -149,7 +149,7 @@ class Player::SpaceController < ApplicationController
     when Array
       value.flat_map { |item| flatten_records(item, category, parent) }
     when Hash
-      if value.key?("name") && (value.key?("identifier") || value.key?("id") || value.key?("type"))
+      if value.key?("name") || value.key?("id")
         body = normalize_source_identity(value)
         body["source_category"] ||= category
         if parent
