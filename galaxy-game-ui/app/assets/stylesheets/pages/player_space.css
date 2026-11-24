@@ -139,7 +139,7 @@
 @media (max-width:1180px) { .space-main-grid { grid-template-columns:205px minmax(320px,1fr); } }
 
 
-/* Sol-centered astronomical catalog and independent sky-context layer. */
+/* System-centered astronomical neighborhoods and independent sky-context layer. */
 .galaxy-map-panel { border-color:rgba(0,212,255,.28); }
 .galaxy-mode-actions { display:flex; flex-wrap:wrap; gap:.3rem; }
 .galaxy-mode-actions button[aria-pressed="true"] { border-color:var(--gg-primary); color:var(--gg-primary); background:rgba(0,212,255,.13); }
@@ -149,7 +149,7 @@
 .galaxy-sky-canvas { height:330px; background-image:linear-gradient(rgba(0,212,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.045) 1px,transparent 1px); background-size:50px 50px; }
 .galaxy-sky-reset { display:flex; justify-content:flex-end; padding:0 .7rem .35rem; }
 .galaxy-axis { stroke:rgba(0,212,255,.14); stroke-width:1; stroke-dasharray:2 7; }
-.galaxy-sol-point { fill:#f6d27b; stroke:#fff0c1; stroke-width:1.5; }
+.galaxy-sol-point,.galaxy-center-point { fill:#f6d27b; stroke:#fff0c1; stroke-width:1.5; }
 .galaxy-star-point { fill:#54c9f5; stroke:#d2f5ff; stroke-width:1; }
 .galaxy-sky-point { fill:#5ec9f4; stroke:#d2f5ff; stroke-width:1; }
 .constellation-boundary { fill:none; stroke:rgba(0,212,255,.34); stroke-width:1.15; vector-effect:non-scaling-stroke; }
