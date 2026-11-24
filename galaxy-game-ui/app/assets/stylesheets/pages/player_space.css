@@ -84,3 +84,56 @@
 .space-system-orbit { fill:none; stroke:#52616e; stroke-width:1; stroke-dasharray:3 5; opacity:.45; }
 @media (max-width:1180px) { .space-main-grid { grid-template-columns:180px minmax(320px,1fr); } .space-inspector { grid-column:1 / -1; grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:760px) { .space-main-grid { grid-template-columns:1fr; } .space-inspector { grid-column:auto; grid-template-columns:1fr; } .space-craft-panel { order:2; } .space-maps-column { order:1; } .space-inspector { order:3; } .space-heading { align-items:flex-start; flex-direction:column; } .network-canvas,.system-canvas { height:250px; } }
+
+/* GalaxyGame Player operations: hierarchy first, reference-app styling second. */
+.space-workspace {
+  color:var(--gg-text-primary);
+  font-family:inherit;
+}
+.space-heading h1 { color:var(--gg-text-primary); font-size:1.35rem; }
+.space-heading p { color:var(--gg-text-secondary); }
+.space-eyebrow { color:var(--gg-primary); letter-spacing:.09em; }
+.space-main-grid { grid-template-columns:232px minmax(360px,1fr) 255px; gap:.65rem; }
+.space-craft-panel,.space-map-panel,.space-inspector-card {
+  background:var(--gg-bg-panel);
+  border:1px solid rgba(0,212,255,.18);
+  border-radius:var(--gg-radius-md);
+  box-shadow:none;
+}
+.space-craft-panel { padding:.7rem; }
+.space-panel-heading h2,.space-map-heading h2,.space-inspector-card h2 { color:var(--gg-text-primary); }
+.space-count,.space-group-count { background:rgba(0,212,255,.1); color:var(--gg-primary); }
+.space-operation-group + .space-operation-group { margin-top:.85rem; padding-top:.75rem; border-top:1px solid rgba(0,212,255,.13); }
+.space-operation-group-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:.45rem; color:var(--gg-text-secondary); font-size:.59rem; font-weight:700; letter-spacing:.1em; }
+.space-group-count { display:grid; place-items:center; min-width:18px; height:18px; border-radius:4px; font-size:.62rem; }
+.space-operation-card { padding:.55rem; border:1px solid rgba(0,212,255,.16); border-radius:5px; background:rgba(0,212,255,.035); }
+.space-operation-title { display:flex; align-items:center; gap:.38rem; min-width:0; }
+.space-operation-title strong { min-width:0; overflow:hidden; color:var(--gg-text-primary); font-size:.68rem; text-overflow:ellipsis; white-space:nowrap; }
+.space-operation-symbol { display:grid; place-items:center; flex:none; width:19px; height:19px; border-radius:4px; background:rgba(0,212,255,.14); color:var(--gg-primary); font-size:.63rem; font-weight:700; }
+.space-operation-state { margin-left:auto; color:var(--gg-accent-success); font-size:.56rem; white-space:nowrap; }
+.space-operation-card p { margin:.35rem 0 .5rem 1.45rem; color:var(--gg-text-secondary); font-size:.6rem; line-height:1.4; }
+.space-operation-members { display:grid; gap:.25rem; }
+.space-craft-item { background:rgba(10,10,10,.24); border-radius:4px; }
+.space-craft-item:hover { border-color:rgba(0,212,255,.42); background:rgba(0,212,255,.07); }
+.space-craft-item.is-selected { border-color:var(--gg-primary); background:rgba(0,212,255,.11); box-shadow:inset 2px 0 var(--gg-primary); }
+.space-craft-copy strong { color:var(--gg-text-primary); }
+.space-craft-copy small { color:var(--gg-text-secondary); }
+.space-independent-item { margin-top:.28rem; width:100%; }
+.space-panel-footnote { border-color:rgba(0,212,255,.13); color:var(--gg-text-dim); }
+.space-map-heading { background:rgba(0,0,0,.12); }
+.space-map-canvas { background-color:#090f17; background-image:radial-gradient(rgba(0,212,255,.17) .8px,transparent .8px); }
+.space-map-legend { border-color:rgba(0,212,255,.18); background:rgba(10,10,10,.88); }
+.space-map-actions button { border-color:rgba(0,212,255,.25); background:rgba(0,212,255,.06); color:var(--gg-text-secondary); }
+.space-map-actions button:hover { border-color:var(--gg-primary); color:var(--gg-primary); }
+.space-status-pill { border-color:rgba(255,214,10,.35); color:var(--gg-accent-warning); background:rgba(255,214,10,.06); }
+.space-progress-label strong { color:var(--gg-primary); }
+.space-progress-track span { background:var(--gg-primary); }
+.space-details div { border-color:rgba(0,212,255,.12); }
+.space-details dt,.space-system-card p { color:var(--gg-text-secondary); }
+.space-details dd { color:var(--gg-text-primary); }
+.space-system-stats span { background:rgba(0,212,255,.06); border:1px solid rgba(0,212,255,.1); }
+.space-system-stats strong { color:var(--gg-primary); }
+.space-network-edge.natural { stroke:var(--gg-primary); }
+.space-network-edge-label { fill:var(--gg-primary); }
+.space-map-node .node-halo { stroke:var(--gg-primary); }
+@media (max-width:1180px) { .space-main-grid { grid-template-columns:205px minmax(320px,1fr); } }
