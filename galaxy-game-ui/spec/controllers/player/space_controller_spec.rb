@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe Player::SpaceController do
+RSpec.describe Player::SpaceController, type: :controller do
   describe "#normalize_system_data" do
-    let(:controller) do
+    let(:normalizer) do
       described_class.allocate.tap do |instance|
         instance.instance_variable_set(:@selected_system, { "id" => "AOL-732356", "name" => "Aki Gaia" })
       end
@@ -29,7 +29,7 @@ RSpec.describe Player::SpaceController do
         "_source_type" => "curated"
       }
 
-      result = controller.send(:normalize_system_data, source, "SOL")
+      result = normalizer.send(:normalize_system_data, source, "SOL")
       normalized_luna = result.fetch("bodies").first
 
       expect(result.dig("stars", 0, "id")).to eq("SOL")
