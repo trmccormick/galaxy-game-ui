@@ -24,8 +24,8 @@
     const star = system?.primary_star || system?.star || {};
     const raw = String(star.spectral_type || star.classification || star.type || "").trim().toUpperCase();
     if (!raw) return "unknown";
-    if (raw.includes("WHITE DWARF")) return "white-dwarf";
-    if (raw.includes("BROWN DWARF") || /^[LTY]/.test(raw)) return "brown-dwarf";
+    if (raw.includes("WHITE DWARF") || /^D[ABCOQZ]\\b|^WD\\b/.test(raw)) return "white-dwarf";
+    if (raw.includes("BROWN DWARF") || /^[LTY]\\d?(?:\\b|[- ])/ .test(raw)) return "brown-dwarf";
     const match = raw.match(/\b([OBAFGKM])(?:\d)?/);
     return match ? match[1].toLowerCase() : "unknown";
   }
