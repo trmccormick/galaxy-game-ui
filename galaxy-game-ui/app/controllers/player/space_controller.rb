@@ -101,7 +101,7 @@ class Player::SpaceController < ApplicationController
   # Load the canonical source JSON first. The normalized view object is a thin
   # presentation adapter; the original star/body records remain unmodified.
   def read_system_data(system_id)
-    source = star_system_lookup.fetch(system_id)
+    source = star_system_lookup.fetch(system_id) || star_system_lookup.fetch(@selected_system["name"])
     return normalize_system_data(source, system_id) if source
 
     read_system_fixture(system_id)
