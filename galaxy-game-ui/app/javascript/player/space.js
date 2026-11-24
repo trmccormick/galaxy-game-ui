@@ -159,7 +159,7 @@
     if (canvas) canvas.hidden = !focused;
     if (unavailable) {
       unavailable.hidden = Boolean(focused);
-      unavailable.textContent = `Galactic position unavailable for ${data.universe.systems.find((item) => item.id === selectedSystem)?.name || selectedSystem}. No sourced galactic coordinates are available, so this system is not plotted on the Sol neighborhood map.`;
+      unavailable.textContent = `Neighborhood data unavailable for ${data.universe.systems.find((item) => item.id === selectedSystem)?.name || selectedSystem}. No sourced positions for nearby systems are available, so the neighborhood map cannot be populated.`;
     }
     const footnote = stage?.querySelector(".galaxy-map-footnote");
     if (footnote) footnote.hidden = !focused;
