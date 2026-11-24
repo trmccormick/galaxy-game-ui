@@ -5,6 +5,7 @@ class Player::SpaceController < ApplicationController
 
   def show
     @universe = read_fixture("universe.min.json")
+    @galaxy_catalog = read_fixture("galaxy/sol_neighborhood.min.json")
     @systems = @universe.fetch("systems")
     @selected_system = @systems.find { |system| system["id"] == params[:system_id] } ||
       @systems.find { |system| system["id"] == "SOL" } || @systems.first
