@@ -372,7 +372,19 @@
     const location = item?.spatial_location;
     if (!location) return null;
     const x = Number(location.x_coordinate), y = Number(location.y_coordinate), z = Number(location.z_coordinate ?? 0);
-    return [x, y, z].every(Number.isFinite) ? { x, y, z } : null;
+    if (![x, y, z].every(Number.isFinite)) return null;
+
+    // StarSim currently creates (0,0,0) SpatialLocation placeholders before
+    // an orbital position has been calculated. Do not render that default as
+    // a real system position. A genuine origin position must be explicitly
+    // marked valid by the API (including on the location record).
+    const explicitlyValid = location.position_valid === true ||
+      location.spatial_position_valid === true ||
+      item.position_valid === true ||
+      item.spatial_position_valid === true;
+    if (x === 0 && y === 0 && z === 0 && !explicitlyValid) return null;
+
+    return { x, y, z };
   }
 
   function renderSystem() {
