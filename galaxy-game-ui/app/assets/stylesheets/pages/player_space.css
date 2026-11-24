@@ -174,3 +174,20 @@
   pointer-events: none;
 }
 .space-orbit-path { pointer-events: none; }
+
+
+/* Explicit empty state when the focused system has no sourced galaxy/sky coordinates. */
+.galaxy-position-unavailable {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  color: var(--text-muted, #9aabb8);
+  background: rgba(8, 18, 27, .58);
+  border: 1px dashed rgba(116, 151, 173, .34);
+  border-radius: 6px;
+  text-align: center;
+  line-height: 1.6;
+}
+.galaxy-position-unavailable[hidden] { display: none; }
