@@ -578,7 +578,13 @@
     };
     Object.entries(values).forEach(([id, value]) => { const node = document.getElementById(id); if (node) node.textContent = value; });
     const focusLabel = document.getElementById("space-focus-label");
-    if (focusLabel) focusLabel.textContent = `${selectedCraft.name} · ${systemNames[selectedCraft.location_system_id] || selectedCraft.location}`;
+    const focusMode = document.getElementById("space-focus-mode");
+    const craftSystemName = systemNames[selectedCraft.location_system_id] || selectedCraft.location;
+    const systemMatchesCraft = selectedCraft.location_system_id === selectedSystem;
+    if (focusMode) focusMode.textContent = systemMatchesCraft ? "ACTIVE CRAFT FOCUS" : "SYSTEM INSPECTION";
+    if (focusLabel) focusLabel.textContent = systemMatchesCraft
+      ? `${selectedCraft.name} · ${craftSystemName}`
+      : `${systemNames[selectedSystem] || data.system.name} · selected asset: ${selectedCraft.name}`;
     const fill = document.getElementById("space-progress-fill");
     if (fill) fill.style.width = `${selectedCraft.progress}%`;
     const list = document.getElementById("space-route-list");
