@@ -188,14 +188,13 @@
     };
     const projected = objects.map((item) => ({ item, point: project(item.position) })).filter((item) => item.point);
     if (!projected.length) return;
-    const minX = Math.min(...projected.map(({ point }) => point.x));
-    const maxX = Math.max(...projected.map(({ point }) => point.x));
-    const minY = Math.min(...projected.map(({ point }) => point.y));
-    const maxY = Math.max(...projected.map(({ point }) => point.y));
-    const spanX = Math.max(maxX - minX, 1), spanY = Math.max(maxY - minY, 1);
-    const scale = Math.min(780 / spanX, 350 / spanY);
-    const offsetX = 500 - ((minX + maxX) / 2) * scale;
-    const offsetY = 235 + ((minY + maxY) / 2) * scale;
+    const extentX = Math.max(1, ...projected.map(({ point }) => Math.abs(point.x)));
+    const extentY = Math.max(1, ...projected.map(({ point }) => Math.abs(point.y)));
+    // Keep the focused system at the visual origin; scale the neighborhood
+    // around it rather than centering the bounding box of the surrounding stars.
+    const scale = Math.min(420 / extentX, 200 / extentY);
+    const offsetX = 500;
+    const offsetY = 235;
 
     const galaxyLabelBoxes = [];
     const labelCandidates = projected.slice().sort((a, b) => {
