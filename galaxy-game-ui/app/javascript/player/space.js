@@ -110,9 +110,21 @@
     });
 
     const localCraft = data.craft.filter((craft) => craft.location_system_id === system.system_id);
+    const locations = new Map([...(system.bodies || []), ...(system.stations || [])].map((item) => [item.id, item.map_position]));
+    const selectedLocalRoute = selectedCraft?.location_system_id === system.system_id ? (selectedCraft.local_route || []) : [];
+    const routePoints = selectedLocalRoute.map((id) => locations.get(id)).filter(Boolean).map((p) => [p.x * 10, p.y * 5]);
+    if (routePoints.length > 1) {
+      world.appendChild(element("polyline", {
+        points: routePoints.map(([x, y]) => `${x},${y}`).join(" "),
+        fill: "none", stroke: "#00d4ff", "stroke-width": "2.5", "stroke-dasharray": "7 5",
+        "stroke-linecap": "round", "stroke-linejoin": "round", opacity: ".9"
+      }));
+    }
+
     localCraft.forEach((craft, index) => {
-      const x = 120 + index * 78, y = 390 - index * 35;
-      const marker = element("g", { class: "space-map-node", tabindex: "0", role: "button", "aria-label": `Select ${craft.name}` });
+      const position = craft.map_position || { x: 12 + index * 9, y: 78 - index * 7 };
+      const x = position.x * 10, y = position.y * 5;
+      const marker = element("g", { class: `space-map-node ${craft.id === selectedCraft?.id ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${craft.name}` });
       marker.appendChild(element("circle", { cx: x, cy: y, r: 13, class: "node-halo" }));
       marker.appendChild(element("path", { d: `M ${x} ${y - 8} L ${x + 7} ${y + 7} L ${x - 7} ${y + 7} Z`, fill: craft.id === selectedCraft?.id ? "#ffbf66" : "#d48e42", stroke: "#ffe1b8", "stroke-width": "1" }));
       marker.appendChild(element("text", { x, y: y + 22, class: "space-map-label", "text-anchor": "middle" }, craft.name));
