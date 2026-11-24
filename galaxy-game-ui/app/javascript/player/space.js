@@ -121,25 +121,28 @@
     const localCraft = data.craft.filter((craft) => craft.location_system_id === system.system_id);
     const bodies = system.bodies || [];
     const stations = system.stations || [];
-    const star = system.star || {};
+    const stars = system.stars || (system.star ? [system.star] : []);
 
-    // The API's spatial locations are authoritative when available. All objects
-    // are interpreted in the system's declared coordinate frame; the renderer
-    // does not assume that a star occupies the origin.
-    const objects = [
-      ...(star.id && (spatialCoordinates(star) || star.map_position) ? [star] : []),
-      ...bodies,
-      ...stations,
-      ...localCraft
-    ];
+    // Never mix coordinate systems on one canvas. Use authoritative SpatialLocation
+    // coordinates only when every displayed object has a valid location in this
+    // frame; otherwise use the explicitly schematic fixture/display layout.
+    const objects = [...stars, ...bodies, ...stations, ...localCraft];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
     const positionFor = (item) => {
       if (hasSpatialFrame) return spatialCoordinates(item);
-      const p = item.map_position;
+      const p = item.display_position || item.map_position;
       return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y))
         ? { x: Number(p.x), y: Number(p.y), z: 0 }
         : null;
     };
+    const starById = new Map(stars.map((item) => [item.id, item]));
+    const starByName = new Map(stars.map((item) => [item.name, item]));
+    const orbitFor = (body) => {
+      if (body.orbit) return body.orbit;
+      if (Array.isArray(body.orbits) && body.orbits.length) return body.orbits[0];
+      return null;
+    };
+    const parentStarFor = (body, orbit) => starById.get(body.parent_star || orbit?.around) || starByName.get(orbit?.around) || null;
 
     const positioned = objects.map((item) => ({ item, position: positionFor(item) })).filter(({ position }) => position);
     if (!positioned.length) {
@@ -171,13 +174,71 @@
       return { x: x * 10, y: y * 5 };
     };
 
+    // Draw parent-centered orbital paths from source orbital elements. These
+    // are geometric paths, not a live ephemeris. Missing eccentricity/inclination
+    // are shown as circular, face-on schematic paths and remain marked as such.
+    const displayScale = Number(system.display_layout?.au_to_map_units || 4);
+    const orbitScreenPoint = (center, x, y) => ({
+      x: center.x + x * (hasSpatialFrame ? scale : 10),
+      y: center.y - y * (hasSpatialFrame ? scale : 5)
+    });
+    bodies.forEach((body) => {
+      const orbit = orbitFor(body);
+      const parent = orbit && parentStarFor(body, orbit);
+      if (!orbit || !parent) return;
+      const a = Number(orbit.semi_major_axis_au ?? orbit.source_distance_au);
+      if (!Number.isFinite(a) || a <= 0) return;
+      const eccentricity = Number.isFinite(Number(orbit.eccentricity)) ? Math.max(0, Math.min(0.95, Number(orbit.eccentricity))) : 0;
+      const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
+      const center = screenPoint(parent);
+      if (!center) return;
+      const path = [];
+      for (let step = 0; step <= 120; step += 1) {
+        const theta = (step / 120) * Math.PI * 2;
+        const radius = a * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(theta));
+        const localX = radius * Math.cos(theta) * displayScale;
+        const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * displayScale;
+        const point = orbitScreenPoint(center, localX, localY);
+        path.push(`${point.x.toFixed(2)},${point.y.toFixed(2)}`);
+      }
+      world.appendChild(element("polyline", {
+        points: path.join(" "),
+        fill: "none",
+        stroke: "#6f8798",
+        "stroke-width": "1.1",
+        "stroke-dasharray": "4 5",
+        opacity: ".72",
+        class: "space-orbit-path"
+      }));
+    });
+
+    // In fixture mode, place bodies on their schematic orbit at the supplied
+    // display phase. This is deliberately not an asserted physical position.
+    const orbitDisplayPoint = (body) => {
+      if (hasSpatialFrame || !system.display_layout?.phase_values_are_illustrative) return null;
+      const orbit = orbitFor(body);
+      const parent = orbit && parentStarFor(body, orbit);
+      const center = parent && screenPoint(parent);
+      const a = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au);
+      if (!center || !Number.isFinite(a) || a <= 0) return null;
+      const e = Number.isFinite(Number(orbit.eccentricity)) ? Number(orbit.eccentricity) : 0;
+      const phase = Number(body.display_phase_deg || 0) * Math.PI / 180;
+      const radius = a * (1 - e * e) / (1 + e * Math.cos(phase));
+      const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
+      const dx = radius * Math.cos(phase) * displayScale;
+      const dy = radius * Math.sin(phase) * Math.cos(inclination * Math.PI / 180) * displayScale;
+      return orbitScreenPoint(center, dx, dy);
+    };
+
     // A barycenter is a coordinate origin, not an additional star to draw.
     if (origin.type === "barycenter") {
       const p = hasSpatialFrame
         ? { x: offsetX, y: offsetY }
-        : origin.map_position
-          ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
-          : null;
+        : system.display_layout?.mode === "schematic"
+          ? { x: 500, y: 245 }
+          : origin.map_position
+            ? { x: Number(origin.map_position.x) * 10, y: Number(origin.map_position.y) * 5 }
+            : null;
       if (p) {
         world.appendChild(element("path", {
           d: `M ${p.x - 7} ${p.y} H ${p.x + 7} M ${p.x} ${p.y - 7} V ${p.y + 7}`,
@@ -188,9 +249,9 @@
     }
 
     positioned.forEach(({ item }) => {
-      const p = screenPoint(item);
+      const p = orbitDisplayPoint(item) || screenPoint(item);
       if (!p) return;
-      const isStar = item.kind === "star" || item.type === "star" || item.id === star.id;
+      const isStar = item.kind === "star" || item.type === "star" || stars.some((starItem) => starItem.id === item.id);
       const isStation = stations.includes(item);
       const radius = isStar ? 10 : 6;
       if (isStation) {
