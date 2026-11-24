@@ -8,13 +8,21 @@ class Player::SpaceController < ApplicationController
     @galaxy_catalog = read_fixture("galaxy/sol_neighborhood.min.json")
     @constellation_catalog = read_fixture("galaxy/constellations.sol.min.json")
     @systems = @universe.fetch("systems")
-    @selected_system = @systems.find { |system| system["id"] == params[:system_id] } ||
-      @systems.find { |system| system["id"] == "SOL" } || @systems.first
-
-    @system_data = read_system_fixture(@selected_system.fetch("id"))
     @craft = craft_fixtures
+    requested_craft = @craft.find { |craft| craft[:id] == params[:craft_id] }
+    @selected_craft = requested_craft || if params[:system_id].present?
+      @craft.find { |craft| craft[:location_system_id] == params[:system_id] } || @craft.first
+    else
+      @craft.first
+    end
+
+    # An explicit craft focus takes precedence over a stale system parameter:
+    # every Space panel must follow the craft's reported current system.
+    focus_system_id = requested_craft&.dig(:location_system_id) || params[:system_id]
+    @selected_system = @systems.find { |system| system["id"] == focus_system_id } ||
+      @systems.find { |system| system["id"] == "SOL" } || @systems.first
+    @system_data = read_system_fixture(@selected_system.fetch("id"))
     @operations = operation_fixtures
-    @selected_craft = @craft.find { |craft| craft[:id] == params[:craft_id] } || @craft.first
     @selected_operation = @operations.find { |operation| operation[:id] == @selected_craft[:operation_id] } || @operations.first
     @fleet_manager = params[:workspace] == "fleet_manager"
     @page_title = @fleet_manager ? "Fleet Manager" : "Space Operations"
