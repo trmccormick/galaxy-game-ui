@@ -5,7 +5,6 @@ class Player::SpaceController < ApplicationController
 
   def show
     @universe = read_fixture("universe.min.json")
-    @galaxy_catalog = read_fixture("galaxy/sol_neighborhood.min.json")
     @constellation_catalog = read_fixture("galaxy/constellations.sol.min.json")
     @systems = @universe.fetch("systems")
     @craft = craft_fixtures
@@ -22,6 +21,7 @@ class Player::SpaceController < ApplicationController
     @selected_system = @systems.find { |system| system["id"] == focus_system_id } ||
       @systems.find { |system| system["id"] == "SOL" } || @systems.first
     @system_data = read_system_fixture(@selected_system.fetch("id"))
+    @galaxy_catalog = read_neighborhood_fixture(@selected_system.fetch("id"))
     @operations = operation_fixtures
     @selected_operation = @operations.find { |operation| operation[:id] == @selected_craft[:operation_id] } || @operations.first
     @fleet_manager = params[:workspace] == "fleet_manager"
@@ -32,6 +32,20 @@ class Player::SpaceController < ApplicationController
 
   def read_fixture(filename)
     JSON.parse(FIXTURE_ROOT.join(filename).read)
+  end
+
+  # Each Galaxy View neighborhood is centered on the currently focused system.
+  # Sol has the initial sourced catalog; other systems load their own catalog
+  # when one is supplied. Missing local data stays unavailable, never Sol data.
+  def read_neighborhood_fixture(system_id)
+    return read_fixture("galaxy/sol_neighborhood.min.json") if system_id == "SOL"
+
+    path = FIXTURE_ROOT.join("galaxy", "neighborhoods", "#{system_id}.min.json")
+    return nil unless path.file?
+
+    JSON.parse(path.read)
+  rescue JSON::ParserError
+    nil
   end
 
   def read_system_fixture(system_id)
