@@ -319,7 +319,7 @@
       if (routeIds.has(system.id)) node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 14, fill: "none", stroke: "#eab65c", "stroke-width": "1.2", "stroke-dasharray": "3 3" }));
       node.appendChild(element("text", { x: p.x, y: p.y + 29, class: "space-map-label", "text-anchor": "middle" }, system.name));
       node.appendChild(element("text", { x: p.x, y: p.y + 43, class: "space-map-subtitle", "text-anchor": "middle" }, system.subtitle || system.id));
-      const select = () => { window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(system.id)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`); };
+      const select = () => { window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(system.id)}`); };
       node.addEventListener("click", select);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); select(); } });
       world.appendChild(node);
