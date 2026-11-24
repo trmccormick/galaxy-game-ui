@@ -65,7 +65,7 @@ RSpec.describe Player::SpaceController, type: :controller do
         "_source_type" => "generated"
       }
 
-      result = controller.send(:normalize_system_data, source, "AOL-732356")
+      result = normalizer.send(:normalize_system_data, source, "AOL-732356")
       planet, moon = result.fetch("bodies")
 
       expect(planet["id"]).to eq("PLANET-1")
@@ -91,7 +91,7 @@ RSpec.describe Player::SpaceController, type: :controller do
         }
       }
 
-      result = controller.send(:normalize_system_data, source, "SOL")
+      result = normalizer.send(:normalize_system_data, source, "SOL")
 
       expect(result.dig("bodies", 0, "orbits")).to eq([])
     end
