@@ -178,14 +178,20 @@
     // are geometric paths, not a live ephemeris. Missing eccentricity/inclination
     // are shown as circular, face-on schematic paths and remain marked as such.
     const displayScale = Number(system.display_layout?.au_to_map_units || 4);
+    const frameUnits = String(frame.units || "").toLowerCase();
+    const auToFrameUnits = frameUnits === "au" ? 1
+      : frameUnits === "m" || frameUnits === "meter" || frameUnits === "meters" ? 149597870700
+      : frameUnits === "km" || frameUnits === "kilometer" || frameUnits === "kilometers" ? 149597870.7
+      : null;
+    const orbitScale = hasSpatialFrame ? auToFrameUnits : displayScale;
     const orbitScreenPoint = (center, x, y) => ({
       x: center.x + x * (hasSpatialFrame ? scale : 10),
-      y: center.y - y * (hasSpatialFrame ? scale : 5)
+      y: center.y - y * (hasSpatialFrame ? scale : 10)
     });
     bodies.forEach((body) => {
       const orbit = orbitFor(body);
       const parent = orbit && parentStarFor(body, orbit);
-      if (!orbit || !parent) return;
+      if (!orbit || !parent || !Number.isFinite(orbitScale)) return;
       const a = Number(orbit.semi_major_axis_au ?? orbit.source_distance_au);
       if (!Number.isFinite(a) || a <= 0) return;
       const eccentricity = Number.isFinite(Number(orbit.eccentricity)) ? Math.max(0, Math.min(0.95, Number(orbit.eccentricity))) : 0;
@@ -196,8 +202,8 @@
       for (let step = 0; step <= 120; step += 1) {
         const theta = (step / 120) * Math.PI * 2;
         const radius = a * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(theta));
-        const localX = radius * Math.cos(theta) * displayScale;
-        const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * displayScale;
+        const localX = radius * Math.cos(theta) * Math.cos(0) * orbitScale;
+        const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * orbitScale;
         const point = orbitScreenPoint(center, localX, localY);
         path.push(`${point.x.toFixed(2)},${point.y.toFixed(2)}`);
       }
