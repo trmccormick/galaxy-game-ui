@@ -399,7 +399,10 @@
     const hasSourceOrbitalPaths = bodies.some((body) => {
       const orbit = orbitFor(body);
       const semiMajorAxis = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au);
-      return orbit && Number.isFinite(semiMajorAxis) && semiMajorAxis > 0;
+      const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
+      const primaryStarReferences = [null, undefined, "", "Primary Star", primaryStar?.id, primaryStar?.name];
+      return orbit && primaryStarReferences.includes(parentReference) &&
+        Number.isFinite(semiMajorAxis) && semiMajorAxis > 0;
     });
     // With orbital elements but no object coordinates, use the primary star as
     // the diagram origin. This is a relative orbital schematic, not a claim
