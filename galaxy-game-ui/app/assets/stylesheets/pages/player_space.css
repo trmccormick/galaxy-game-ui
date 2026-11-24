@@ -194,3 +194,31 @@
 .galaxy-position-unavailable[hidden] { display: none; }
 
 .space-map-canvas[hidden] { display: none !important; }
+
+
+/* Primary-star spectral classes: shared node language in Galaxy and Network views. */
+.stellar-node-o,.stellar-node-b { fill:#8fbaff; }
+.stellar-node-a { fill:#dce9f5; }
+.stellar-node-f { fill:#f3e5a4; }
+.stellar-node-g { fill:#f0c75e; }
+.stellar-node-k { fill:#e99a58; }
+.stellar-node-m { fill:#d96e73; }
+.stellar-node-brown-dwarf { fill:#a58a78; }
+.stellar-node-white-dwarf { fill:#b9d9f5; }
+.stellar-node-unknown { fill:#778795; }
+.galaxy-center-point.stellar-node-o,.galaxy-center-point.stellar-node-b,.galaxy-center-point.stellar-node-a,.galaxy-center-point.stellar-node-f,.galaxy-center-point.stellar-node-g,.galaxy-center-point.stellar-node-k,.galaxy-center-point.stellar-node-m,.galaxy-center-point.stellar-node-brown-dwarf,.galaxy-center-point.stellar-node-white-dwarf,.galaxy-center-point.stellar-node-unknown,
+.galaxy-star-point.stellar-node-o,.galaxy-star-point.stellar-node-b,.galaxy-star-point.stellar-node-a,.galaxy-star-point.stellar-node-f,.galaxy-star-point.stellar-node-g,.galaxy-star-point.stellar-node-k,.galaxy-star-point.stellar-node-m,.galaxy-star-point.stellar-node-brown-dwarf,.galaxy-star-point.stellar-node-white-dwarf,.galaxy-star-point.stellar-node-unknown,
+.galaxy-sky-point.stellar-node-o,.galaxy-sky-point.stellar-node-b,.galaxy-sky-point.stellar-node-a,.galaxy-sky-point.stellar-node-f,.galaxy-sky-point.stellar-node-g,.galaxy-sky-point.stellar-node-k,.galaxy-sky-point.stellar-node-m,.galaxy-sky-point.stellar-node-brown-dwarf,.galaxy-sky-point.stellar-node-white-dwarf,.galaxy-sky-point.stellar-node-unknown { stroke:#dce8ef; }
+.stellar-legend { gap:.45rem .6rem; max-width:calc(100% - 1.3rem); }
+.stellar-legend .legend-dot { width:7px; height:7px; border:1px solid rgba(255,255,255,.45); }
+.legend-dot.stellar-o,.legend-dot.stellar-b { background:#8fbaff; }
+.legend-dot.stellar-a { background:#dce9f5; }
+.legend-dot.stellar-f { background:#f3e5a4; }
+.legend-dot.stellar-g { background:#f0c75e; }
+.legend-dot.stellar-k { background:#e99a58; }
+.legend-dot.stellar-m { background:#d96e73; }
+.legend-dot.stellar-brown { background:#a58a78; }
+.legend-dot.stellar-white { background:#b9d9f5; }
+.legend-dot.stellar-unknown { background:#778795; }
+.network-map-legend { gap:.4rem .65rem; }
+.network-map-legend .legend-note { color:var(--gg-text-dim); }
