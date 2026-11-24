@@ -191,3 +191,5 @@
   line-height: 1.6;
 }
 .galaxy-position-unavailable[hidden] { display: none; }
+
+.space-map-canvas[hidden] { display: none !important; }
