@@ -24,7 +24,7 @@
     const stars = system?.stars || [];
     const star = stars.find((item) => item.primary === true || item.is_primary === true || item.role === "primary") ||
       stars[0] || system?.primary_star || system?.star || {};
-    const raw = String(star.spectral_type || star.classification || star.type || "").trim().toUpperCase();
+    const raw = String(star.spectral_class || star.spectral_type || star.classification || star.type || star.type_of_star || "").trim().toUpperCase();
     if (!raw) return "unknown";
     if (raw.includes("WHITE DWARF") || /^(?:D[ABCOQZ]\b|WD\b)/.test(raw)) return "white-dwarf";
     if (raw.includes("BROWN DWARF") || /^(?:[LTY]\d?(?:\b|[- ])|BROWN DWARF)/.test(raw)) return "brown-dwarf";
@@ -424,7 +424,7 @@
       return null;
     };
     const parentObjectFor = (body, orbit) => {
-      const reference = body.parent_id || body.parent_star || orbit?.around;
+      const reference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
       return objectById.get(reference) || objectByName.get(reference) ||
         (reference === "Primary Star" || !reference ? stars[0] : null);
     };
