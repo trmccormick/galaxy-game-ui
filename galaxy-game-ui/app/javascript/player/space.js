@@ -192,9 +192,9 @@
     const extentY = Math.max(1, ...projected.map(({ point }) => Math.abs(point.y)));
     // Keep the focused system at the visual origin; scale the neighborhood
     // around it rather than centering the bounding box of the surrounding stars.
-    const scale = Math.min(420 / extentX, 200 / extentY);
+    const scale = Math.min(420 / extentX, 215 / extentY);
     const offsetX = 500;
-    const offsetY = 235;
+    const offsetY = 250;
 
     const galaxyLabelBoxes = [];
     const labelCandidates = projected.slice().sort((a, b) => {
@@ -212,8 +212,8 @@
     });
 
     // The selected system is the origin of its own local neighborhood frame.
-    galaxySpatialWorld.appendChild(element("line", { x1: 500, y1: 35, x2: 500, y2: 435, class: "galaxy-axis" }));
-    galaxySpatialWorld.appendChild(element("line", { x1: 80, y1: 235, x2: 920, y2: 235, class: "galaxy-axis" }));
+    galaxySpatialWorld.appendChild(element("line", { x1: 500, y1: 35, x2: 500, y2: 465, class: "galaxy-axis" }));
+    galaxySpatialWorld.appendChild(element("line", { x1: 80, y1: 250, x2: 920, y2: 250, class: "galaxy-axis" }));
     projected.forEach(({ item, point }) => {
       const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
       const isCenter = Boolean(item.isCenter);
