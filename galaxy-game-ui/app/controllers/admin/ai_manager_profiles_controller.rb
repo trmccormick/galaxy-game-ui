@@ -38,7 +38,7 @@ class Admin::AiManagerProfilesController < Admin::BaseController
     end
 
     if tasks.empty?
-      return redirect_to new_admin_ai_manager_profile_path(template_id: template[:id]),
+      return redirect_to admin_ai_manager_new_profile_path(template_id: template[:id]),
         alert: "Select at least one task grouping for the mission profile."
     end
 
