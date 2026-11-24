@@ -438,7 +438,7 @@
     const parentObjectFor = (body, orbit) => {
       const reference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
       return objectById.get(reference) || objectByName.get(reference) ||
-        (reference === "Primary Star" || !reference ? stars[0] : null);
+        (reference === "Primary Star" || !reference ? primaryStar : null);
     };
 
     const positioned = objects.map((item) => ({ item, position: positionFor(item) })).filter(({ position }) => position);
