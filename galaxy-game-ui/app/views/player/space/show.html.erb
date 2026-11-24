@@ -11,12 +11,8 @@
   </header>
 
   <div class="space-toolbar">
-    <label for="space-system-select">System focus</label>
-    <select id="space-system-select">
-      <% @systems.each do |system| %>
-        <option value="<%= system["id"] %>" <%= "selected" if system["id"] == @selected_system["id"] %>><%= system["name"] %></option>
-      <% end %>
-    </select>
+    <span class="space-toolbar-meta">ACTIVE CRAFT FOCUS</span>
+    <strong id="space-focus-label"><%= @selected_craft[:name] %> · <%= @selected_system["name"] %></strong>
     <span class="space-toolbar-divider"></span>
     <span class="space-toolbar-meta"><%= @systems.length %> systems in test universe</span>
     <span class="space-toolbar-meta"><%= @universe.fetch("connections").length %> configured connection</span>
@@ -89,7 +85,7 @@
     <div class="space-maps-column">
       <section class="space-map-panel galaxy-map-panel">
         <div class="space-map-heading">
-          <div><span class="space-eyebrow">ASTRONOMICAL NEIGHBORHOOD</span><h2>Galaxy View · Sol</h2><p>Real nearby-system positions · sky boundaries shown separately from physical space</p></div>
+          <div><span class="space-eyebrow">ASTRONOMICAL NEIGHBORHOOD</span><h2>Galaxy View · <%= @selected_system["name"] %></h2><p>Spatial context for the active craft system · unknown coordinates remain unavailable</p></div>
           <div class="space-map-actions galaxy-mode-actions">
             <button type="button" data-galaxy-mode="spatial" aria-pressed="true">Spatial</button>
             <button type="button" data-galaxy-mode="sky" aria-pressed="false">Constellations</button>
@@ -98,13 +94,15 @@
         </div>
         <div class="galaxy-map-stage" data-galaxy-canvas="spatial">
           <div class="galaxy-map-caption">PHYSICAL NEIGHBORHOOD · EQUATORIAL CARTESIAN PROJECTION · LIGHT-YEARS</div>
-          <div class="space-map-canvas galaxy-spatial-canvas"><svg id="space-galaxy-map" role="img" aria-label="Three-dimensional spatial projection of Sol's nearby star systems"></svg></div>
+          <div class="space-map-canvas galaxy-spatial-canvas"><svg id="space-galaxy-map" role="img" aria-label="Spatial neighborhood map for the active craft system"></svg></div>
+          <div class="galaxy-position-unavailable" data-galaxy-unavailable="spatial" hidden></div>
           <div class="galaxy-map-footnote">Local Bubble is a physical interstellar region. Its boundary is intentionally not drawn here because this fixture does not include a sourced 3D boundary model. Real systems without a loaded local-system fixture remain catalog entries; Alpha Centauri can open its existing System View fixture.</div>
         </div>
         <div class="galaxy-map-stage" data-galaxy-canvas="sky" hidden>
           <div class="galaxy-map-caption">SOL OBSERVING SKY · RIGHT ASCENSION / DECLINATION · IAU BOUNDARIES</div>
           <div class="space-map-actions galaxy-sky-reset"><button type="button" data-map-reset="galaxy-sky">Reset sky view</button></div>
-          <div class="space-map-canvas galaxy-sky-canvas"><svg id="space-constellation-map" role="img" aria-label="IAU constellation boundaries and nearby star systems as seen from Sol"></svg></div>
+          <div class="space-map-canvas galaxy-sky-canvas"><svg id="space-constellation-map" role="img" aria-label="Observer-specific IAU constellation sky chart"></svg></div>
+          <div class="galaxy-position-unavailable" data-galaxy-unavailable="sky" hidden></div>
           <div class="galaxy-map-footnote">Constellations are angular sky regions, not 3D stellar neighborhoods. Positions are source-derived; the nearby-star source does not state its coordinate epoch, so boundary matches remain provisional.</div>
         </div>
         <div class="galaxy-selection-details">
