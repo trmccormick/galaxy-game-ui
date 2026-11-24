@@ -210,3 +210,16 @@ Tasks should remain narrow and independently testable. Start with static or mock
 - Which status colors and line styles remain legible across the prototype's map and panel backgrounds?
 
 Resolve these through prototype use and inspection of the actual game data, rather than treating this page as a source of predetermined answers.
+
+## 7. Real orbital geometry in the System View
+
+The System View's long-term target is a physically meaningful orbital presentation, not decorative orbit rings or schematic spacing.
+
+- **Sol:** use sourced orbital data with explicit epoch, reference frame, units, and provenance. Do not infer physical orbital paths from illustrative map positions or display spacing.
+- **Generated systems:** generate coherent orbital architectures using scientifically informed real-world examples and observed exoplanet/planetary-system characteristics. Generated values must be identified as procedural, not observational.
+- **One shared path:** real and generated systems use the same orbital-data schema and renderer/calculation path. The model must identify the central body and support parent-centered satellite orbits as well as star-centered planetary orbits.
+- **Time and accuracy:** investigate how orbital phase and position are evaluated over game time, which approximations are suitable, and where perturbations or changing elements matter. Record epoch and reference frame; preserve uncertainty and incomplete data rather than implying false precision.
+- **Authority boundary:** the main game's simulation/orbital data is authoritative. The UI renders the orbital state/data it receives and must not become a competing orbital calculator or source of game truth.
+- **Prototype caveat:** schematic fallback rings based on illustrative fixture positions are not real orbital geometry. They are temporary presentation scaffolding only and must be removed or replaced when the sourced/generated orbital-data path is available. Do not present them as validated Sol orbits.
+
+This is a future capability and data/model investigation, not authorization to change the main simulation or to invent orbital values in UI fixtures. See the main game's [Sol System Reference](https://github.com/trmccormick/galaxyGame/blob/main/docs/wiki/astronomy/sol_system_reference.md) for the domain-level open question.
