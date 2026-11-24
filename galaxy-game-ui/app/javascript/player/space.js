@@ -11,6 +11,7 @@
   let selectedCraft = byId(data.craft, data.selected_craft_id) || data.craft[0];
   let selectedSystem = data.selected_system_id;
   let selectedGalaxySystemId = data.galaxy_catalog?.systems?.[0]?.id || null;
+  let showOrbitReferences = true;
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
@@ -360,6 +361,26 @@
       return { x: x * 10, y: y * 5 };
     };
 
+    // The current Sol UI fixture has display positions but no orbital elements.
+    // These rings retain the earlier renderer's visual convention while remaining
+    // explicitly schematic rather than implying physical semi-major axes.
+    if (!hasSpatialFrame && showOrbitReferences && !bodies.some((body) => orbitFor(body))) {
+      const star = stars[0];
+      const center = star && screenPoint(star);
+      if (center) {
+        bodies.forEach((body) => {
+          const point = screenPoint(body);
+          if (!point) return;
+          const radius = Math.hypot(point.x - center.x, point.y - center.y);
+          if (radius < 12) return;
+          world.appendChild(element("circle", {
+            cx: center.x, cy: center.y, r: radius.toFixed(2),
+            class: "space-orbit-reference", "data-orbit-body": body.id
+          }));
+        });
+      }
+    }
+
     // Draw parent-centered orbital paths from source orbital elements. These
     // are geometric paths, not a live ephemeris. Missing eccentricity/inclination
     // are shown as circular, face-on schematic paths and remain marked as such.
@@ -374,7 +395,7 @@
       x: center.x + x * (hasSpatialFrame ? scale : 10),
       y: center.y - y * (hasSpatialFrame ? scale : 10)
     });
-    bodies.forEach((body) => {
+    if (showOrbitReferences) bodies.forEach((body) => {
       const orbit = orbitFor(body);
       const parent = orbit && parentStarFor(body, orbit);
       if (!orbit || !parent || !Number.isFinite(orbitScale)) return;
@@ -541,6 +562,12 @@
   }
 
   root.querySelectorAll("[data-craft-id]").forEach((button) => button.addEventListener("click", () => selectCraft(button.dataset.craftId)));
+  root.querySelector("[data-toggle-orbit-references]")?.addEventListener("click", (event) => {
+    showOrbitReferences = !showOrbitReferences;
+    event.currentTarget.setAttribute("aria-pressed", String(showOrbitReferences));
+    event.currentTarget.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
+    renderSystem();
+  });
   root.querySelector("#space-system-select")?.addEventListener("change", (event) => {
     window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(event.target.value)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
   });
