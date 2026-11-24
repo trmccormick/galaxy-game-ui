@@ -25,21 +25,52 @@
   </div>
 
   <div class="space-main-grid">
-    <aside class="space-craft-panel">
+    <aside class="space-craft-panel space-operations-panel">
       <div class="space-panel-heading">
-        <div><span class="space-eyebrow">ASSET CONTROL</span><h2>Craft</h2></div>
-        <span class="space-count"><%= @craft.length %></span>
+        <div><span class="space-eyebrow">ASSET CONTROL</span><h2>Operations</h2></div>
+        <span class="space-count"><%= @operations.length %></span>
       </div>
-      <div class="space-craft-list" role="list">
-        <% @craft.each do |craft| %>
-          <button class="space-craft-item <%= "is-selected" if craft[:id] == @selected_craft[:id] %>" type="button" data-craft-id="<%= craft[:id] %>" role="listitem">
+
+      <section class="space-operation-group">
+        <div class="space-operation-group-heading">
+          <span>FLEET OPERATIONS</span>
+          <span class="space-group-count"><%= @operations.count { |operation| operation[:kind] == "fleet" } %></span>
+        </div>
+        <% @operations.select { |operation| operation[:kind] == "fleet" }.each do |operation| %>
+          <div class="space-operation-card fleet-operation">
+            <div class="space-operation-title"><span class="space-operation-symbol fleet-symbol">F</span><strong><%= operation[:name] %></strong><span class="space-operation-state"><%= operation[:status] %></span></div>
+            <p><%= operation[:objective] %></p>
+            <div class="space-operation-members">
+              <% operation[:craft_ids].each do |craft_id| %>
+                <% craft = @craft.find { |item| item[:id] == craft_id } %>
+                <% next unless craft %>
+                <button class="space-craft-item space-operation-craft <%= "is-selected" if craft[:id] == @selected_craft[:id] %>" type="button" data-craft-id="<%= craft[:id] %>">
+                  <span class="space-craft-indicator <%= craft[:status] == "Operating" ? "is-operating" : "" %>"></span>
+                  <span class="space-craft-copy"><strong><%= craft[:name] %></strong><small><%= craft[:role] %></small><small><%= craft[:location] %></small></span>
+                  <span class="space-craft-chevron">›</span>
+                </button>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+
+      <section class="space-operation-group">
+        <div class="space-operation-group-heading">
+          <span>INDEPENDENT DISPATCHES</span>
+          <span class="space-group-count"><%= @operations.count { |operation| operation[:kind] == "independent" } %></span>
+        </div>
+        <% @operations.select { |operation| operation[:kind] == "independent" }.each do |operation| %>
+          <% craft = @craft.find { |item| item[:id] == operation[:craft_ids].first } %>
+          <% next unless craft %>
+          <button class="space-craft-item space-independent-item <%= "is-selected" if craft[:id] == @selected_craft[:id] %>" type="button" data-craft-id="<%= craft[:id] %>">
             <span class="space-craft-indicator <%= craft[:status] == "Operating" ? "is-operating" : "" %>"></span>
-            <span class="space-craft-copy"><strong><%= craft[:name] %></strong><small><%= craft[:type] %></small><small><%= craft[:location] %></small></span>
+            <span class="space-craft-copy"><strong><%= operation[:name] %></strong><small><%= craft[:name] %> · <%= craft[:status] %></small><small><%= operation[:objective] %></small></span>
             <span class="space-craft-chevron">›</span>
           </button>
         <% end %>
-      </div>
-      <div class="space-panel-footnote">Craft operate autonomously. Player actions assign objectives; this view does not directly pilot a vehicle.</div>
+      </section>
+      <div class="space-panel-footnote">Fleets group craft around a shared objective. Independent robotic missions are dispatched and tracked directly; no one-craft fleet is required.</div>
     </aside>
 
     <div class="space-maps-column">
@@ -89,7 +120,7 @@
     </aside>
   </div>
 
-  <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, system: @system_data, craft: @craft, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
+  <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, system: @system_data, craft: @craft, operations: @operations, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
 </section>
 
 <%= javascript_import_module_tag "player/space" %>
