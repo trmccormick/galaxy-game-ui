@@ -57,7 +57,7 @@ class Player::SpaceController < ApplicationController
       next if item["id"] == center["id"]
 
       source_position = item.dig("position", "cartesian_ly")
-      next unless source_position
+      next unless source_position && %w[x y z].all? { |axis| source_position.key?(axis) }
 
       relative = %w[x y z].to_h do |axis|
         [axis, source_position.fetch(axis).to_f - center_position.fetch(axis)]
