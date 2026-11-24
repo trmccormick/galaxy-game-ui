@@ -14,7 +14,8 @@ class Player::SpaceController < ApplicationController
     @operations = operation_fixtures
     @selected_craft = @craft.find { |craft| craft[:id] == params[:craft_id] } || @craft.first
     @selected_operation = @operations.find { |operation| operation[:id] == @selected_craft[:operation_id] } || @operations.first
-    @page_title = "Space Operations"
+    @fleet_manager = params[:workspace] == "fleet_manager"
+    @page_title = @fleet_manager ? "Fleet Manager" : "Space Operations"
   end
 
   private
