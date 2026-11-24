@@ -560,7 +560,6 @@
     root.querySelectorAll("[data-craft-id]").forEach((button) => button.classList.toggle("is-selected", button.dataset.craftId === id));
     selectedGalaxySystemId = selectedSystem === "SOL" ? "SOL" : (galaxyRecordForFocus()?.id || null);
     updateInspector();
-    renderGalaxy();
     renderNetwork();
     renderSystem();
   }
@@ -578,6 +577,8 @@
       "space-inspector-progress": `${selectedCraft.progress}%`
     };
     Object.entries(values).forEach(([id, value]) => { const node = document.getElementById(id); if (node) node.textContent = value; });
+    const focusLabel = document.getElementById("space-focus-label");
+    if (focusLabel) focusLabel.textContent = `${selectedCraft.name} · ${systemNames[selectedCraft.location_system_id] || selectedCraft.location}`;
     const fill = document.getElementById("space-progress-fill");
     if (fill) fill.style.width = `${selectedCraft.progress}%`;
     const list = document.getElementById("space-route-list");
