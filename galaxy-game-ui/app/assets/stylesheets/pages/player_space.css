@@ -137,3 +137,26 @@
 .space-network-edge-label { fill:var(--gg-primary); }
 .space-map-node .node-halo { stroke:var(--gg-primary); }
 @media (max-width:1180px) { .space-main-grid { grid-template-columns:205px minmax(320px,1fr); } }
+
+
+/* Sol-centered astronomical catalog and independent sky-context layer. */
+.galaxy-map-panel { border-color:rgba(0,212,255,.28); }
+.galaxy-mode-actions { display:flex; flex-wrap:wrap; gap:.3rem; }
+.galaxy-mode-actions button[aria-pressed="true"] { border-color:var(--gg-primary); color:var(--gg-primary); background:rgba(0,212,255,.13); }
+.galaxy-map-stage[hidden] { display:none; }
+.galaxy-map-caption { padding:.45rem .75rem; color:var(--gg-text-dim); font-size:.55rem; font-weight:700; letter-spacing:.11em; }
+.galaxy-spatial-canvas { height:330px; background-image:linear-gradient(rgba(0,212,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.035) 1px,transparent 1px); background-size:42px 42px; }
+.galaxy-sky-canvas { height:330px; background-image:linear-gradient(rgba(0,212,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.045) 1px,transparent 1px); background-size:50px 50px; }
+.galaxy-sky-reset { display:flex; justify-content:flex-end; padding:0 .7rem .35rem; }
+.galaxy-axis { stroke:rgba(0,212,255,.14); stroke-width:1; stroke-dasharray:2 7; }
+.galaxy-sol-point { fill:#f6d27b; stroke:#fff0c1; stroke-width:1.5; }
+.galaxy-star-point { fill:#54c9f5; stroke:#d2f5ff; stroke-width:1; }
+.galaxy-sky-point { fill:#5ec9f4; stroke:#d2f5ff; stroke-width:1; }
+.constellation-boundary { fill:none; stroke:rgba(0,212,255,.34); stroke-width:1.15; vector-effect:non-scaling-stroke; }
+.constellation-label { fill:rgba(118,190,218,.68); font-size:11px; font-weight:650; pointer-events:none; }
+.galaxy-system-node .node-halo,.galaxy-sky-node .node-halo { stroke:var(--gg-primary); }
+.galaxy-selection-details { display:flex; flex-wrap:wrap; align-items:baseline; gap:.55rem; padding:.55rem .75rem; border-top:1px solid rgba(0,212,255,.13); background:rgba(0,0,0,.12); }
+.galaxy-selection-details strong { color:var(--gg-text-primary); font-size:.7rem; }
+.galaxy-selection-details span { color:var(--gg-text-secondary); font-size:.62rem; }
+.galaxy-map-footnote { padding:.45rem .75rem .6rem; color:var(--gg-text-dim); font-size:.59rem; line-height:1.45; }
+@media (max-width:760px) { .galaxy-spatial-canvas,.galaxy-sky-canvas { height:260px; } .galaxy-mode-actions { justify-content:flex-start; } }
