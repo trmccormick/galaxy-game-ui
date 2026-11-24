@@ -21,35 +21,57 @@
   }
 
   function attachMapControls(svg, key) {
-    const state = { x: 0, y: 0, scale: 1, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
-    const group = element("g", { class: "map-world" });
-    svg.appendChild(group);
-    const apply = () => group.setAttribute("transform", `translate(${state.x} ${state.y}) scale(${state.scale})`);
+    const initial = { x: 0, y: 0, width: 1000, height: 500 };
+    const view = { ...initial, dragging: false, startX: 0, startY: 0, origin: null };
+    const world = element("g", { class: "map-world" });
+    svg.appendChild(world);
     svg.setAttribute("viewBox", "0 0 1000 500");
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    const apply = () => svg.setAttribute("viewBox", [view.x, view.y, view.width, view.height].map((n) => n.toFixed(2)).join(" "));
+    const reset = () => {
+      view.x = initial.x; view.y = initial.y; view.width = initial.width; view.height = initial.height;
+      apply();
+    };
+
     svg.addEventListener("pointerdown", (event) => {
       if (event.target.closest(".space-map-node")) return;
-      state.dragging = true; state.startX = event.clientX; state.startY = event.clientY;
-      state.originX = state.x; state.originY = state.y; svg.setPointerCapture(event.pointerId);
+      view.dragging = true;
+      view.startX = event.clientX; view.startY = event.clientY;
+      view.origin = { x: view.x, y: view.y, width: view.width, height: view.height };
+      svg.setPointerCapture(event.pointerId);
     });
     svg.addEventListener("pointermove", (event) => {
-      if (!state.dragging) return;
+      if (!view.dragging || !view.origin) return;
       const bounds = svg.getBoundingClientRect();
-      state.x = state.originX + (event.clientX - state.startX) * 1000 / bounds.width;
-      state.y = state.originY + (event.clientY - state.startY) * 500 / bounds.height;
+      if (!bounds.width || !bounds.height) return;
+      view.x = view.origin.x - (event.clientX - view.startX) * view.origin.width / bounds.width;
+      view.y = view.origin.y - (event.clientY - view.startY) * view.origin.height / bounds.height;
       apply();
     });
-    const stop = () => { state.dragging = false; };
-    svg.addEventListener("pointerup", stop); svg.addEventListener("pointercancel", stop);
+    const stop = () => { view.dragging = false; view.origin = null; };
+    svg.addEventListener("pointerup", stop);
+    svg.addEventListener("pointercancel", stop);
     svg.addEventListener("wheel", (event) => {
       event.preventDefault();
-      const factor = event.deltaY < 0 ? 1.12 : 0.89;
-      state.scale = Math.max(.65, Math.min(3.2, state.scale * factor)); apply();
+      const bounds = svg.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      const fractionX = (event.clientX - bounds.left) / bounds.width;
+      const fractionY = (event.clientY - bounds.top) / bounds.height;
+      const worldX = view.x + fractionX * view.width;
+      const worldY = view.y + fractionY * view.height;
+      const factor = event.deltaY < 0 ? 1 / 1.2 : 1.2;
+      const nextWidth = Math.max(180, Math.min(1600, view.width * factor));
+      const nextHeight = nextWidth / 2;
+      view.x = worldX - fractionX * nextWidth;
+      view.y = worldY - fractionY * nextHeight;
+      view.width = nextWidth;
+      view.height = nextHeight;
+      apply();
     }, { passive: false });
-    root.querySelector(`[data-map-reset="${key}"]`)?.addEventListener("click", () => {
-      state.x = 0; state.y = 0; state.scale = 1; apply();
-    });
-    return group;
+
+    root.querySelector(`[data-map-reset="${key}"]`)?.addEventListener("click", reset);
+    return world;
   }
 
   function renderNetwork() {
