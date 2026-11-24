@@ -6,7 +6,16 @@ class Player::SpaceController < ApplicationController
   def show
     @universe = read_fixture("universe.min.json")
     @constellation_catalog = read_fixture("galaxy/constellations.sol.min.json")
-    @systems = @universe.fetch("systems")
+    # The fixture universe currently supplies map topology and display metadata.
+    # Enrich each system with its authoritative star records from the shared JSON
+    # data tree; keep the full source arrays intact for the client renderer.
+    lookup = Lookup::StarSystemLookupService.new
+    @systems = @universe.fetch("systems").map do |system|
+      source = lookup.fetch(system["id"])
+      stars = source&.fetch("stars", nil) || []
+      system.merge("stars" => stars, "source_type" => source&.fetch("_source_type", nil))
+    end
+    @universe["systems"] = @systems
     @craft = craft_fixtures
     requested_craft = @craft.find { |craft| craft[:id] == params[:craft_id] }
     @selected_craft = requested_craft || if params[:system_id].present?
@@ -20,7 +29,7 @@ class Player::SpaceController < ApplicationController
     focus_system_id = requested_craft&.dig(:location_system_id) || params[:system_id]
     @selected_system = @systems.find { |system| system["id"] == focus_system_id } ||
       @systems.find { |system| system["id"] == "SOL" } || @systems.first
-    @system_data = read_system_fixture(@selected_system.fetch("id"))
+    @system_data = read_system_data(@selected_system.fetch("id"))
     @galaxy_catalog = read_neighborhood_fixture(@selected_system.fetch("id"))
     @operations = operation_fixtures
     @selected_operation = @operations.find { |operation| operation[:id] == @selected_craft[:operation_id] } || @operations.first
@@ -86,11 +95,59 @@ class Player::SpaceController < ApplicationController
     nil
   end
 
+  # Load the canonical source JSON first. The normalized view object is a thin
+  # presentation adapter; the original star/body records remain unmodified.
+  def read_system_data(system_id)
+    source = Lookup::StarSystemLookupService.new.fetch(system_id)
+    return normalize_system_data(source, system_id) if source
+
+    read_system_fixture(system_id)
+  end
+
+  def normalize_system_data(source, system_id)
+    stars = source["stars"].is_a?(Array) ? source["stars"] : []
+    bodies = flatten_records(source["celestial_bodies"])
+    stations = %w[stations orbital_facilities space_stations].flat_map do |key|
+      flatten_records(source[key])
+    end.uniq
+
+    {
+      "fixture" => false,
+      "system_id" => source.dig("solar_system", "identifier") || source["id"] || system_id,
+      "name" => source.dig("solar_system", "name") || source["name"] || @selected_system["name"],
+      "stars" => stars,
+      "bodies" => bodies,
+      "stations" => stations,
+      "coordinate_frame" => source["coordinate_frame"],
+      "display_layout" => source["display_layout"],
+      "source_file" => source["_source_file"],
+      "source_type" => source["_source_type"],
+      "note" => "Loaded from #{source["_source_type"]} source JSON: #{source["_source_file"]}."
+    }
+  end
+
+  # Celestial body data may be grouped by category in the source JSON. Flatten
+  # only the grouping containers; retain each body hash and all nested fields.
+  def flatten_records(value)
+    case value
+    when Array
+      value.flat_map { |item| flatten_records(item) }
+    when Hash
+      if value.key?("id") || value.key?("name")
+        [value]
+      else
+        value.values.flat_map { |item| flatten_records(item) }
+      end
+    else
+      []
+    end
+  end
+
   def read_system_fixture(system_id)
     path = FIXTURE_ROOT.join("systems", system_id, "system.min.json")
     JSON.parse(path.read)
   rescue Errno::ENOENT, JSON::ParserError
-    { "fixture" => true, "system_id" => system_id, "name" => @selected_system["name"], "star" => {}, "bodies" => [], "stations" => [], "note" => "No system fixture is available." }
+    { "fixture" => true, "system_id" => system_id, "name" => @selected_system["name"], "stars" => [], "bodies" => [], "stations" => [], "note" => "No source JSON or UI system fixture is available." }
   end
 
   # Display-only examples for exercising map selection and tracking.
