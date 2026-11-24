@@ -99,6 +99,18 @@
     ].join(" · ");
   }
 
+  function chooseGalaxySystem(system) {
+    selectedGalaxySystemId = system.id;
+    const systemEntry = data.universe.systems.find((item) => item.id === system.seed_identifier);
+    if (systemEntry && systemEntry.id !== selectedSystem) {
+      window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(systemEntry.id)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
+      return;
+    }
+    renderGalaxySpatial();
+    renderGalaxySky();
+    updateGalaxySelection();
+  }
+
   function renderGalaxySpatial() {
     if (!galaxySpatialWorld) return;
     galaxySpatialWorld.replaceChildren();
@@ -132,7 +144,7 @@
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isSol ? 6 : 4.5, class: isSol ? "galaxy-sol-point" : "galaxy-star-point" }));
       node.appendChild(element("text", { x: p.x + 9, y: p.y - 8, class: "space-map-label" }, item.name));
       if (!isSol) node.appendChild(element("text", { x: p.x + 9, y: p.y + 5, class: "space-map-subtitle" }, `${item.position.distance_ly.toFixed(1)} ly`));
-      const choose = () => { selectedGalaxySystemId = isSol ? null : item.id; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); };
+      const choose = () => { if (isSol) { selectedGalaxySystemId = null; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); } else { chooseGalaxySystem(item); } };
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
       galaxySpatialWorld.appendChild(node);
@@ -183,7 +195,7 @@
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 8 : 4, class: "galaxy-sky-point" }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 12, class: "node-halo" }));
       node.appendChild(element("title", {}, `${system.name} · ${system.position.distance_ly.toFixed(2)} ly`));
-      const choose = () => { selectedGalaxySystemId = system.id; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); };
+      const choose = () => chooseGalaxySystem(system);
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
       constellationWorld.appendChild(node);
