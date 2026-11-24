@@ -4,7 +4,7 @@
   if (!root || !payloadNode) return;
 
   let data;
-  try { data = JSON.parse(payloadNode.textContent); } catch (error) { console.error("Unable to read Player Space fixture payload", error); return; }
+  try { data = JSON.parse(payloadNode.textContent); } catch (error) { console.error("Unable to read Player Space payload", error); return; }
 
   const svgNS = "http://www.w3.org/2000/svg";
   const byId = (items, id) => items.find((item) => item.id === id);
@@ -21,7 +21,9 @@
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
   function stellarTypeKey(system) {
-    const star = system?.stars?.[0] || system?.primary_star || system?.star || {};
+    const stars = system?.stars || [];
+    const star = stars.find((item) => item.primary === true || item.is_primary === true || item.role === "primary") ||
+      stars[0] || system?.primary_star || system?.star || {};
     const raw = String(star.spectral_type || star.classification || star.type || "").trim().toUpperCase();
     if (!raw) return "unknown";
     if (raw.includes("WHITE DWARF") || /^(?:D[ABCOQZ]\b|WD\b)/.test(raw)) return "white-dwarf";
