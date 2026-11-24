@@ -354,6 +354,8 @@
       const node = element("g", { class: `space-map-node ${system.id === selectedSystem ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 22, class: "node-halo" }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 9 : 7, fill: stellarTypeColor(system), stroke: "#d6e5ef", "stroke-width": "1.2" }));
+      const accessStroke = system.access === "baseline" ? "#36a9f5" : system.access === "natural_connection" ? "#43d39a" : "#778795";
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 12 : 10, fill: "none", stroke: accessStroke, "stroke-width": "1.3", "stroke-dasharray": system.access === "not_connected" ? "2 2" : "none" }));
       if (routeIds.has(system.id)) node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 14, fill: "none", stroke: "#eab65c", "stroke-width": "1.2", "stroke-dasharray": "3 3" }));
       node.appendChild(element("text", { x: p.x, y: p.y + 29, class: "space-map-label", "text-anchor": "middle" }, system.name));
       node.appendChild(element("text", { x: p.x, y: p.y + 43, class: "space-map-subtitle", "text-anchor": "middle" }, system.subtitle || system.id));
