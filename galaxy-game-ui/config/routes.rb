@@ -45,7 +45,7 @@ Rails.application.routes.draw do
     get "ai_manager/library/missions/:id", to: "ai_manager_library#mission", as: :ai_manager_library_mission
 
     # Session-backed mission profile builder prototype.
-    get "ai_manager/profiles/new", to: "ai_manager_profiles#new", as: :new_ai_manager_profile
+    get "ai_manager/profiles/new", to: "ai_manager_profiles#new", as: :ai_manager_new_profile
     post "ai_manager/profiles", to: "ai_manager_profiles#create", as: :ai_manager_profiles
     get "ai_manager/profiles/:id", to: "ai_manager_profiles#show", as: :ai_manager_profile
 
