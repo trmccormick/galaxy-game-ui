@@ -1,0 +1,95 @@
+<%= stylesheet_link_tag "pages/player_space", "data-turbo-track": "reload" %>
+
+<section class="space-workspace" data-space-root>
+  <header class="space-heading">
+    <div>
+      <div class="space-eyebrow">PLAYER OPERATIONS / SPACE</div>
+      <h1>Space Operations</h1>
+      <p>Track autonomous craft across the wormhole network and within a selected star system.</p>
+    </div>
+    <div class="space-heading-status"><span class="space-live-dot"></span> PROTOTYPE TELEMETRY <span class="space-fixture-tag">FIXTURE DATA</span></div>
+  </header>
+
+  <div class="space-toolbar">
+    <label for="space-system-select">System focus</label>
+    <select id="space-system-select">
+      <% @systems.each do |system| %>
+        <option value="<%= system["id"] %>" <%= "selected" if system["id"] == @selected_system["id"] %>><%= system["name"] %></option>
+      <% end %>
+    </select>
+    <span class="space-toolbar-divider"></span>
+    <span class="space-toolbar-meta"><%= @systems.length %> systems in test universe</span>
+    <span class="space-toolbar-meta"><%= @universe.fetch("connections").length %> configured connection</span>
+    <span class="space-toolbar-spacer"></span>
+    <span class="space-toolbar-meta">Map data supplied by Rails</span>
+  </div>
+
+  <div class="space-main-grid">
+    <aside class="space-craft-panel">
+      <div class="space-panel-heading">
+        <div><span class="space-eyebrow">ASSET CONTROL</span><h2>Craft</h2></div>
+        <span class="space-count"><%= @craft.length %></span>
+      </div>
+      <div class="space-craft-list" role="list">
+        <% @craft.each do |craft| %>
+          <button class="space-craft-item <%= "is-selected" if craft[:id] == @selected_craft[:id] %>" type="button" data-craft-id="<%= craft[:id] %>" role="listitem">
+            <span class="space-craft-indicator <%= craft[:status] == "Operating" ? "is-operating" : "" %>"></span>
+            <span class="space-craft-copy"><strong><%= craft[:name] %></strong><small><%= craft[:type] %></small><small><%= craft[:location] %></small></span>
+            <span class="space-craft-chevron">›</span>
+          </button>
+        <% end %>
+      </div>
+      <div class="space-panel-footnote">Craft operate autonomously. Player actions assign objectives; this view does not directly pilot a vehicle.</div>
+    </aside>
+
+    <div class="space-maps-column">
+      <section class="space-map-panel">
+        <div class="space-map-heading">
+          <div><span class="space-eyebrow">INTER-SYSTEM</span><h2>Wormhole Network</h2><p>Network topology · known systems and configured connections</p></div>
+          <div class="space-map-actions"><button type="button" data-map-reset="network">Reset view</button></div>
+        </div>
+        <div class="space-map-canvas network-canvas" data-map="network">
+          <svg id="space-network-map" role="img" aria-label="Wormhole network map"></svg>
+          <div class="space-map-legend"><span><i class="legend-dot home"></i> Sol baseline</span><span><i class="legend-line natural"></i> Natural connection</span><span><i class="legend-dot unknown"></i> Not connected</span></div>
+        </div>
+      </section>
+
+      <section class="space-map-panel">
+        <div class="space-map-heading">
+          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Illustrative spatial layout · bodies, infrastructure, and craft locations</p></div>
+          <div class="space-map-actions"><button type="button" data-map-reset="system">Reset view</button></div>
+        </div>
+        <div class="space-map-canvas system-canvas" data-map="system">
+          <svg id="space-system-map" role="img" aria-label="Selected star system navigation map"></svg>
+          <div class="space-map-legend"><span><i class="legend-dot star"></i> Star</span><span><i class="legend-dot body"></i> Celestial body</span><span><i class="legend-dot station"></i> Facility</span><span><i class="legend-dot craft"></i> Craft</span></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="space-inspector">
+      <section class="space-inspector-card">
+        <div class="space-panel-heading"><div><span class="space-eyebrow">SELECTED ASSET</span><h2 id="space-inspector-name"><%= @selected_craft[:name] %></h2></div><span class="space-status-pill" id="space-inspector-status"><%= @selected_craft[:status] %></span></div>
+        <dl class="space-details">
+          <div><dt>Class</dt><dd id="space-inspector-type"><%= @selected_craft[:type] %></dd></div>
+          <div><dt>Current location</dt><dd id="space-inspector-location"><%= @selected_craft[:location] %></dd></div>
+          <div><dt>Destination</dt><dd id="space-inspector-destination"><%= @selected_craft[:destination] %></dd></div>
+          <div><dt>Assigned operation</dt><dd id="space-inspector-operation"><%= @selected_craft[:operation] %></dd></div>
+          <div><dt>Telemetry</dt><dd id="space-inspector-updated"><%= @selected_craft[:updated] %></dd></div>
+        </dl>
+        <div class="space-progress-label"><span>Mission progress</span><strong id="space-inspector-progress"><%= @selected_craft[:progress] %>%</strong></div>
+        <div class="space-progress-track"><span id="space-progress-fill" style="width:<%= @selected_craft[:progress] %>%"></span></div>
+        <div class="space-route-block"><h3>Ordered route</h3><ol id="space-route-list"><% @selected_craft[:route].each do |system_id| %><li><%= @systems.find { |system| system["id"] == system_id }&.fetch("name", system_id) || system_id %></li><% end %></ol></div>
+      </section>
+      <section class="space-inspector-card space-system-card">
+        <span class="space-eyebrow">SYSTEM CONTEXT</span>
+        <h2 id="space-system-inspector-name"><%= @system_data["name"] %></h2>
+        <div class="space-system-stats"><span><strong id="space-body-count"><%= @system_data.fetch("bodies", []).length %></strong><small>Bodies</small></span><span><strong id="space-station-count"><%= @system_data.fetch("stations", []).length %></strong><small>Facilities</small></span></div>
+        <p id="space-system-note"><%= @system_data["note"] %></p>
+      </section>
+    </aside>
+  </div>
+
+  <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, system: @system_data, craft: @craft, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
+</section>
+
+<%= javascript_include_tag "player/space", "data-turbo-track": "reload" %>
