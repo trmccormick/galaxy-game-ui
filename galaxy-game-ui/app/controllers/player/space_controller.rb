@@ -11,7 +11,9 @@ class Player::SpaceController < ApplicationController
 
     @system_data = read_system_fixture(@selected_system.fetch("id"))
     @craft = craft_fixtures
+    @operations = operation_fixtures
     @selected_craft = @craft.find { |craft| craft[:id] == params[:craft_id] } || @craft.first
+    @selected_operation = @operations.find { |operation| operation[:id] == @selected_craft[:operation_id] } || @operations.first
     @page_title = "Space Operations"
   end
 
@@ -33,22 +35,46 @@ class Player::SpaceController < ApplicationController
   def craft_fixtures
     [
       {
-        id: "LUNA-TRANSFER-01", name: "Luna Transfer 01", type: "Cargo transport",
+        id: "LUNA-TRANSFER-01", name: "Luna Transfer 01", type: "Cargo transport", role: "Bulk supply transport",
+        operation_id: "LUNA-INFRASTRUCTURE", assignment_type: "Fleet member",
         status: "In transit", location_system_id: "SOL", location: "Earth–Luna transfer",
-        destination: "Luna Base", destination_system_id: "SOL", operation: "Luna base resupply",
+        destination: "Luna Base", destination_system_id: "SOL", operation: "Luna infrastructure and resupply",
         route: ["SOL"], progress: 68, updated: "Prototype telemetry"
       },
       {
-        id: "VENUS-SKIMMER-01", name: "Venus Skimmer 01", type: "Atmospheric skimmer",
-        status: "Operating", location_system_id: "SOL", location: "Venus orbit",
-        destination: "Venus transfer orbit", destination_system_id: "SOL", operation: "Atmospheric gas collection",
+        id: "VENUS-SKIMMER-01", name: "Venus Gas Harvester 01", type: "Robotic atmospheric skimmer", role: "Independent autonomous mission",
+        operation_id: "VENUS-GAS-LOOP", assignment_type: "Independent dispatch",
+        status: "Operating", location_system_id: "SOL", location: "Venus atmosphere",
+        destination: "Luna Base", destination_system_id: "SOL", operation: "Recurring Luna–Venus gas delivery",
         route: ["SOL"], progress: 42, updated: "Prototype telemetry"
       },
       {
-        id: "EDEN-SCOUT-01", name: "Eden Scout 01", type: "Survey craft",
+        id: "EDEN-SCOUT-01", name: "Eden Scout 01", type: "Survey craft", role: "Independent survey dispatch",
+        operation_id: "EDEN-SURVEY", assignment_type: "Independent dispatch",
         status: "Awaiting dispatch", location_system_id: "AOL-732356", location: "Aki Gaia",
-        destination: "Aki Gaia survey region", destination_system_id: "AOL-732356", operation: "Frontier survey",
+        destination: "Aki Gaia survey region", destination_system_id: "AOL-732356", operation: "Aki Gaia reconnaissance",
         route: ["SOL", "AOL-732356"], progress: 0, updated: "Prototype telemetry"
+      }
+    ]
+  end
+
+  # Illustrative UI groupings only. These do not define a persisted fleet model.
+  def operation_fixtures
+    [
+      {
+        id: "LUNA-INFRASTRUCTURE", name: "Luna Infrastructure", kind: "fleet",
+        objective: "Coordinate Luna base construction and resupply",
+        status: "Active", craft_ids: ["LUNA-TRANSFER-01"]
+      },
+      {
+        id: "VENUS-GAS-LOOP", name: "Venus Gas Delivery", kind: "independent",
+        objective: "Recurring robotic Luna–Venus atmospheric harvesting and return",
+        status: "Operating", craft_ids: ["VENUS-SKIMMER-01"]
+      },
+      {
+        id: "EDEN-SURVEY", name: "Aki Gaia Reconnaissance", kind: "independent",
+        objective: "Survey candidate settlement region",
+        status: "Awaiting dispatch", craft_ids: ["EDEN-SCOUT-01"]
       }
     ]
   end
