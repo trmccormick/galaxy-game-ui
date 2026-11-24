@@ -10,6 +10,7 @@
   const byId = (items, id) => items.find((item) => item.id === id);
   let selectedCraft = byId(data.craft, data.selected_craft_id) || data.craft[0];
   let selectedSystem = data.selected_system_id;
+  let selectedGalaxySystemId = data.galaxy_catalog?.systems?.[0]?.id || null;
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
   const systemNames = Object.fromEntries(data.universe.systems.map((system) => [system.id, system.name]));
 
@@ -72,6 +73,137 @@
 
     root.querySelector(`[data-map-reset="${key}"]`)?.addEventListener("click", reset);
     return world;
+  }
+
+  const galaxySpatialSvg = root.querySelector("#space-galaxy-map");
+  const constellationSvg = root.querySelector("#space-constellation-map");
+  const galaxySpatialWorld = galaxySpatialSvg ? attachMapControls(galaxySpatialSvg, "galaxy-spatial") : null;
+  const constellationWorld = constellationSvg ? attachMapControls(constellationSvg, "galaxy-sky") : null;
+
+  function updateGalaxySelection() {
+    const system = (data.galaxy_catalog?.systems || []).find((item) => item.id === selectedGalaxySystemId);
+    const name = document.getElementById("galaxy-selection-name");
+    const details = document.getElementById("galaxy-selection-details");
+    if (!name || !details) return;
+    if (!system) {
+      name.textContent = "Select a nearby system";
+      details.textContent = "31 curated real-system seeds in this UI catalog";
+      return;
+    }
+    const constellation = (data.galaxy_catalog.constellations || []).find((item) => item.id === system.constellation);
+    name.textContent = system.name;
+    details.textContent = [
+      `${system.position.distance_ly.toFixed(2)} ly from Sol`,
+      constellation ? `${constellation.name} (provisional)` : "Constellation unknown",
+      system.seed_file
+    ].join(" · ");
+  }
+
+  function renderGalaxySpatial() {
+    if (!galaxySpatialWorld) return;
+    galaxySpatialWorld.replaceChildren();
+    const systems = data.galaxy_catalog?.systems || [];
+    const objects = [{ id: "SOL", name: "Sol", position: { cartesian_ly: { x: 0, y: 0, z: 0 }, distance_ly: 0 } }, ...systems];
+    const project = (position) => {
+      const p = position?.cartesian_ly;
+      if (!p) return null;
+      return { x: Number(p.x) - Number(p.y) * 0.5, y: Number(p.z) - (Number(p.x) + Number(p.y)) * 0.25 };
+    };
+    const projected = objects.map((item) => ({ item, point: project(item.position) })).filter((item) => item.point);
+    if (!projected.length) return;
+    const minX = Math.min(...projected.map(({ point }) => point.x));
+    const maxX = Math.max(...projected.map(({ point }) => point.x));
+    const minY = Math.min(...projected.map(({ point }) => point.y));
+    const maxY = Math.max(...projected.map(({ point }) => point.y));
+    const spanX = Math.max(maxX - minX, 1), spanY = Math.max(maxY - minY, 1);
+    const scale = Math.min(780 / spanX, 350 / spanY);
+    const offsetX = 500 - ((minX + maxX) / 2) * scale;
+    const offsetY = 235 + ((minY + maxY) / 2) * scale;
+
+    // A faint origin cross indicates Sol's reference position, not a second system.
+    galaxySpatialWorld.appendChild(element("line", { x1: 500, y1: 35, x2: 500, y2: 435, class: "galaxy-axis" }));
+    galaxySpatialWorld.appendChild(element("line", { x1: 80, y1: 235, x2: 920, y2: 235, class: "galaxy-axis" }));
+    projected.forEach(({ item, point }) => {
+      const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
+      const isSol = item.id === "SOL";
+      const selected = item.id === selectedGalaxySystemId;
+      const node = element("g", { class: `space-map-node galaxy-system-node ${selected || isSol ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${item.name}` });
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isSol ? 6 : 4.5, class: isSol ? "galaxy-sol-point" : "galaxy-star-point" }));
+      node.appendChild(element("text", { x: p.x + 9, y: p.y - 8, class: "space-map-label" }, item.name));
+      if (!isSol) node.appendChild(element("text", { x: p.x + 9, y: p.y + 5, class: "space-map-subtitle" }, `${item.position.distance_ly.toFixed(1)} ly`));
+      const choose = () => { selectedGalaxySystemId = isSol ? null : item.id; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); };
+      node.addEventListener("click", choose);
+      node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
+      galaxySpatialWorld.appendChild(node);
+    });
+    galaxySpatialWorld.appendChild(element("text", { x: 18, y: 482, class: "space-map-subtitle" }, "Isometric projection of equatorial Cartesian positions · depth compressed for display"));
+  }
+
+  function renderGalaxySky() {
+    if (!constellationWorld) return;
+    constellationWorld.replaceChildren();
+    const catalog = data.galaxy_catalog || {};
+    const features = catalog.constellation_boundaries?.features || [];
+    const project = (ra, dec) => {
+      let longitude = Number(ra);
+      while (longitude < -180) longitude += 360;
+      while (longitude > 180) longitude -= 360;
+      return { x: (longitude + 180) / 360 * 1000, y: (90 - Number(dec)) / 180 * 500 };
+    };
+
+    features.forEach((feature) => {
+      const rings = feature.geometry?.coordinates || [];
+      rings.forEach((ring) => {
+        let segment = [];
+        const flush = () => {
+          if (segment.length > 1) constellationWorld.appendChild(element("polyline", { points: segment.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "), class: "constellation-boundary" }));
+          segment = [];
+        };
+        ring.forEach((coordinate, index) => {
+          const point = project(coordinate[0], coordinate[1]);
+          if (index > 0 && Math.abs(point.x - segment[segment.length - 1].x) > 500) flush();
+          segment.push(point);
+        });
+        flush();
+      });
+    });
+
+    (catalog.constellations || []).forEach((constellation) => {
+      const center = constellation.center;
+      if (!center) return;
+      const p = project(center[0], center[1]);
+      constellationWorld.appendChild(element("text", { x: p.x, y: p.y, class: "constellation-label", "text-anchor": "middle" }, constellation.abbreviation));
+    });
+
+    (catalog.systems || []).forEach((system) => {
+      const p = project(system.position.right_ascension_degrees, system.position.declination_degrees);
+      const selected = system.id === selectedGalaxySystemId;
+      const node = element("g", { class: `space-map-node galaxy-sky-node ${selected ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 8 : 4, class: "galaxy-sky-point" }));
+      node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 12, class: "node-halo" }));
+      node.appendChild(element("title", {}, `${system.name} · ${system.position.distance_ly.toFixed(2)} ly`));
+      const choose = () => { selectedGalaxySystemId = system.id; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); };
+      node.addEventListener("click", choose);
+      node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
+      constellationWorld.appendChild(node);
+    });
+    constellationWorld.appendChild(element("text", { x: 18, y: 482, class: "space-map-subtitle" }, "RA increases to the left · boundary coordinates are angular sky regions"));
+  }
+
+  function renderGalaxy() {
+    renderGalaxySpatial();
+    renderGalaxySky();
+    updateGalaxySelection();
+    root.querySelectorAll("[data-galaxy-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.galaxyMode;
+        root.querySelectorAll("[data-galaxy-mode]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        root.querySelectorAll("[data-galaxy-canvas]").forEach((panel) => { panel.hidden = panel.dataset.galaxyCanvas !== mode; });
+        root.querySelector('[data-map-reset="galaxy-spatial"]').hidden = mode !== "spatial";
+        root.querySelector('[data-map-reset="galaxy-sky"]').hidden = mode !== "sky";
+      });
+    });
   }
 
   function renderNetwork() {
@@ -355,6 +487,7 @@
     window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(event.target.value)}&craft_id=${encodeURIComponent(selectedCraft?.id || "")}`);
   });
 
+  renderGalaxy();
   renderNetwork();
   renderSystem();
   updateInspector();
