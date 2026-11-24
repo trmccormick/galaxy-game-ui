@@ -384,16 +384,31 @@
     const bodies = system.bodies || [];
     const stations = system.stations || [];
     const stars = system.stars || (system.star ? [system.star] : []);
+    const primaryStar = stars.find((item) => item.primary === true || item.is_primary === true || item.role === "primary") || stars[0];
     const systemObjects = [...stars, ...bodies, ...stations];
     const hasSystemSpatialData = systemObjects.some((item) => {
       if (spatialCoordinates(item)) return true;
       const p = item.display_position || item.map_position;
       return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y));
     });
-    if (!hasSystemSpatialData) {
+    const orbitFor = (body) => {
+      if (body.orbit) return body.orbit;
+      if (Array.isArray(body.orbits) && body.orbits.length) return body.orbits[0];
+      return null;
+    };
+    const hasSourceOrbitalPaths = bodies.some((body) => {
+      const orbit = orbitFor(body);
+      const semiMajorAxis = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au);
+      return orbit && Number.isFinite(semiMajorAxis) && semiMajorAxis > 0;
+    });
+    // With orbital elements but no object coordinates, use the primary star as
+    // the diagram origin. This is a relative orbital schematic, not a claim
+    // that the star or any body has a sourced galactic/system coordinate.
+    const orbitOnlyFrame = !hasSystemSpatialData && hasSourceOrbitalPaths && Boolean(primaryStar);
+    if (!hasSystemSpatialData && !orbitOnlyFrame) {
       world.appendChild(element("text", {
         x: 500, y: 250, class: "space-map-subtitle", "text-anchor": "middle"
-      }, `System spatial data unavailable for ${system.name || selectedSystem}. No celestial-body or facility positions are supplied.`));
+      }, `System spatial data unavailable for ${system.name || selectedSystem}. No celestial-body or facility positions or usable orbital elements are supplied.`));
       return;
     }
 
@@ -401,7 +416,7 @@
     // their position is explicitly local to this system (SpatialLocation in a
     // shared authoritative frame, or display_position in the fixture frame).
     // A generic craft map_position is not a system-local coordinate.
-    const hasSystemSpatialFrame = systemObjects.length > 0 && systemObjects.every((item) => spatialCoordinates(item));
+    const hasSystemSpatialFrame = !orbitOnlyFrame && systemObjects.length > 0 && systemObjects.every((item) => spatialCoordinates(item));
     const craftWithLocalPositions = localCraft.filter((craft) => {
       if (hasSystemSpatialFrame) return Boolean(spatialCoordinates(craft));
       const p = craft.display_position;
@@ -412,17 +427,14 @@
     const positionFor = (item) => {
       if (hasSpatialFrame) return spatialCoordinates(item);
       const p = item.display_position || item.map_position;
-      return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y))
-        ? { x: Number(p.x), y: Number(p.y), z: 0 }
-        : null;
+      if (p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y))) {
+        return { x: Number(p.x), y: Number(p.y), z: 0 };
+      }
+      if (orbitOnlyFrame && item === primaryStar) return { x: 50, y: 50, z: 0 };
+      return null;
     };
     const objectById = new Map(systemObjects.map((item) => [item.id, item]));
     const objectByName = new Map(systemObjects.map((item) => [item.name, item]));
-    const orbitFor = (body) => {
-      if (body.orbit) return body.orbit;
-      if (Array.isArray(body.orbits) && body.orbits.length) return body.orbits[0];
-      return null;
-    };
     const parentObjectFor = (body, orbit) => {
       const reference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
       return objectById.get(reference) || objectByName.get(reference) ||
@@ -451,7 +463,7 @@
     const scale = Math.min(820 / spanX, 390 / spanY);
     const offsetX = 500 - ((minX + maxX) / 2) * scale;
     const offsetY = 245 + ((minY + maxY) / 2) * scale;
-    const primaryStarPosition = stars[0] ? positionFor(stars[0]) : null;
+    const primaryStarPosition = primaryStar ? positionFor(primaryStar) : null;
     const displayOffsetX = primaryStarPosition ? 500 - primaryStarPosition.x * 10 : 0;
     const displayOffsetY = primaryStarPosition ? 250 - primaryStarPosition.y * 5 : 0;
     const screenPoint = (item) => {
@@ -620,7 +632,12 @@
       }));
     }
 
-    if (!positioned.length) world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial objects are currently reported for this system"));
+    if (orbitOnlyFrame) {
+      world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" },
+        "ORBITAL ELEMENTS ONLY · primary star is the diagram origin · body positions and moon paths require additional source data"));
+    } else if (!positioned.length) {
+      world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial objects are currently reported for this system"));
+    }
   }
 
   function selectCraft(id) {
