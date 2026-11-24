@@ -35,16 +35,54 @@ class Player::SpaceController < ApplicationController
   end
 
   # Each Galaxy View neighborhood is centered on the currently focused system.
-  # Sol has the initial sourced catalog; other systems load their own catalog
-  # when one is supplied. Missing local data stays unavailable, never Sol data.
+  # Prefer a dedicated local catalog when one exists. Otherwise, when the
+  # focused system and its neighbors share the sourced Sol Cartesian frame,
+  # derive local positions by subtracting the focused system's vector.
+  # Systems without a supported position in a common frame remain unavailable.
   def read_neighborhood_fixture(system_id)
-    return read_fixture("galaxy/sol_neighborhood.min.json") if system_id == "SOL"
+    dedicated_path = FIXTURE_ROOT.join("galaxy", "neighborhoods", "#{system_id}.min.json")
+    if dedicated_path.file?
+      return JSON.parse(dedicated_path.read)
+    end
 
-    path = FIXTURE_ROOT.join("galaxy", "neighborhoods", "#{system_id}.min.json")
-    return nil unless path.file?
+    sol_catalog = read_fixture("galaxy/sol_neighborhood.min.json")
+    return sol_catalog if system_id == "SOL"
 
-    JSON.parse(path.read)
-  rescue JSON::ParserError
+    systems = sol_catalog.fetch("systems", [])
+    center = systems.find { |item| item["id"] == system_id || item["seed_identifier"] == system_id }
+    return nil unless center && center.dig("position", "cartesian_ly")
+
+    center_position = center.dig("position", "cartesian_ly").transform_values(&:to_f)
+    neighbors = systems.filter_map do |item|
+      next if item["id"] == center["id"]
+
+      source_position = item.dig("position", "cartesian_ly")
+      next unless source_position
+
+      relative = %w[x y z].to_h do |axis|
+        [axis, source_position.fetch(axis).to_f - center_position.fetch(axis)]
+      end
+      distance = Math.sqrt(relative.values.sum { |value| value**2 })
+      next if distance.zero?
+
+      copy = JSON.parse(JSON.generate(item))
+      copy["position"] = copy.fetch("position", {}).merge(
+        "cartesian_ly" => relative,
+        "distance_ly" => distance
+      )
+      copy
+    end
+
+    sol_catalog.merge(
+      "reference_system_id" => system_id,
+      "description" => "System-centered neighborhood derived by vector subtraction from the shared sourced Sol-relative Cartesian catalog.",
+      "coordinate_conventions" => sol_catalog.fetch("coordinate_conventions", {}).merge(
+        "spatial" => "Cartesian equatorial offsets in light-years relative to the focused system, derived by subtracting its sourced Sol-relative position from each neighbor's position. Axes retain the shared equatorial orientation."
+      ),
+      "center_system" => { "id" => center["id"], "name" => center["name"] },
+      "systems" => neighbors
+    )
+  rescue JSON::ParserError, KeyError, TypeError
     nil
   end
 
