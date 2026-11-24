@@ -369,10 +369,17 @@
       return;
     }
 
-    // Never mix coordinate systems on one canvas. Use authoritative SpatialLocation
-    // coordinates only when every displayed object has a valid location in this
-    // frame; otherwise use the explicitly schematic fixture/display layout.
-    const objects = [...systemObjects, ...localCraft];
+    // Never mix coordinate systems on one canvas. Craft are plotted only when
+    // their position is explicitly local to this system (SpatialLocation in a
+    // shared authoritative frame, or display_position in the fixture frame).
+    // A generic craft map_position is not a system-local coordinate.
+    const hasSystemSpatialFrame = systemObjects.length > 0 && systemObjects.every((item) => spatialCoordinates(item));
+    const craftWithLocalPositions = localCraft.filter((craft) => {
+      if (hasSystemSpatialFrame) return Boolean(spatialCoordinates(craft));
+      const p = craft.display_position;
+      return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y));
+    });
+    const objects = [...systemObjects, ...craftWithLocalPositions];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
     const positionFor = (item) => {
       if (hasSpatialFrame) return spatialCoordinates(item);
@@ -439,11 +446,13 @@
         if (!center || !point) return;
         const radius = Math.hypot(point.x - center.x, point.y - center.y);
         if (radius < 12) return;
-        world.appendChild(element("circle", {
+        const ring = element("circle", {
           cx: center.x, cy: center.y, r: radius.toFixed(2),
           class: "space-orbit-reference", "data-orbit-body": body.id,
           "data-orbit-parent": parent.id || parent.name
-        }));
+        });
+        ring.appendChild(element("title", {}, `Schematic guide for ${body.name || body.id} around ${parent.name || parent.id}; derived from display positions, not orbital elements.`));
+        world.appendChild(ring);
       });
     }
 
@@ -480,7 +489,7 @@
         const point = orbitScreenPoint(center, localX, localY);
         path.push(`${point.x.toFixed(2)},${point.y.toFixed(2)}`);
       }
-      world.appendChild(element("polyline", {
+      const orbitPath = element("polyline", {
         points: path.join(" "),
         fill: "none",
         stroke: "#6f8798",
@@ -488,7 +497,9 @@
         "stroke-dasharray": "4 5",
         opacity: ".72",
         class: "space-orbit-path"
-      }));
+      });
+      orbitPath.appendChild(element("title", {}, `Orbital path for ${body.name || body.id} around ${parent.name || parent.id}, rendered from supplied orbital elements.`));
+      world.appendChild(orbitPath);
     });
 
     // In fixture mode, place bodies on their schematic orbit at the supplied
@@ -547,7 +558,7 @@
     });
 
     // Craft use the same coordinate frame as every other spatial object.
-    localCraft.forEach((craft) => {
+    craftWithLocalPositions.forEach((craft) => {
       const p = screenPoint(craft);
       if (!p) return;
       const marker = element("g", { class: `space-map-node ${craft.id === selectedCraft?.id ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${craft.name}` });
