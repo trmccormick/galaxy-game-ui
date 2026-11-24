@@ -106,57 +106,134 @@
     });
   }
 
+  function spatialCoordinates(item) {
+    const location = item?.spatial_location;
+    if (!location) return null;
+    const x = Number(location.x_coordinate), y = Number(location.y_coordinate), z = Number(location.z_coordinate ?? 0);
+    return [x, y, z].every(Number.isFinite) ? { x, y, z } : null;
+  }
+
   function renderSystem() {
     const svg = root.querySelector("#space-system-map");
     svg.replaceChildren();
     const world = attachMapControls(svg, "system");
     const system = data.system;
-    const star = system.star || {};
-    const cx = 500, cy = 245;
-    [75, 135, 205, 285, 365].forEach((radius) => world.appendChild(element("ellipse", { cx, cy, rx: radius, ry: radius * .43, class: "space-system-orbit" })));
-    world.appendChild(element("circle", { cx, cy, r: 19, fill: "#f3c76d", stroke: "#fff0bf", "stroke-width": "2", filter: "drop-shadow(0 0 12px #e7b95a)" }));
-    world.appendChild(element("text", { x: cx, y: cy + 38, class: "space-map-label", "text-anchor": "middle" }, star.name || system.name));
-
-    (system.bodies || []).forEach((body, index) => {
-      const p = body.map_position || { x: 20 + index * 13, y: 45 + (index % 2) * 12 };
-      const x = p.x * 10, y = p.y * 5;
-      const isStar = body.kind === "star";
-      world.appendChild(element("circle", { cx: x, cy: y, r: isStar ? 9 : 6, fill: isStar ? "#e8c16e" : "#7ca9c7", stroke: "#d7e6ef", "stroke-width": "1" }));
-      world.appendChild(element("text", { x, y: y + 18, class: "space-map-label", "text-anchor": "middle" }, body.name));
-    });
-
-    (system.stations || []).forEach((station) => {
-      const p = station.map_position || { x: 50, y: 50 };
-      const x = p.x * 10, y = p.y * 5;
-      world.appendChild(element("rect", { x: x - 6, y: y - 6, width: 12, height: 12, rx: 2, fill: "#43d39a", stroke: "#d6fff0", "stroke-width": "1" }));
-      world.appendChild(element("text", { x, y: y + 18, class: "space-map-label", "text-anchor": "middle" }, station.name));
-    });
-
     const localCraft = data.craft.filter((craft) => craft.location_system_id === system.system_id);
-    const locations = new Map([...(system.bodies || []), ...(system.stations || [])].map((item) => [item.id, item.map_position]));
-    const selectedLocalRoute = selectedCraft?.location_system_id === system.system_id ? (selectedCraft.local_route || []) : [];
-    const routePoints = selectedLocalRoute.map((id) => locations.get(id)).filter(Boolean).map((p) => [p.x * 10, p.y * 5]);
-    if (routePoints.length > 1) {
-      world.appendChild(element("polyline", {
-        points: routePoints.map(([x, y]) => `${x},${y}`).join(" "),
-        fill: "none", stroke: "#00d4ff", "stroke-width": "2.5", "stroke-dasharray": "7 5",
-        "stroke-linecap": "round", "stroke-linejoin": "round", opacity: ".9"
-      }));
+    const bodies = system.bodies || [];
+    const stations = system.stations || [];
+    const star = system.star || {};
+
+    // The API's spatial locations are authoritative when available. All objects
+    // are interpreted in the system's declared coordinate frame; the renderer
+    // does not assume that a star occupies the origin.
+    const objects = [
+      ...(star.id && (spatialCoordinates(star) || star.map_position) ? [star] : []),
+      ...bodies,
+      ...stations,
+      ...localCraft
+    ];
+    const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
+    const positionFor = (item) => {
+      if (hasSpatialFrame) return spatialCoordinates(item);
+      const p = item.map_position;
+      return p && Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y))
+        ? { x: Number(p.x), y: Number(p.y), z: 0 }
+        : null;
+    };
+
+    const positioned = objects.map((item) => ({ item, position: positionFor(item) })).filter(({ position }) => position);
+    if (!positioned.length) {
+      world.appendChild(element("text", { x: 500, y: 250, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial positions reported for this system"));
+      return;
     }
 
-    localCraft.forEach((craft, index) => {
-      const position = craft.map_position || { x: 12 + index * 9, y: 78 - index * 7 };
-      const x = position.x * 10, y = position.y * 5;
+    const frame = system.coordinate_frame || {};
+    const origin = frame.origin || {};
+    const originCoordinates = origin.coordinates || {};
+    const originX = Number(originCoordinates.x_coordinate ?? 0);
+    const originY = Number(originCoordinates.y_coordinate ?? 0);
+    const points = positioned.map(({ position }) => ({
+      x: position.x - (hasSpatialFrame ? originX : 0),
+      y: position.y - (hasSpatialFrame ? originY : 0)
+    }));
+    const minX = Math.min(...points.map((p) => p.x)), maxX = Math.max(...points.map((p) => p.x));
+    const minY = Math.min(...points.map((p) => p.y)), maxY = Math.max(...points.map((p) => p.y));
+    const spanX = Math.max(maxX - minX, 1), spanY = Math.max(maxY - minY, 1);
+    const scale = Math.min(820 / spanX, 390 / spanY);
+    const offsetX = 500 - ((minX + maxX) / 2) * scale;
+    const offsetY = 245 + ((minY + maxY) / 2) * scale;
+    const screenPoint = (item) => {
+      const position = positionFor(item);
+      if (!position) return null;
+      const x = position.x - (hasSpatialFrame ? originX : 0);
+      const y = position.y - (hasSpatialFrame ? originY : 0);
+      if (hasSpatialFrame) return { x: offsetX + x * scale, y: offsetY - y * scale };
+      return { x: x * 10, y: y * 5 };
+    };
+
+    // A barycenter is a coordinate origin, not an additional star to draw.
+    if (hasSpatialFrame && origin.type === "barycenter") {
+      const p = hasSpatialFrame
+        ? { x: offsetX, y: offsetY }
+        : { x: 500, y: 245 };
+      world.appendChild(element("path", {
+        d: `M ${p.x - 7} ${p.y} H ${p.x + 7} M ${p.x} ${p.y - 7} V ${p.y + 7}`,
+        class: "space-system-origin"
+      }));
+      world.appendChild(element("text", { x: p.x + 10, y: p.y - 10, class: "space-map-subtitle" }, origin.name || "System barycenter"));
+    }
+
+    positioned.forEach(({ item }) => {
+      const p = screenPoint(item);
+      if (!p) return;
+      const isStar = item.kind === "star" || item.type === "star" || item.id === star.id;
+      const isStation = stations.includes(item);
+      const radius = isStar ? 10 : 6;
+      if (isStation) {
+        world.appendChild(element("rect", { x: p.x - 6, y: p.y - 6, width: 12, height: 12, rx: 2, fill: "#43d39a", stroke: "#d6fff0", "stroke-width": "1" }));
+      } else {
+        world.appendChild(element("circle", {
+          cx: p.x, cy: p.y, r: radius,
+          fill: isStar ? "#e8c16e" : "#7ca9c7",
+          stroke: "#d7e6ef", "stroke-width": isStar ? "1.5" : "1"
+        }));
+      }
+      world.appendChild(element("text", { x: p.x, y: p.y + (isStar ? 20 : 17), class: "space-map-label", "text-anchor": "middle" }, item.name || item.id));
+    });
+
+    // Craft use the same coordinate frame as every other spatial object.
+    localCraft.forEach((craft) => {
+      const p = screenPoint(craft);
+      if (!p) return;
       const marker = element("g", { class: `space-map-node ${craft.id === selectedCraft?.id ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${craft.name}` });
-      marker.appendChild(element("circle", { cx: x, cy: y, r: 13, class: "node-halo" }));
-      marker.appendChild(element("path", { d: `M ${x} ${y - 8} L ${x + 7} ${y + 7} L ${x - 7} ${y + 7} Z`, fill: craft.id === selectedCraft?.id ? "#ffbf66" : "#d48e42", stroke: "#ffe1b8", "stroke-width": "1" }));
-      marker.appendChild(element("text", { x, y: y + 22, class: "space-map-label", "text-anchor": "middle" }, craft.name));
+      marker.appendChild(element("circle", { cx: p.x, cy: p.y, r: 13, class: "node-halo" }));
+      marker.appendChild(element("path", { d: `M ${p.x} ${p.y - 8} L ${p.x + 7} ${p.y + 7} L ${p.x - 7} ${p.y + 7} Z`, fill: craft.id === selectedCraft?.id ? "#ffbf66" : "#d48e42", stroke: "#ffe1b8", "stroke-width": "1" }));
+      marker.appendChild(element("text", { x: p.x, y: p.y + 22, class: "space-map-label", "text-anchor": "middle" }, craft.name));
       const choose = () => selectCraft(craft.id);
       marker.addEventListener("click", choose);
       marker.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
       world.appendChild(marker);
     });
-    if (!localCraft.length) world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" }, "No prototype craft currently assigned to this system"));
+
+    // Do not invent a straight-line route between current waypoints. Draw a
+    // trajectory only when the API supplies its time-dependent path points.
+    const trajectory = selectedCraft?.location_system_id === system.system_id ? selectedCraft.trajectory : null;
+    const trajectoryPoints = (trajectory?.points || []).map((point) => {
+      const x = Number(point.x_coordinate), y = Number(point.y_coordinate);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      const px = hasSpatialFrame ? offsetX + (x - originX) * scale : x * 10;
+      const py = hasSpatialFrame ? offsetY - (y - originY) * scale : y * 5;
+      return [px, py];
+    }).filter(Boolean);
+    if (trajectoryPoints.length > 1) {
+      world.appendChild(element("polyline", {
+        points: trajectoryPoints.map(([x, y]) => `${x},${y}`).join(" "),
+        fill: "none", stroke: "#00d4ff", "stroke-width": "2.5", "stroke-dasharray": "7 5",
+        "stroke-linecap": "round", "stroke-linejoin": "round", opacity: ".9"
+      }));
+    }
+
+    if (!positioned.length) world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial objects are currently reported for this system"));
   }
 
   function selectCraft(id) {
