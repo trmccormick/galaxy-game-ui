@@ -152,7 +152,7 @@
       "space-inspector-type": selectedCraft.type,
       "space-inspector-location": selectedCraft.location,
       "space-inspector-destination": selectedCraft.destination,
-      "space-inspector-operation": selectedCraft.operation,
+      "space-inspector-operation": `${selectedCraft.assignment_type} · ${selectedCraft.operation}`,
       "space-inspector-updated": selectedCraft.updated,
       "space-inspector-progress": `${selectedCraft.progress}%`
     };
@@ -163,6 +163,15 @@
     if (list) {
       list.replaceChildren();
       (selectedCraft.route || []).forEach((id) => list.appendChild(document.createElement("li")).textContent = systemNames[id] || id);
+    }
+    const localList = document.getElementById("space-local-route-list");
+    if (localList) {
+      localList.replaceChildren();
+      (selectedCraft.local_route || []).forEach((id) => {
+        const body = (data.system.bodies || []).find((item) => item.id === id);
+        const station = (data.system.stations || []).find((item) => item.id === id);
+        localList.appendChild(document.createElement("li")).textContent = body?.name || station?.name || id.replace(/-/g, " ");
+      });
     }
   }
 
