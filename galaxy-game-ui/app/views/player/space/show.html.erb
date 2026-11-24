@@ -92,4 +92,4 @@
   <script type="application/json" id="space-view-data"><%= raw(json_escape({ universe: @universe, system: @system_data, craft: @craft, selected_craft_id: @selected_craft[:id], selected_system_id: @selected_system["id"] }.to_json)) %></script>
 </section>
 
-<%= javascript_include_tag "player/space", "data-turbo-track": "reload" %>
+<%= javascript_import_module_tag "player/space" %>
