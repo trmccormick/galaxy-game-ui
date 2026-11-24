@@ -21,6 +21,34 @@
     return node;
   }
 
+  // Place labels in map coordinates without allowing adjacent names to collide.
+  // Markers remain selectable and expose their full name through an SVG title.
+  function addDeclutteredLabel(world, text, x, y, className, occupied, options = {}) {
+    const fontSize = options.fontSize || 11;
+    const width = Math.max(24, String(text).length * fontSize * 0.56);
+    const height = fontSize * 1.35;
+    const gap = options.gap ?? 7;
+    const candidates = [
+      { x: x + 9, y: y - 8, anchor: "start", left: x + 9, right: x + 9 + width },
+      { x: x - 9, y: y - 8, anchor: "end", left: x - 9 - width, right: x - 9 },
+      { x: x + 9, y: y + height, anchor: "start", left: x + 9, right: x + 9 + width },
+      { x: x - 9, y: y + height, anchor: "end", left: x - 9 - width, right: x - 9 },
+      { x: x, y: y - 15, anchor: "middle", left: x - width / 2, right: x + width / 2 }
+    ];
+    const chosen = candidates.find((candidate) => {
+      const box = { left: candidate.left - gap, right: candidate.right + gap, top: candidate.y - height, bottom: candidate.y + gap };
+      return box.left >= 4 && box.right <= 996 && box.top >= 4 && box.bottom <= 496 &&
+        !occupied.some((other) => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top);
+    });
+    if (!chosen) return false;
+    occupied.push({ left: chosen.left - gap, right: chosen.right + gap, top: chosen.y - height, bottom: chosen.y + gap });
+    world.appendChild(element("text", {
+      x: chosen.x, y: chosen.y, class: className,
+      "text-anchor": chosen.anchor, "font-size": fontSize
+    }, text));
+    return true;
+  }
+
   function attachMapControls(svg, key) {
     const initial = { x: 0, y: 0, width: 1000, height: 500 };
     const view = { ...initial, dragging: false, startX: 0, startY: 0, origin: null };
@@ -132,6 +160,21 @@
     const offsetX = 500 - ((minX + maxX) / 2) * scale;
     const offsetY = 235 + ((minY + maxY) / 2) * scale;
 
+    const galaxyLabelBoxes = [];
+    const labelCandidates = projected.slice().sort((a, b) => {
+      const score = (entry) => entry.item.id === selectedGalaxySystemId ? -10000 : entry.item.id === "SOL" ? -9000 : entry.item.position.distance_ly;
+      return score(a) - score(b);
+    });
+    const labelableIds = new Set();
+    labelCandidates.forEach(({ item, point }) => {
+      if (labelableIds.size >= 15) return;
+      const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
+      const label = item.id === "SOL" ? "Sol" : item.name + " · " + item.position.distance_ly.toFixed(1) + " ly";
+      if (addDeclutteredLabel(galaxySpatialWorld, label, p.x, p.y, "space-map-label galaxy-system-label", galaxyLabelBoxes, { fontSize: 11, gap: 8 })) {
+        labelableIds.add(item.id);
+      }
+    });
+
     // A faint origin cross indicates Sol's reference position, not a second system.
     galaxySpatialWorld.appendChild(element("line", { x1: 500, y1: 35, x2: 500, y2: 435, class: "galaxy-axis" }));
     galaxySpatialWorld.appendChild(element("line", { x1: 80, y1: 235, x2: 920, y2: 235, class: "galaxy-axis" }));
@@ -142,8 +185,7 @@
       const node = element("g", { class: `space-map-node galaxy-system-node ${selected || isSol ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${item.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isSol ? 6 : 4.5, class: isSol ? "galaxy-sol-point" : "galaxy-star-point" }));
-      node.appendChild(element("text", { x: p.x + 9, y: p.y - 8, class: "space-map-label" }, item.name));
-      if (!isSol) node.appendChild(element("text", { x: p.x + 9, y: p.y + 5, class: "space-map-subtitle" }, `${item.position.distance_ly.toFixed(1)} ly`));
+      node.appendChild(element("title", {}, item.name + (isSol ? "" : " · " + item.position.distance_ly.toFixed(2) + " ly")));
       const choose = () => { if (isSol) { selectedGalaxySystemId = null; renderGalaxySpatial(); renderGalaxySky(); updateGalaxySelection(); } else { chooseGalaxySystem(item); } };
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
@@ -396,6 +438,7 @@
       }
     }
 
+    const systemLabelBoxes = [];
     positioned.forEach(({ item }) => {
       const p = orbitDisplayPoint(item) || screenPoint(item);
       if (!p) return;
@@ -411,7 +454,9 @@
           stroke: "#d7e6ef", "stroke-width": isStar ? "1.5" : "1"
         }));
       }
-      world.appendChild(element("text", { x: p.x, y: p.y + (isStar ? 20 : 17), class: "space-map-label", "text-anchor": "middle" }, item.name || item.id));
+      const objectName = item.name || item.id;
+      world.appendChild(element("title", {}, objectName));
+      addDeclutteredLabel(world, objectName, p.x, p.y, "space-map-label", systemLabelBoxes, { fontSize: isStar ? 12 : 11, gap: 8 });
     });
 
     // Craft use the same coordinate frame as every other spatial object.
@@ -421,7 +466,8 @@
       const marker = element("g", { class: `space-map-node ${craft.id === selectedCraft?.id ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${craft.name}` });
       marker.appendChild(element("circle", { cx: p.x, cy: p.y, r: 13, class: "node-halo" }));
       marker.appendChild(element("path", { d: `M ${p.x} ${p.y - 8} L ${p.x + 7} ${p.y + 7} L ${p.x - 7} ${p.y + 7} Z`, fill: craft.id === selectedCraft?.id ? "#ffbf66" : "#d48e42", stroke: "#ffe1b8", "stroke-width": "1" }));
-      marker.appendChild(element("text", { x: p.x, y: p.y + 22, class: "space-map-label", "text-anchor": "middle" }, craft.name));
+      marker.appendChild(element("title", {}, craft.name));
+      if (craft.id === selectedCraft?.id) addDeclutteredLabel(world, craft.name, p.x, p.y, "space-map-label space-map-label-selected", systemLabelBoxes, { fontSize: 11, gap: 9 });
       const choose = () => selectCraft(craft.id);
       marker.addEventListener("click", choose);
       marker.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
