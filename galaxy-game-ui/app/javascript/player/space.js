@@ -123,7 +123,7 @@
     return true;
   }
 
-  function attachMapControls(svg, key) {
+  function attachMapControls(svg, key, onViewChange = () => {}) {
     const initial = { x: 0, y: 0, width: 1000, height: 500 };
     const view = { ...initial, dragging: false, startX: 0, startY: 0, origin: null };
     const world = element("g", { class: "map-world" });
@@ -131,7 +131,7 @@
     svg.setAttribute("viewBox", "0 0 1000 500");
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-    const apply = () => svg.setAttribute("viewBox", [view.x, view.y, view.width, view.height].map((n) => n.toFixed(2)).join(" "));
+    const apply = () => { svg.setAttribute("viewBox", [view.x, view.y, view.width, view.height].map((n) => n.toFixed(2)).join(" ")); onViewChange(view); };
     const reset = () => {
       view.x = initial.x; view.y = initial.y; view.width = initial.width; view.height = initial.height;
       apply();
@@ -435,7 +435,9 @@
   function renderSystem() {
     const svg = root.querySelector("#space-system-map");
     svg.replaceChildren();
-    const world = attachMapControls(svg, "system");
+    const moonNodes = [];
+    const updateMoonVisibility = (view) => { const zoomedToBody = view.width <= 420; moonNodes.forEach((node) => { node.style.display = zoomedToBody ? "" : "none"; }); };
+    const world = attachMapControls(svg, "system", updateMoonVisibility);
     const defs = element("defs");
     const starGradient = element("radialGradient", { id: "space-star-gradient", cx: "35%", cy: "32%", r: "72%" });
     starGradient.appendChild(element("stop", { offset: "0%", "stop-color": "#fff7cf" }));
@@ -453,7 +455,11 @@
     const stations = system.stations || [];
     const stars = system.stars || (system.star ? [system.star] : []);
     const primaryStar = stars.find((item) => item.primary === true || item.is_primary === true || item.role === "primary") || stars[0];
-    const systemObjects = [...stars, ...bodies, ...stations];
+    const isMoonBody = (body) => body?.is_moon === true || String(body?.type || "").toLowerCase().includes("moon") || String(body?.source_category || "").toLowerCase().includes("moon") || Boolean(body?.parent_id || body?.parent_body);
+    // System-scale composition omits moons; their parent-relative positions belong in a close view of the host world.
+    const overviewBodies = bodies.filter((body) => !isMoonBody(body));
+    const systemObjects = [...stars, ...overviewBodies, ...stations];
+    const allSystemObjects = [...stars, ...bodies, ...stations];
     const hasSystemSpatialData = systemObjects.some((item) => {
       if (spatialCoordinates(item)) return true;
       const p = item.display_position || item.map_position;
@@ -483,7 +489,7 @@
       const distanceMeters = Number(body.distance_from_star ?? matchingStarDistance);
       return Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters / 149597870700 : null;
     };
-    const hasSourceOrbitalPaths = bodies.some((body) => {
+    const hasSourceOrbitalPaths = overviewBodies.some((body) => {
       const orbit = orbitFor(body);
       const radiusAu = orbitDistanceAuFor(body, orbit);
       const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
@@ -576,8 +582,8 @@
       if (orbitOnlyFrame && bodies.includes(item)) return orbitDisplayPositionFor(item);
       return null;
     };
-    const objectById = new Map(systemObjects.map((item) => [item.id, item]));
-    const objectByName = new Map(systemObjects.map((item) => [item.name, item]));
+    const objectById = new Map(allSystemObjects.map((item) => [item.id, item]));
+    const objectByName = new Map(allSystemObjects.map((item) => [item.name, item]));
     const parentObjectFor = (body, orbit) => {
       const reference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
       return objectById.get(reference) || objectByName.get(reference) ||
@@ -622,7 +628,7 @@
     // from fixture display positions. Planets orbit the primary star; moons
     // use their declared parent body. These guides are not physical elements.
     if (!hasSpatialFrame && showOrbitReferences) {
-      bodies.forEach((body) => {
+      overviewBodies.forEach((body) => {
         if (orbitFor(body)) return;
         const parent = parentObjectFor(body, null);
         const center = parent && screenPoint(parent);
@@ -653,7 +659,7 @@
       x: center.x + x * (hasSpatialFrame ? scale : 10),
       y: center.y - y * (hasSpatialFrame ? scale : 10)
     });
-    if (showOrbitReferences) bodies.forEach((body) => {
+    if (showOrbitReferences) overviewBodies.forEach((body) => {
       const orbit = orbitFor(body);
       const parent = orbit && parentObjectFor(body, orbit);
       if (!orbit || !parent || !Number.isFinite(orbitScale)) return;
@@ -746,7 +752,7 @@
         const gradientId = isStar ? "space-star-gradient" : `space-body-gradient-${String(item.id || item.name).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
         if (!isStar) {
           const gradient = element("radialGradient", { id: gradientId, cx: "32%", cy: "28%", r: "76%" });
-          gradient.appendChild(element("stop", { offset: "0%", "stop-color": lightenHex(color) }));
+          gradient.appendChild(element("stop", { offset: "0%", "stop-color": lightenHex(color, 14) }));
           gradient.appendChild(element("stop", { offset: "100%", "stop-color": color }));
           defs.appendChild(gradient);
         }
@@ -767,6 +773,20 @@
       world.appendChild(element("title", {}, objectName));
       addDeclutteredLabel(world, objectName, p.x, p.y, "space-map-label", systemLabelBoxes, { fontSize: isStar ? 12 : 11, gap: 8 });
     });
+
+    // Moons appear only after zooming into a world (2.4x or closer).
+    bodies.filter(isMoonBody).forEach((moon) => {
+      const p = orbitDisplayPoint(moon) || screenPoint(moon);
+      if (!p) return;
+      const group = element("g", { class: "space-map-moon", style: "display:none" });
+      group.appendChild(element("circle", { cx: p.x, cy: p.y, r: 3.5, fill: "#aebbc5", stroke: "#e0e8ee", "stroke-width": ".8" }));
+      group.appendChild(element("title", {}, (moon.name || moon.id) + " · moon of " + (moon.parent_body || moon.parent_id || "parent world")));
+      const moonLabels = [];
+      addDeclutteredLabel(group, moon.name || moon.id, p.x, p.y, "space-map-label", moonLabels, { fontSize: 10, gap: 5 });
+      world.appendChild(group);
+      moonNodes.push(group);
+    });
+    updateMoonVisibility({ width: 1000 });
 
     // Craft use the same coordinate frame as every other spatial object.
     craftWithLocalPositions.forEach((craft) => {
