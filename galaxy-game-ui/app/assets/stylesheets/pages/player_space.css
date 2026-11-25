@@ -237,3 +237,17 @@
 .legend-dot.body-super { background:#16a085; }
 .legend-dot.body-ocean { background:#2980b9; }
 .legend-dot.body-dwarf { background:#7f8c8d; }
+
+/* Keep the classification key separate from the object/line key. */
+.system-canvas .body-color-legend {
+  bottom:2.45rem;
+  z-index:2;
+  max-width:calc(100% - 1.3rem);
+  background:rgba(7,13,20,.96);
+  border-color:rgba(0,212,255,.28);
+  gap:.35rem .55rem;
+}
+.system-canvas .space-map-legend:not(.body-color-legend) {
+  z-index:1;
+  background:rgba(7,13,20,.96);
+}
