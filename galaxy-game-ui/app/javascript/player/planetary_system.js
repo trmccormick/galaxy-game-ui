@@ -75,32 +75,33 @@
     world.appendChild(make("text", { x: center.x, y: center.y + 48, "text-anchor": "middle", class: "space-map-label space-map-label-selected" }, focus.name || idOf(focus)));
     world.appendChild(make("text", { x: center.x, y: 28, "text-anchor": "middle", class: "space-map-subtitle" }, "LOCAL PLANETARY NAVIGATION · " + (focus.name || idOf(focus)).toUpperCase()));
 
-    if (showOrbits) {
-      moons.forEach((moon, index) => {
-        const orbit = (moon.orbits || []).find((entry) => {
-          const around = entry.around;
-          return around === focus.name || around === idOf(focus);
-        }) || moon.orbit || null;
-        let radius = null;
-        const semiMajorAxis = Number(orbit?.semi_major_axis_au);
-        if (Number.isFinite(semiMajorAxis) && semiMajorAxis > 0) radius = Math.max(48, Math.min(205, semiMajorAxis * 20000));
-        if (!radius) {
-          const parentPosition = positionOf(focus), moonPosition = positionOf(moon);
-          if (parentPosition && moonPosition) {
-            const dx = moonPosition.x - parentPosition.x, dy = moonPosition.y - parentPosition.y;
-            radius = Math.max(48, Math.min(205, Math.hypot(dx, dy) * 10));
-          }
+    const moonPoints = new Map();
+    moons.forEach((moon, index) => {
+      const orbit = (moon.orbits || []).find((entry) => {
+        const around = entry.around;
+        return around === focus.name || around === idOf(focus);
+      }) || moon.orbit || null;
+      let radius = null;
+      const semiMajorAxis = Number(orbit?.semi_major_axis_au);
+      if (Number.isFinite(semiMajorAxis) && semiMajorAxis > 0) radius = Math.max(48, Math.min(205, semiMajorAxis * 20000));
+      if (!radius) {
+        const parentPosition = positionOf(focus), moonPosition = positionOf(moon);
+        if (parentPosition && moonPosition) {
+          const dx = moonPosition.x - parentPosition.x, dy = moonPosition.y - parentPosition.y;
+          radius = Math.max(48, Math.min(205, Math.hypot(dx, dy) * 10));
         }
-        if (!radius) return;
-        const angle = Number.isFinite(Number(moon.display_phase_deg))
-          ? Number(moon.display_phase_deg) * Math.PI / 180
-          : (index / Math.max(1, moons.length)) * Math.PI * 2;
-        const p = { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
-        world.appendChild(make("circle", { cx: center.x, cy: center.y, r: radius, fill: "none", stroke: "#8199aa", "stroke-width": 1.2, "stroke-dasharray": "4 5", opacity: .8 }));
-        world.appendChild(make("circle", { cx: p.x, cy: p.y, r: 7, fill: "#b9c8d2", stroke: "#f0f5f8", "stroke-width": 1 }));
-        world.appendChild(make("text", { x: p.x, y: p.y - 13, "text-anchor": "middle", class: "space-map-label" }, moon.name || idOf(moon)));
-      });
-    }
+      }
+      // Missing orbital scale gets a subordinate schematic marker, not a claimed phase.
+      if (!radius) radius = Math.min(190, 95 + index * 28);
+      const angle = Number.isFinite(Number(moon.display_phase_deg))
+        ? Number(moon.display_phase_deg) * Math.PI / 180
+        : (index / Math.max(1, moons.length)) * Math.PI * 2;
+      const p = { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+      moonPoints.set(moon, p);
+      if (showOrbits) world.appendChild(make("circle", { cx: center.x, cy: center.y, r: radius, fill: "none", stroke: "#8199aa", "stroke-width": 1.2, "stroke-dasharray": "4 5", opacity: .8 }));
+      world.appendChild(make("circle", { cx: p.x, cy: p.y, r: 7, fill: "#b9c8d2", stroke: "#f0f5f8", "stroke-width": 1 }));
+      world.appendChild(make("text", { x: p.x, y: p.y - 13, "text-anchor": "middle", class: "space-map-label" }, moon.name || idOf(moon)));
+    });
 
     localStations.forEach((station, index) => {
       const nearMoon = moons.find((moon) => station.near === moon.name || station.near === idOf(moon));
@@ -117,7 +118,8 @@
     });
 
     if (activeLocalBody && (activeLocalBody === focus || moons.includes(activeLocalBody))) {
-      const marker = { x: center.x + 42, y: center.y - 42 };
+      const localAnchor = moons.includes(activeLocalBody) ? moonPoints.get(activeLocalBody) : center;
+      const marker = { x: localAnchor.x + 34, y: localAnchor.y - 34 };
       world.appendChild(make("path", {
         d: "M " + marker.x + " " + (marker.y - 9) + " l 8 8 l -8 8 l -8 -8 Z",
         fill: "#ffbf66", stroke: "#fff0c1", "stroke-width": 1.3, class: "space-current-craft-marker"
