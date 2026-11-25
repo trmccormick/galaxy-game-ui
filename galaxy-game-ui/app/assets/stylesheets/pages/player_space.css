@@ -251,3 +251,10 @@
   z-index:1;
   background:rgba(7,13,20,.96);
 }
+
+
+/* Separate parent/child orbital workspace; the system overview remains planet-only. */
+.planetary-system-canvas { height:360px; background-image:radial-gradient(rgba(0,212,255,.16) .8px,transparent .8px); }
+.planetary-system-canvas .legend-dot.moon { width:5px; height:5px; background:#aebbc5; }
+.planetary-system-note { position:absolute; right:.65rem; bottom:.6rem; max-width:48%; color:var(--gg-text-dim); font-size:.55rem; line-height:1.4; text-align:right; pointer-events:none; }
+@media (max-width:760px) { .planetary-system-canvas { height:280px; } .planetary-system-note { max-width:58%; } }
