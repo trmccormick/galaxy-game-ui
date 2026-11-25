@@ -460,12 +460,10 @@
     const objects = [...systemObjects, ...craftWithLocalPositions];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
     const displayScale = Number(system.display_layout?.au_to_map_units || 4);
-    const orbitPhaseFor = (body, orbit) => {
-      const suppliedMeanAnomaly = Number(orbit?.mean_anomaly_deg ?? body.mean_anomaly_deg ?? body.display_phase_deg);
-      if (Number.isFinite(suppliedMeanAnomaly)) return suppliedMeanAnomaly * Math.PI / 180;
-
-      // Stable pseudo-random phase: it looks randomly distributed but does not
-      // jump when the workspace rerenders or the user changes selections.
+    const orbitPhaseFor = (body) => {
+      // Randomize the prototype's initial phase from stable system/body identity.
+      // This keeps the display placement fixed across rerenders without
+      // pretending an epoch-less source phase is a current ephemeris.
       const key = `${system.system_id || selectedSystem}:${body.id || body.identifier || body.name}`;
       let hash = 2166136261;
       for (let index = 0; index < key.length; index += 1) {
@@ -493,7 +491,7 @@
 
       const eccentricity = Number.isFinite(Number(orbit.eccentricity))
         ? Math.max(0, Math.min(0.95, Number(orbit.eccentricity))) : 0;
-      const meanAnomaly = orbitPhaseFor(body, orbit);
+      const meanAnomaly = orbitPhaseFor(body);
       let eccentricAnomaly = meanAnomaly;
       for (let iteration = 0; iteration < 8; iteration += 1) {
         const correction = (eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly) - meanAnomaly) /
