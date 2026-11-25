@@ -775,7 +775,11 @@
     });
 
     // Moons appear only after zooming into a world (2.4x or closer).
-    bodies.filter(isMoonBody).forEach((moon) => {
+    bodies.filter((moon) => {
+      if (!isMoonBody(moon)) return false;
+      const reference = moon.parent_id || moon.parent_body || orbitFor(moon)?.around;
+      return Boolean(reference && !["Primary Star", primaryStar?.id, primaryStar?.name].includes(reference));
+    }).forEach((moon) => {
       const p = orbitDisplayPoint(moon) || screenPoint(moon);
       if (!p) return;
       const group = element("g", { class: "space-map-moon", style: "display:none" });
