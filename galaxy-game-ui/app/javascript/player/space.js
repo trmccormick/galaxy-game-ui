@@ -434,12 +434,12 @@
     return { x, y, z };
   }
 
-  function renderSystem() {
-    const svg = root.querySelector("#space-system-map");
+  function renderSystem(viewMode = "system") {
+    const isPlanetaryView = viewMode === "planetary";
+    const svg = root.querySelector(isPlanetaryView ? "#space-planetary-system-map" : "#space-system-map");
+    if (!svg) return;
     svg.replaceChildren();
-    const moonNodes = [];
-    const updateMoonVisibility = (view) => { const zoomedToBody = view.width <= 420; moonNodes.forEach((node) => { node.style.display = zoomedToBody ? "" : "none"; }); };
-    const world = attachMapControls(svg, "system", updateMoonVisibility);
+    const world = attachMapControls(svg, isPlanetaryView ? "planetary-system" : "system");
     const defs = element("defs");
     const starGradient = element("radialGradient", { id: "space-star-gradient", cx: "35%", cy: "32%", r: "72%" });
     starGradient.appendChild(element("stop", { offset: "0%", "stop-color": "#fff7cf" }));
@@ -460,7 +460,8 @@
     const isMoonBody = (body) => body?.is_moon === true || String(body?.type || "").toLowerCase().includes("moon") || String(body?.source_category || "").toLowerCase().includes("moon") || Boolean(body?.parent_id || body?.parent_body);
     // System-scale composition omits moons; their parent-relative positions belong in a close view of the host world.
     const overviewBodies = bodies.filter((body) => !isMoonBody(body));
-    const systemObjects = [...stars, ...overviewBodies, ...stations];
+    const displayedBodies = isPlanetaryView ? bodies : overviewBodies;
+    const systemObjects = [...stars, ...displayedBodies, ...stations];
     const allSystemObjects = [...stars, ...bodies, ...stations];
     const hasSystemSpatialData = systemObjects.some((item) => {
       if (spatialCoordinates(item)) return true;
@@ -491,7 +492,7 @@
       const distanceMeters = Number(body.distance_from_star ?? matchingStarDistance);
       return Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters / 149597870700 : null;
     };
-    const hasSourceOrbitalPaths = overviewBodies.some((body) => {
+    const hasSourceOrbitalPaths = displayedBodies.some((body) => {
       const orbit = orbitFor(body);
       const radiusAu = orbitDistanceAuFor(body, orbit);
       const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
@@ -570,8 +571,9 @@
       const orbitalRadius = radiusAu * (1 - eccentricity * Math.cos(eccentricAnomaly));
       const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
       const angle = trueAnomaly;
-      const dx = orbitalRadius * Math.cos(angle) * displayScale;
-      const dy = orbitalRadius * Math.sin(angle) * Math.cos(inclination * Math.PI / 180) * displayScale;
+      const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+      const dx = orbitalRadius * Math.cos(angle) * displayScale * moonScale;
+      const dy = orbitalRadius * Math.sin(angle) * Math.cos(inclination * Math.PI / 180) * displayScale * moonScale;
       return { x: parentPosition.x + dx, y: parentPosition.y + dy, z: parentPosition.z || 0 };
     };
     const positionFor = (item) => {
@@ -630,7 +632,7 @@
     // from fixture display positions. Planets orbit the primary star; moons
     // use their declared parent body. These guides are not physical elements.
     if (!hasSpatialFrame && showOrbitReferences) {
-      overviewBodies.forEach((body) => {
+      displayedBodies.forEach((body) => {
         if (orbitFor(body)) return;
         const parent = parentObjectFor(body, null);
         const center = parent && screenPoint(parent);
@@ -661,7 +663,7 @@
       x: center.x + x * (hasSpatialFrame ? scale : 10),
       y: center.y - y * (hasSpatialFrame ? scale : 10)
     });
-    if (showOrbitReferences) overviewBodies.forEach((body) => {
+    if (showOrbitReferences) displayedBodies.forEach((body) => {
       const orbit = orbitFor(body);
       const parent = orbit && parentObjectFor(body, orbit);
       if (!orbit || !parent || !Number.isFinite(orbitScale)) return;
@@ -675,8 +677,9 @@
       for (let step = 0; step <= 120; step += 1) {
         const theta = (step / 120) * Math.PI * 2;
         const radius = a * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(theta));
-        const localX = radius * Math.cos(theta) * Math.cos(0) * orbitScale;
-        const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * orbitScale;
+        const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+        const localX = radius * Math.cos(theta) * orbitScale * moonScale;
+        const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * orbitScale * moonScale;
         const point = orbitScreenPoint(center, localX, localY);
         path.push(`${point.x.toFixed(2)},${point.y.toFixed(2)}`);
       }
@@ -706,8 +709,9 @@
       const phase = Number(body.display_phase_deg || 0) * Math.PI / 180;
       const radius = a * (1 - e * e) / (1 + e * Math.cos(phase));
       const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
-      const dx = radius * Math.cos(phase) * displayScale;
-      const dy = radius * Math.sin(phase) * Math.cos(inclination * Math.PI / 180) * displayScale;
+      const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+      const dx = radius * Math.cos(phase) * displayScale * moonScale;
+      const dy = radius * Math.sin(phase) * Math.cos(inclination * Math.PI / 180) * displayScale * moonScale;
       return orbitScreenPoint(center, dx, dy);
     };
 
@@ -776,8 +780,9 @@
       addDeclutteredLabel(world, objectName, p.x, p.y, "space-map-label", systemLabelBoxes, { fontSize: isStar ? 12 : 11, gap: 8 });
     });
 
-    // Moons appear only after zooming into a world (2.4x or closer).
-    bodies.filter((moon) => {
+    // The system overview intentionally omits moons. The separate planetary
+    // view renders them with their parent worlds and parent-centered orbit paths.
+    if (!isPlanetaryView) bodies.filter((moon) => {
       if (!isMoonBody(moon)) return false;
       const reference = moon.parent_id || moon.parent_body || orbitFor(moon)?.around;
       return Boolean(reference && !["Primary Star", primaryStar?.id, primaryStar?.name].includes(reference));
@@ -792,8 +797,6 @@
       world.appendChild(group);
       moonNodes.push(group);
     });
-    updateMoonVisibility({ width: 1000 });
-
     // Craft use the same coordinate frame as every other spatial object.
     craftWithLocalPositions.forEach((craft) => {
       const p = screenPoint(craft);
@@ -889,14 +892,18 @@
   }
 
   root.querySelectorAll("[data-craft-id]").forEach((button) => button.addEventListener("click", () => selectCraft(button.dataset.craftId)));
-  root.querySelector("[data-toggle-orbit-references]")?.addEventListener("click", (event) => {
+  root.querySelectorAll("[data-toggle-orbit-references]").forEach((button) => button.addEventListener("click", (event) => {
     showOrbitReferences = !showOrbitReferences;
-    event.currentTarget.setAttribute("aria-pressed", String(showOrbitReferences));
-    event.currentTarget.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
-    renderSystem();
-  });
+    root.querySelectorAll("[data-toggle-orbit-references]").forEach((control) => {
+      control.setAttribute("aria-pressed", String(showOrbitReferences));
+      control.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
+    });
+    renderSystem("system");
+    renderSystem("planetary");
+  }));
   renderGalaxy();
   renderNetwork();
-  renderSystem();
+  renderSystem("system");
+  renderSystem("planetary");
   updateInspector();
 })();
