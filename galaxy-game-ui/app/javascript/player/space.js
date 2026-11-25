@@ -256,7 +256,9 @@
       return { x: p.x - p.y * 0.5, y: p.z - (p.x + p.y) * 0.25 };
     };
     const projected = objects.map((item) => ({ item, point: project(item.position) })).filter((item) => item.point);
-    if (!projected.length) return;
+    // A focused system is always a valid local origin, even if a malformed or
+    // incomplete catalog prevents neighbor projection. Keep that origin visible.
+    if (!projected.some(({ item }) => item.isCenter)) projected.unshift({ item: center, point: { x: 0, y: 0 } });
     const extentX = Math.max(1, ...projected.map(({ point }) => Math.abs(point.x)));
     const extentY = Math.max(1, ...projected.map(({ point }) => Math.abs(point.y)));
     // Keep the focused system at the visual origin; scale the neighborhood
