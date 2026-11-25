@@ -408,13 +408,27 @@
       if (Array.isArray(body.orbits) && body.orbits.length) return body.orbits[0];
       return null;
     };
+    const orbitDistanceAuFor = (body, orbit = orbitFor(body)) => {
+      const orbitDistance = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au ?? orbit?.distance_au ?? orbit?.distance);
+      if (Number.isFinite(orbitDistance) && orbitDistance > 0) return orbitDistance;
+
+      // Some source records provide only a heliocentric distance in meters.
+      // Use it as a circular, display-only radius for a planet around the star.
+      // Never apply this fallback to a moon: its radius must be parent-relative.
+      const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
+      const isMoon = Boolean(body.parent_id || body.parent_body) ||
+        String(body.type || "").toLowerCase().includes("moon") ||
+        String(body.source_category || "").toLowerCase().includes("moon");
+      const primaryStarReferences = [null, undefined, "", "Primary Star", primaryStar?.id, primaryStar?.name];
+      if (isMoon || !primaryStarReferences.includes(parentReference)) return null;
+      const distanceMeters = Number(body.distance_from_star);
+      return Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters / 149597870700 : null;
+    };
     const hasSourceOrbitalPaths = bodies.some((body) => {
       const orbit = orbitFor(body);
-      const semiMajorAxis = Number(orbit?.semi_major_axis_au ?? orbit?.source_distance_au);
-      const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
-      const primaryStarReferences = [null, undefined, "", "Primary Star", primaryStar?.id, primaryStar?.name];
-      return orbit && primaryStarReferences.includes(parentReference) &&
-        Number.isFinite(semiMajorAxis) && semiMajorAxis > 0;
+      const radiusAu = orbitDistanceAuFor(body, orbit);
+      const parent = parentObjectFor(body, orbit);
+      return Number.isFinite(radiusAu) && radiusAu > 0 && Boolean(parent);
     });
     // With orbital elements but no object coordinates, use the primary star as
     // the diagram origin. This is a relative orbital schematic, not a claim
@@ -439,6 +453,58 @@
     });
     const objects = [...systemObjects, ...craftWithLocalPositions];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
+    const orbitPhaseFor = (body, orbit) => {
+      const suppliedMeanAnomaly = Number(orbit?.mean_anomaly_deg ?? body.mean_anomaly_deg ?? body.display_phase_deg);
+      if (Number.isFinite(suppliedMeanAnomaly)) return suppliedMeanAnomaly * Math.PI / 180;
+
+      // Stable pseudo-random phase: it looks randomly distributed but does not
+      // jump when the workspace rerenders or the user changes selections.
+      const key = `${system.system_id || selectedSystem}:${body.id || body.identifier || body.name}`;
+      let hash = 2166136261;
+      for (let index = 0; index < key.length; index += 1) {
+        hash ^= key.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+      }
+      return ((hash >>> 0) / 4294967296) * Math.PI * 2;
+    };
+    const orbitDisplayPositionFor = (body, visited = new Set()) => {
+      if (!body || visited.has(body.id || body.name)) return null;
+      const nextVisited = new Set(visited);
+      nextVisited.add(body.id || body.name);
+      const orbit = orbitFor(body);
+      const radiusAu = orbitDistanceAuFor(body, orbit);
+      const parent = parentObjectFor(body, orbit);
+      if (!orbit || !Number.isFinite(radiusAu) || radiusAu <= 0 || !parent) return null;
+
+      let parentPosition;
+      if (parent === primaryStar) {
+        parentPosition = { x: 50, y: 50, z: 0 };
+      } else {
+        parentPosition = orbitDisplayPositionFor(parent, nextVisited);
+      }
+      if (!parentPosition) return null;
+
+      const eccentricity = Number.isFinite(Number(orbit.eccentricity))
+        ? Math.max(0, Math.min(0.95, Number(orbit.eccentricity))) : 0;
+      const meanAnomaly = orbitPhaseFor(body, orbit);
+      let eccentricAnomaly = meanAnomaly;
+      for (let iteration = 0; iteration < 8; iteration += 1) {
+        const correction = (eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly) - meanAnomaly) /
+          (1 - eccentricity * Math.cos(eccentricAnomaly));
+        eccentricAnomaly -= correction;
+        if (Math.abs(correction) < 1e-8) break;
+      }
+      const trueAnomaly = 2 * Math.atan2(
+        Math.sqrt(1 + eccentricity) * Math.sin(eccentricAnomaly / 2),
+        Math.sqrt(1 - eccentricity) * Math.cos(eccentricAnomaly / 2)
+      );
+      const orbitalRadius = radiusAu * (1 - eccentricity * Math.cos(eccentricAnomaly));
+      const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
+      const angle = trueAnomaly;
+      const dx = orbitalRadius * Math.cos(angle) * displayScale;
+      const dy = orbitalRadius * Math.sin(angle) * Math.cos(inclination * Math.PI / 180) * displayScale;
+      return { x: parentPosition.x + dx, y: parentPosition.y + dy, z: parentPosition.z || 0 };
+    };
     const positionFor = (item) => {
       if (hasSpatialFrame) return spatialCoordinates(item);
       const p = item.display_position || item.map_position;
@@ -446,6 +512,7 @@
         return { x: Number(p.x), y: Number(p.y), z: 0 };
       }
       if (orbitOnlyFrame && item === primaryStar) return { x: 50, y: 50, z: 0 };
+      if (orbitOnlyFrame && bodies.includes(item)) return orbitDisplayPositionFor(item);
       return null;
     };
     const objectById = new Map(systemObjects.map((item) => [item.id, item]));
@@ -649,7 +716,7 @@
 
     if (orbitOnlyFrame) {
       world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" },
-        "ORBITAL ELEMENTS ONLY · primary star is the diagram origin · body positions and moon paths require additional source data"));
+        "DISPLAY-ONLY STARTING POSITIONS · derived from supplied orbital distances · unknown phases are stable pseudo-random placements"));
     } else if (!positioned.length) {
       world.appendChild(element("text", { x: 500, y: 465, class: "space-map-subtitle", "text-anchor": "middle" }, "No spatial objects are currently reported for this system"));
     }
