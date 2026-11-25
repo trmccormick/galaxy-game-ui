@@ -838,16 +838,15 @@
   function selectCraft(id) {
     const nextCraft = byId(data.craft, id);
     if (!nextCraft) return;
-    if (nextCraft.location_system_id && nextCraft.location_system_id !== selectedSystem) {
-      window.location.assign(`${workspacePath}?system_id=${encodeURIComponent(nextCraft.location_system_id)}&craft_id=${encodeURIComponent(nextCraft.id)}`);
-      return;
-    }
-    selectedCraft = nextCraft;
-    root.querySelectorAll("[data-craft-id]").forEach((button) => button.classList.toggle("is-selected", button.dataset.craftId === id));
-    selectedGalaxySystemId = selectedSystem;
-    updateInspector();
-    renderNetwork();
-    renderSystem();
+
+    // Craft focus changes the context of every map and inspector. Re-fetch the
+    // page with the selected craft as the authoritative focus instead of
+    // partially updating only the asset card while leaving Galaxy/System
+    // context bound to the previous craft's system.
+    const params = new URLSearchParams();
+    params.set("craft_id", nextCraft.id);
+    if (root.dataset.workspace === "fleet_manager") params.set("workspace", "fleet_manager");
+    window.location.assign(`${workspacePath}?${params.toString()}`);
   }
 
   function updateInspector() {
