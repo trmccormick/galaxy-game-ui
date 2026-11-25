@@ -294,7 +294,13 @@
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
       const starRecord = stellarRecordFor(item);
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isCenter ? 6 : 4.5, class: (isCenter ? "galaxy-center-point " : "galaxy-star-point ") + stellarNodeClass(starRecord) }));
-      node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center" : (distanceLyFor(item) === null ? "" : " · " + distanceLyFor(item).toFixed(2) + " ly"))));
+      if (isCenter && selectedCraft?.location_system_id === selectedSystem) {
+        node.appendChild(element("path", {
+          d: `M ${p.x + 16} ${p.y - 8} l 6 6 l -6 6 l -6 -6 Z`,
+          fill: "#ffbf66", stroke: "#fff0c1", "stroke-width": "1.1", class: "space-current-craft-marker"
+        }));
+      }
+      node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center · selected craft current system" : (distanceLyFor(item) === null ? "" : " · " + distanceLyFor(item).toFixed(2) + " ly"))));
       const choose = () => { if (!isCenter) chooseGalaxySystem(item); };
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
@@ -357,6 +363,12 @@
       const node = element("g", { class: `space-map-node galaxy-sky-node ${selected ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 8 : 4, class: "galaxy-sky-point " + stellarNodeClass(stellarRecordFor(system)) }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 12, class: "node-halo" }));
+      if (system.id === selectedCraft?.location_system_id) {
+        node.appendChild(element("path", {
+          d: `M ${p.x + 12} ${p.y - 7} l 5 5 l -5 5 l -5 -5 Z`,
+          fill: "#ffbf66", stroke: "#fff0c1", "stroke-width": "1.1", class: "space-current-craft-marker"
+        }));
+      }
       node.appendChild(element("title", {}, `${system.name} · ${system.position.distance_ly.toFixed(2)} ly`));
       const choose = () => chooseGalaxySystem(system);
       node.addEventListener("click", choose);
@@ -416,6 +428,13 @@
       const node = element("g", { class: `space-map-node ${system.id === selectedSystem ? "is-selected" : ""}`, tabindex: "0", role: "button", "aria-label": `Select ${system.name}` });
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 22, class: "node-halo" }));
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 9 : 7, fill: stellarTypeColor(system), stroke: "#d6e5ef", "stroke-width": "1.2" }));
+      if (system.id === selectedCraft?.location_system_id) {
+        node.appendChild(element("path", {
+          d: `M ${p.x + 15} ${p.y - 8} l 6 6 l -6 6 l -6 -6 Z`,
+          fill: "#ffbf66", stroke: "#fff0c1", "stroke-width": "1.1", class: "space-current-craft-marker"
+        }));
+        node.appendChild(element("title", {}, system.name + " · selected craft current system"));
+      }
       const accessStroke = system.access === "baseline" ? "#36a9f5" : system.access === "natural_connection" ? "#43d39a" : "#778795";
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: system.id === "SOL" ? 12 : 10, fill: "none", stroke: accessStroke, "stroke-width": "1.3", "stroke-dasharray": system.access === "not_connected" ? "2 2" : "none" }));
       if (routeIds.has(system.id)) node.appendChild(element("circle", { cx: p.x, cy: p.y, r: 14, fill: "none", stroke: "#eab65c", "stroke-width": "1.2", "stroke-dasharray": "3 3" }));
