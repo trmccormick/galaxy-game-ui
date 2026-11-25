@@ -421,14 +421,20 @@
         String(body.source_category || "").toLowerCase().includes("moon");
       const primaryStarReferences = [null, undefined, "", "Primary Star", primaryStar?.id, primaryStar?.name];
       if (isMoon || !primaryStarReferences.includes(parentReference)) return null;
-      const distanceMeters = Number(body.distance_from_star);
+      const matchingStarDistance = Array.isArray(body.star_distances)
+        ? body.star_distances.find((entry) => !entry.star_name || entry.star_name === primaryStar?.name || entry.star_name === primaryStar?.id)?.distance
+        : null;
+      const distanceMeters = Number(body.distance_from_star ?? matchingStarDistance);
       return Number.isFinite(distanceMeters) && distanceMeters > 0 ? distanceMeters / 149597870700 : null;
     };
     const hasSourceOrbitalPaths = bodies.some((body) => {
       const orbit = orbitFor(body);
       const radiusAu = orbitDistanceAuFor(body, orbit);
-      const parent = parentObjectFor(body, orbit);
-      return Number.isFinite(radiusAu) && radiusAu > 0 && Boolean(parent);
+      const parentReference = body.parent_id || body.parent_body || body.parent_star || orbit?.around;
+      const primaryStarReferences = [null, undefined, "", "Primary Star", primaryStar?.id, primaryStar?.name];
+      const parentExists = primaryStarReferences.includes(parentReference) ||
+        systemObjects.some((item) => item.id === parentReference || item.name === parentReference);
+      return Number.isFinite(radiusAu) && radiusAu > 0 && parentExists;
     });
     // With orbital elements but no object coordinates, use the primary star as
     // the diagram origin. This is a relative orbital schematic, not a claim
