@@ -96,4 +96,16 @@ RSpec.describe Player::SpaceController, type: :controller do
       expect(result.dig("bodies", 0, "orbits")).to eq([])
     end
   end
+  describe "#craft_fixtures" do
+    it "represents the Venus harvester as a repeating in-system itinerary with a reported current position" do
+      craft = described_class.allocate.send(:craft_fixtures).find { |item| item[:id] == "VENUS-SKIMMER-01" }
+
+      expect(craft[:route]).to eq(["SOL"])
+      expect(craft[:route_stops].map { |stop| stop[:location_id] }).to eq(["LUNA-BASE", "VENUS", "LUNA-BASE"])
+      expect(craft[:route_stops].map { |stop| stop[:status] }).to eq(["completed", "current", "upcoming"])
+      expect(craft[:current_position_ref]).to eq("VENUS")
+      expect(craft[:destination]).to eq("Luna Base")
+    end
+  end
+
 end
