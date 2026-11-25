@@ -466,12 +466,11 @@
     return { x, y, z };
   }
 
-  function renderSystem(viewMode = "system") {
-    const isPlanetaryView = viewMode === "planetary";
-    const svg = root.querySelector(isPlanetaryView ? "#space-planetary-system-map" : "#space-system-map");
+  function renderSystem() {
+    const svg = root.querySelector("#space-system-map");
     if (!svg) return;
     svg.replaceChildren();
-    const world = attachMapControls(svg, isPlanetaryView ? "planetary-system" : "system");
+    const world = attachMapControls(svg, "system");
     const defs = element("defs");
     const starGradient = element("radialGradient", { id: "space-star-gradient", cx: "35%", cy: "32%", r: "72%" });
     starGradient.appendChild(element("stop", { offset: "0%", "stop-color": "#fff7cf" }));
@@ -492,7 +491,7 @@
     const isMoonBody = (body) => body?.is_moon === true || String(body?.type || "").toLowerCase().includes("moon") || String(body?.source_category || "").toLowerCase().includes("moon") || Boolean(body?.parent_id || body?.parent_body);
     // System-scale composition omits moons; their parent-relative positions belong in a close view of the host world.
     const overviewBodies = bodies.filter((body) => !isMoonBody(body));
-    const displayedBodies = isPlanetaryView ? bodies : overviewBodies;
+    const displayedBodies = overviewBodies;
     const systemObjects = [...stars, ...displayedBodies, ...stations];
     const allSystemObjects = [...stars, ...bodies, ...stations];
     const hasSystemSpatialData = systemObjects.some((item) => {
@@ -603,7 +602,7 @@
       const orbitalRadius = radiusAu * (1 - eccentricity * Math.cos(eccentricAnomaly));
       const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
       const angle = trueAnomaly;
-      const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+      const moonScale = 1;
       const dx = orbitalRadius * Math.cos(angle) * displayScale * moonScale;
       const dy = orbitalRadius * Math.sin(angle) * Math.cos(inclination * Math.PI / 180) * displayScale * moonScale;
       return { x: parentPosition.x + dx, y: parentPosition.y + dy, z: parentPosition.z || 0 };
@@ -763,7 +762,7 @@
       for (let step = 0; step <= 120; step += 1) {
         const theta = (step / 120) * Math.PI * 2;
         const radius = a * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(theta));
-        const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+        const moonScale = 1;
         const localX = radius * Math.cos(theta) * orbitScale * moonScale;
         const localY = radius * Math.sin(theta) * Math.cos(inclination * Math.PI / 180) * orbitScale * moonScale;
         const point = orbitScreenPoint(center, localX, localY);
@@ -795,7 +794,7 @@
       const phase = Number(body.display_phase_deg || 0) * Math.PI / 180;
       const radius = a * (1 - e * e) / (1 + e * Math.cos(phase));
       const inclination = Number.isFinite(Number(orbit.inclination_deg)) ? Number(orbit.inclination_deg) : 0;
-      const moonScale = isPlanetaryView && isMoonBody(body) ? 1000 : 1;
+      const moonScale = 1;
       const dx = radius * Math.cos(phase) * displayScale * moonScale;
       const dy = radius * Math.sin(phase) * Math.cos(inclination * Math.PI / 180) * displayScale * moonScale;
       return orbitScreenPoint(center, dx, dy);
@@ -973,10 +972,10 @@
       control.setAttribute("aria-pressed", String(showOrbitReferences));
       control.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
     });
-    renderSystem("system");
+    renderSystem();
   }));
   renderGalaxy();
   renderNetwork();
-  renderSystem("system");
+  renderSystem();
   updateInspector();
 })();
