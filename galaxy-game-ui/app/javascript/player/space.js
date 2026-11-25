@@ -395,7 +395,20 @@
       if (!from || !to) return;
       const a = point(from), b = point(to);
       world.appendChild(element("line", { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: `space-network-edge ${edge.kind === "natural" ? "natural" : ""}` }));
-      world.appendChild(element("text", { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10, class: "space-network-edge-label", "text-anchor": "middle" }, edge.kind === "natural" ? "NATURAL" : edge.kind.toUpperCase()));
+      const route = selectedCraft?.route || [];
+      const routeLegIndex = route.findIndex((id, index) => index < route.length - 1 &&
+        ((id === edge.from && route[index + 1] === edge.to) || (id === edge.to && route[index + 1] === edge.from)));
+      if (routeLegIndex >= 0) {
+        world.appendChild(element("line", {
+          x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: "#ffbf66", "stroke-width": "3.5",
+          "stroke-dasharray": "7 4", "stroke-linecap": "round", opacity: ".95", class: "space-network-route-leg"
+        }));
+        world.appendChild(element("text", {
+          x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10, class: "space-network-edge-label", "text-anchor": "middle"
+        }, "ROUTE " + (routeLegIndex + 1)));
+      } else {
+        world.appendChild(element("text", { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - 10, class: "space-network-edge-label", "text-anchor": "middle" }, edge.kind === "natural" ? "NATURAL" : edge.kind.toUpperCase()));
+      }
     });
 
     systems.forEach((system) => {
@@ -667,8 +680,9 @@
       });
     }
 
-    const currentPositionObject = selectedCraft?.location_system_id === system.system_id
-      ? routeStopObject({ location_id: selectedCraft.current_position_ref }) : null;
+    const currentPositionReference = selectedCraft?.current_position_ref || selectedCraft?.position_reference;
+    const currentPositionObject = selectedCraft?.location_system_id === system.system_id && currentPositionReference
+      ? routeStopObject({ location_id: currentPositionReference }) : null;
     const currentPositionPoint = currentPositionObject ? screenPoint(currentPositionObject) : null;
     if (currentPositionPoint) {
       const markerX = currentPositionPoint.x + 19, markerY = currentPositionPoint.y - 19;
