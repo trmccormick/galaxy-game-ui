@@ -269,3 +269,5 @@
 .space-route-block li.route-stop-current { border-left-color:#ffbf66; color:#ffe0a8; background:rgba(255,191,102,.07); }
 .space-route-block li.route-stop-upcoming { border-left-color:#8da3b3; color:#b8c7d2; }
 .space-network-route-leg { pointer-events:none; }
+
+.legend-line.mission-route { border-top:2px dashed #ffbf66; }
