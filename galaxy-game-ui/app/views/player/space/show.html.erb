@@ -138,7 +138,7 @@
       <section class="space-map-panel planetary-system-panel">
         <div class="space-map-heading">
           <div><span class="space-eyebrow">PLANETARY SYSTEM</span><h2 id="space-planetary-system-title"><%= @selected_system["name"] %> · Planetary System</h2><p>Local planetary context for the selected craft · parent-centered moon relationships</p></div>
-          <div class="space-map-actions"><button type="button" data-toggle-orbit-references aria-pressed="true">Hide orbits</button><button type="button" data-map-reset="planetary-system">Reset view</button></div>
+          <div class="space-map-actions"><button type="button" data-toggle-planetary-orbits aria-pressed="true">Hide moon orbits</button><button type="button" data-map-reset="planetary-system">Reset view</button></div>
         </div>
         <div class="space-map-canvas planetary-system-canvas" data-map="planetary-system">
           <svg id="space-planetary-system-map" role="img" aria-label="Planetary system map showing planets and their moons orbiting their parent bodies"></svg>
@@ -176,3 +176,4 @@
 </section>
 
 <%= javascript_import_module_tag "player/space" %>
+<%= javascript_import_module_tag "player/planetary_system" %>
