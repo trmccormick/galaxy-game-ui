@@ -459,6 +459,7 @@
     });
     const objects = [...systemObjects, ...craftWithLocalPositions];
     const hasSpatialFrame = objects.length > 0 && objects.every((item) => spatialCoordinates(item));
+    const displayScale = Number(system.display_layout?.au_to_map_units || 4);
     const orbitPhaseFor = (body, orbit) => {
       const suppliedMeanAnomaly = Number(orbit?.mean_anomaly_deg ?? body.mean_anomaly_deg ?? body.display_phase_deg);
       if (Number.isFinite(suppliedMeanAnomaly)) return suppliedMeanAnomaly * Math.PI / 180;
@@ -588,7 +589,6 @@
     // Draw parent-centered orbital paths from source orbital elements. These
     // are geometric paths, not a live ephemeris. Missing eccentricity/inclination
     // are shown as circular, face-on schematic paths and remain marked as such.
-    const displayScale = Number(system.display_layout?.au_to_map_units || 4);
     const frameUnits = String(frame.units || "").toLowerCase();
     const auToFrameUnits = frameUnits === "au" ? 1
       : frameUnits === "m" || frameUnits === "meter" || frameUnits === "meters" ? 149597870700
