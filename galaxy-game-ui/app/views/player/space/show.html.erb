@@ -123,12 +123,12 @@
 
       <section class="space-map-panel">
         <div class="space-map-heading">
-          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Primary star centered · sourced orbital paths where available · schematic guides otherwise</p></div>
+          <div><span class="space-eyebrow">IN-SYSTEM</span><h2 id="space-system-title"><%= @selected_system["name"] %></h2><p>Primary star centered · orbital context plus ordered mission stops (connectors are schematic)</p></div>
           <div class="space-map-actions"><button type="button" data-toggle-orbit-references aria-pressed="true">Hide orbits</button><button type="button" data-map-reset="system">Reset view</button></div>
         </div>
         <div class="space-map-canvas system-canvas" data-map="system">
           <svg id="space-system-map" role="img" aria-label="Selected star system navigation map"></svg>
-          <div class="space-map-legend"><span><i class="legend-dot star"></i> Star</span><span><i class="legend-dot body"></i> Celestial body</span><span><i class="legend-dot station"></i> Facility</span><span><i class="legend-line orbit"></i> Orbit path / schematic guide</span><span><i class="legend-dot craft"></i> Craft</span></div>
+          <div class="space-map-legend"><span><i class="legend-dot star"></i> Star</span><span><i class="legend-dot body"></i> Celestial body</span><span><i class="legend-dot station"></i> Facility</span><span><i class="legend-line orbit"></i> Orbit path / schematic guide</span><span><i class="legend-dot craft"></i> Craft position</span><span><i class="legend-line mission-route"></i> Mission itinerary</span></div>
           <div class="space-map-legend body-color-legend" aria-label="Celestial body classification colors">
             <span><i class="legend-dot body-hot"></i> Hot terrestrial</span><span><i class="legend-dot body-temperate"></i> Temperate terrestrial</span><span><i class="legend-dot body-cold"></i> Cold terrestrial</span><span><i class="legend-dot body-gas"></i> Gas giant</span><span><i class="legend-dot body-ice"></i> Ice giant</span><span><i class="legend-dot body-super"></i> Super-Earth</span><span><i class="legend-dot body-ocean"></i> Ocean planet</span><span><i class="legend-dot body-dwarf"></i> Dwarf planet</span>
           </div>
@@ -137,13 +137,13 @@
 
       <section class="space-map-panel planetary-system-panel">
         <div class="space-map-heading">
-          <div><span class="space-eyebrow">PLANETARY SYSTEM</span><h2 id="space-planetary-system-title"><%= @selected_system["name"] %> · Planetary System</h2><p>Planets and their moons · parent-centered orbital relationships · moon orbits expanded for legibility</p></div>
+          <div><span class="space-eyebrow">PLANETARY SYSTEM</span><h2 id="space-planetary-system-title"><%= @selected_system["name"] %> · Planetary System</h2><p>Local planetary context for the selected craft · parent-centered moon relationships</p></div>
           <div class="space-map-actions"><button type="button" data-toggle-orbit-references aria-pressed="true">Hide orbits</button><button type="button" data-map-reset="planetary-system">Reset view</button></div>
         </div>
         <div class="space-map-canvas planetary-system-canvas" data-map="planetary-system">
           <svg id="space-planetary-system-map" role="img" aria-label="Planetary system map showing planets and their moons orbiting their parent bodies"></svg>
           <div class="space-map-legend"><span><i class="legend-dot star"></i> Star</span><span><i class="legend-dot body"></i> Planet</span><span><i class="legend-dot moon"></i> Moon</span><span><i class="legend-line orbit"></i> Parent-centered orbit</span></div>
-          <div class="planetary-system-note">Moon orbital distances are visually expanded so parent-child relationships remain visible at this overview scale. Their displayed spacing is schematic, not a common-scale ephemeris.</div>
+          <div class="planetary-system-note">This pane follows the selected craft's current planetary context. Route connectors identify ordered mission stops, not a calculated flight path; exact craft coordinates are shown only when supplied.</div>
         </div>
       </section>
     </div>
