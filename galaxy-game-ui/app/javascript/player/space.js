@@ -628,6 +628,59 @@
       return { x: x * 10 + displayOffsetX, y: y * 5 + displayOffsetY };
     };
 
+    // Mission stops are an itinerary, not a guessed trajectory. Resolve each
+    // stop against loaded system JSON; never invent missing map coordinates.
+    const routeStops = selectedCraft?.location_system_id === system.system_id ? (selectedCraft.route_stops || []) : [];
+    const routeStopObject = (stop) =>
+      (system.bodies || []).find((item) => item.id === stop.location_id) ||
+      (system.stations || []).find((item) => item.id === stop.location_id);
+    const positionedRouteStops = routeStops.map((stop, index) => ({ stop, index, object: routeStopObject(stop) }))
+      .map((entry) => ({ ...entry, point: entry.object ? screenPoint(entry.object) : null }));
+
+    if (positionedRouteStops.length > 1) {
+      positionedRouteStops.slice(1).forEach((entry, index) => {
+        const previous = positionedRouteStops[index];
+        if (!previous.point || !entry.point) return;
+        const completedLeg = previous.stop.status === "completed" && entry.stop.status === "current";
+        const activeLeg = previous.stop.status === "current" && entry.stop.status === "upcoming";
+        world.appendChild(element("line", {
+          x1: previous.point.x, y1: previous.point.y, x2: entry.point.x, y2: entry.point.y,
+          stroke: completedLeg ? "#36c99a" : activeLeg ? "#ffbf66" : "#718493",
+          "stroke-width": activeLeg ? "2.8" : "2",
+          "stroke-dasharray": activeLeg ? "7 5" : completedLeg ? "none" : "3 5",
+          opacity: activeLeg || completedLeg ? ".95" : ".55", class: "space-mission-route-leg"
+        }));
+        const midpoint = { x: (previous.point.x + entry.point.x) / 2, y: (previous.point.y + entry.point.y) / 2 };
+        world.appendChild(element("text", { x: midpoint.x, y: midpoint.y - 7, class: "space-map-subtitle", "text-anchor": "middle" },
+          activeLeg ? "ACTIVE LEG" : completedLeg ? "COMPLETED" : "PLANNED"));
+      });
+      positionedRouteStops.forEach(({ stop, index, point }) => {
+        if (!point) return;
+        const color = stop.status === "current" ? "#ffbf66" : stop.status === "completed" ? "#36c99a" : "#8da3b3";
+        world.appendChild(element("circle", {
+          cx: point.x, cy: point.y, r: stop.status === "current" ? 17 : 13, fill: "none", stroke: color,
+          "stroke-width": stop.status === "current" ? "2.2" : "1.4",
+          "stroke-dasharray": stop.status === "upcoming" ? "3 3" : "none", class: "space-mission-route-stop"
+        }));
+        world.appendChild(element("text", { x: point.x + 15, y: point.y - 13, class: "space-map-label space-map-label-selected" }, String(index + 1)));
+        world.appendChild(element("title", {}, (index + 1) + ". " + (stop.label || stop.location_id) + " — " + (stop.activity || stop.status)));
+      });
+    }
+
+    const currentPositionObject = selectedCraft?.location_system_id === system.system_id
+      ? routeStopObject({ location_id: selectedCraft.current_position_ref }) : null;
+    const currentPositionPoint = currentPositionObject ? screenPoint(currentPositionObject) : null;
+    if (currentPositionPoint) {
+      const markerX = currentPositionPoint.x + 19, markerY = currentPositionPoint.y - 19;
+      world.appendChild(element("path", {
+        d: "M " + markerX + " " + (markerY - 8) + " L " + (markerX + 7) + " " + markerY + " L " + markerX + " " + (markerY + 8) + " L " + (markerX - 7) + " " + markerY + " Z",
+        fill: "#ffbf66", stroke: "#fff0c1", "stroke-width": "1.2", class: "space-current-craft-marker"
+      }));
+      world.appendChild(element("line", { x1: currentPositionPoint.x + 5, y1: currentPositionPoint.y - 5, x2: markerX - 6, y2: markerY + 6, stroke: "#ffbf66", "stroke-width": "1", "stroke-dasharray": "2 2" }));
+      world.appendChild(element("text", { x: markerX + 10, y: markerY - 5, class: "space-map-label space-map-label-selected" }, selectedCraft.name));
+      world.appendChild(element("title", {}, "Reported position: " + (selectedCraft.current_position_label || selectedCraft.location)));
+    }
+
     // When orbital elements are absent, retain clearly schematic guide rings
     // from fixture display positions. Planets orbit the primary star; moons
     // use their declared parent body. These guides are not physical elements.
@@ -868,10 +921,14 @@
     const localList = document.getElementById("space-local-route-list");
     if (localList) {
       localList.replaceChildren();
-      (selectedCraft.local_route || []).forEach((id) => {
-        const body = (data.system.bodies || []).find((item) => item.id === id);
-        const station = (data.system.stations || []).find((item) => item.id === id);
-        localList.appendChild(document.createElement("li")).textContent = body?.name || station?.name || id.replace(/-/g, " ");
+      const stops = selectedCraft.route_stops || (selectedCraft.local_route || []).map((id) => ({ location_id: id, status: "planned" }));
+      stops.forEach((stop, index) => {
+        const body = (data.system.bodies || []).find((item) => item.id === stop.location_id);
+        const station = (data.system.stations || []).find((item) => item.id === stop.location_id);
+        const item = document.createElement("li");
+        item.className = "route-stop route-stop-" + (stop.status || "planned");
+        item.textContent = (index + 1) + ". " + (stop.label || body?.name || station?.name || stop.location_id.replace(/-/g, " ")) + " · " + (stop.activity || stop.status || "planned");
+        localList.appendChild(item);
       });
     }
   }
