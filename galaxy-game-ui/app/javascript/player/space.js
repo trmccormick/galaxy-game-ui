@@ -52,12 +52,19 @@
 
   function stellarNodeClass(system) { return "stellar-node-" + stellarTypeKey(system); }
 
+  function lightenHex(color, amount = 42) {
+    const value = Number.parseInt(String(color).replace("#", ""), 16);
+    if (!Number.isFinite(value)) return color;
+    const channel = (shift) => Math.min(255, ((value >> shift) & 255) + amount);
+    return "#" + [channel(16), channel(8), channel(0)].map((part) => part.toString(16).padStart(2, "0")).join("");
+  }
+
   // Preserve the original SystemRenderer body-category/temperature palette.
   // This colors the body itself; selection, atmosphere, and status remain overlays.
   function planetColor(body) {
-    const category = String(body?.body_category || body?.category || body?.classification || "").toLowerCase();
+    const category = String(body?.body_category || body?.source_category || body?.category || body?.classification || "").toLowerCase().replace(/[ -]+/g, "_");
     if (category === "terrestrial") {
-      const temperature = Number(body.surface_temperature ?? body.surface_temperature_k ?? 250);
+      const temperature = Number(body.surface_temperature ?? body.surface_temperature_k ?? body.temperature_k ?? 250);
       if (temperature > 400) return "#d35400";
       if (temperature > 250) return "#3498db";
       return "#95a5a6";
@@ -423,6 +430,17 @@
     const svg = root.querySelector("#space-system-map");
     svg.replaceChildren();
     const world = attachMapControls(svg, "system");
+    const defs = element("defs");
+    const starGradient = element("radialGradient", { id: "space-star-gradient", cx: "35%", cy: "32%", r: "72%" });
+    starGradient.appendChild(element("stop", { offset: "0%", "stop-color": "#fff7cf" }));
+    starGradient.appendChild(element("stop", { offset: "58%", "stop-color": "#f5ca70" }));
+    starGradient.appendChild(element("stop", { offset: "100%", "stop-color": "#d98739" }));
+    defs.appendChild(starGradient);
+    const systemGlow = element("radialGradient", { id: "space-star-glow" });
+    systemGlow.appendChild(element("stop", { offset: "0%", "stop-color": "#f8d783", "stop-opacity": ".28" }));
+    systemGlow.appendChild(element("stop", { offset: "100%", "stop-color": "#f8d783", "stop-opacity": "0" }));
+    defs.appendChild(systemGlow);
+    world.appendChild(defs);
     const system = data.system;
     const localCraft = data.craft.filter((craft) => craft.location_system_id === system.system_id);
     const bodies = system.bodies || [];
@@ -702,15 +720,42 @@
       if (!p) return;
       const isStar = item.kind === "star" || item.type === "star" || stars.some((starItem) => starItem.id === item.id);
       const isStation = stations.includes(item);
-      const radius = isStar ? 10 : 6;
+      const isMoon = item.kind === "moon" || item.is_moon === true ||
+        String(item.source_category || "").toLowerCase().includes("moon") ||
+        String(item.type || "").toLowerCase().includes("moon");
+      const measuredRadius = Number(item.radius);
+      const measuredMass = Number(item.mass);
+      const radius = isStar ? 11 : isMoon ? 3.5 : Number.isFinite(measuredRadius) && measuredRadius > 0
+        ? Math.max(5, Math.min(22, 5 + Math.log10(measuredRadius / 1000) * 3))
+        : Number.isFinite(measuredMass) && measuredMass > 0
+          ? Math.max(5, Math.min(22, 5 + Math.log10(measuredMass / 1e23) * 2))
+          : 6;
       if (isStation) {
         world.appendChild(element("rect", { x: p.x - 6, y: p.y - 6, width: 12, height: 12, rx: 2, fill: "#43d39a", stroke: "#d6fff0", "stroke-width": "1" }));
       } else {
+        const color = isStar ? stellarTypeColor({ stars: [item] }) : isMoon ? "#bdc3c7" : planetColor(item);
+        if (isStar) {
+          world.appendChild(element("circle", { cx: p.x, cy: p.y, r: 25, fill: "url(#space-star-glow)" }));
+        }
+        const gradientId = isStar ? "space-star-gradient" : `space-body-gradient-${String(item.id || item.name).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+        if (!isStar) {
+          const gradient = element("radialGradient", { id: gradientId, cx: "32%", cy: "28%", r: "76%" });
+          gradient.appendChild(element("stop", { offset: "0%", "stop-color": lightenHex(color) }));
+          gradient.appendChild(element("stop", { offset: "100%", "stop-color": color }));
+          defs.appendChild(gradient);
+        }
         world.appendChild(element("circle", {
           cx: p.x, cy: p.y, r: radius,
-          fill: isStar ? stellarTypeColor({ stars: [item] }) : (item.kind === "moon" || item.is_moon ? "#bdc3c7" : planetColor(item)),
-          stroke: isStar ? "#fff0c1" : "#d7e6ef", "stroke-width": isStar ? "1.5" : "1"
+          fill: `url(#${gradientId})`,
+          stroke: isStar ? "#fff0c1" : "#d7e6ef", "stroke-width": isStar ? "1.5" : ".8"
         }));
+        const pressure = Number(item.atmosphere?.surface_pressure ?? item.atmosphere?.pressure ?? 0);
+        if (!isStar && !isMoon && Number.isFinite(pressure) && pressure > 0.01) {
+          world.appendChild(element("circle", {
+            cx: p.x, cy: p.y, r: radius + 2.5,
+            fill: "none", stroke: "#87cefa", "stroke-width": "1.2", opacity: ".48"
+          }));
+        }
       }
       const objectName = item.name || item.id;
       world.appendChild(element("title", {}, objectName));
