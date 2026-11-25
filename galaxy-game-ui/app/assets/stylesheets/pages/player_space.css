@@ -227,3 +227,13 @@
 .legend-ring.baseline { border-color:#36a9f5; }
 .legend-ring.natural-access { border-color:#43d39a; }
 .legend-ring.no-access { border-color:#778795; border-style:dashed; }
+
+.body-color-legend { margin-top:-.25rem; }
+.legend-dot.body-hot { background:#d35400; }
+.legend-dot.body-temperate { background:#3498db; }
+.legend-dot.body-cold { background:#95a5a6; }
+.legend-dot.body-gas { background:#f39c12; }
+.legend-dot.body-ice { background:#3498db; }
+.legend-dot.body-super { background:#16a085; }
+.legend-dot.body-ocean { background:#2980b9; }
+.legend-dot.body-dwarf { background:#7f8c8d; }
