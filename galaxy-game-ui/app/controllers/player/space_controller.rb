@@ -233,7 +233,8 @@ class Player::SpaceController < ApplicationController
         operation_id: "LUNA-INFRASTRUCTURE", assignment_type: "Fleet member",
         status: "Working", location_system_id: "SOL", location: "Luna Base",
         destination: "Luna Base", destination_system_id: "SOL", operation: "Luna infrastructure and resupply",
-        route: ["SOL"], local_route: ["LUNA-BASE"], map_position: { x: 48, y: 44 }, progress: 31, updated: "Prototype telemetry"
+        route: ["SOL"], local_route: ["LUNA-BASE"], current_position_ref: "LUNA-BASE",
+        current_position_label: "Docked at Luna Base", map_position: { x: 48, y: 44 }, progress: 31, updated: "Prototype telemetry"
       }
     ]
   end
