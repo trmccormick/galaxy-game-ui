@@ -14,7 +14,20 @@
     const catalog = data.galaxy_catalog;
     return catalog?.reference_system_id === selectedSystem && Array.isArray(catalog.systems) ? catalog : null;
   };
-  const nearbySystemsForFocus = () => (neighborhoodForFocus()?.systems || []).filter((item) => item.position?.cartesian_ly);
+  const cartesianPositionFor = (item) => {
+    const point = item?.position?.cartesian_ly || item?.cartesian_ly;
+    if (!point) return null;
+    const x = Number(point.x), y = Number(point.y), z = Number(point.z);
+    return [x, y, z].every(Number.isFinite) ? { x, y, z } : null;
+  };
+  const distanceLyFor = (item) => {
+    const supplied = Number(item?.position?.distance_ly ?? item?.distance_ly);
+    if (Number.isFinite(supplied) && supplied >= 0) return supplied;
+    const point = cartesianPositionFor(item);
+    return point ? Math.hypot(point.x, point.y, point.z) : null;
+  };
+  const nearbySystemsForFocus = () => (neighborhoodForFocus()?.systems || [])
+    .filter((item) => cartesianPositionFor(item));
   let selectedGalaxySystemId = selectedSystem;
   let showOrbitReferences = true;
   const workspacePath = root.dataset.workspace === "fleet_manager" ? "/player/fleet-manager" : "/player/space";
@@ -38,6 +51,24 @@
   }
 
   function stellarNodeClass(system) { return "stellar-node-" + stellarTypeKey(system); }
+
+  // Preserve the original SystemRenderer body-category/temperature palette.
+  // This colors the body itself; selection, atmosphere, and status remain overlays.
+  function planetColor(body) {
+    const category = String(body?.body_category || body?.category || body?.classification || "").toLowerCase();
+    if (category === "terrestrial") {
+      const temperature = Number(body.surface_temperature ?? body.surface_temperature_k ?? 250);
+      if (temperature > 400) return "#d35400";
+      if (temperature > 250) return "#3498db";
+      return "#95a5a6";
+    }
+    if (category === "gas_giant" || category === "gas giant") return "#f39c12";
+    if (category === "ice_giant" || category === "ice giant") return "#3498db";
+    if (category === "super_earth" || category === "super earth") return "#16a085";
+    if (category === "ocean_planet" || category === "ocean planet") return "#2980b9";
+    if (category === "dwarf_planet" || category === "dwarf planet") return "#7f8c8d";
+    return "#ecf0f1";
+  }
 
   function stellarRecordFor(item) {
     const record = data.universe.systems.find((entry) => entry.id === item.id || entry.id === item.seed_identifier);
@@ -147,8 +178,8 @@
     const catalog = neighborhoodForFocus();
     const nearby = nearbySystemsForFocus();
     name.textContent = focusedName;
-    if (!catalog || nearby.length === 0) {
-      details.textContent = "Neighborhood data unavailable · no sourced positions for nearby systems are available.";
+    if (!catalog) {
+      details.textContent = "Galactic position unavailable · no sourced neighborhood coordinates are loaded for this system.";
       return;
     }
     details.textContent = selectedSystem === "SOL"
@@ -173,7 +204,7 @@
     galaxySpatialWorld.replaceChildren();
     const catalog = neighborhoodForFocus();
     const systems = nearbySystemsForFocus();
-    const focused = Boolean(catalog && systems.length);
+    const focused = Boolean(catalog);
     const focusedName = data.universe.systems.find((item) => item.id === selectedSystem)?.name || data.system.name || selectedSystem;
     const stage = root.querySelector('[data-galaxy-canvas="spatial"]');
     const canvas = stage?.querySelector(".space-map-canvas");
@@ -207,9 +238,9 @@
     };
     const objects = [center, ...systems];
     const project = (position) => {
-      const p = position?.cartesian_ly;
+      const p = cartesianPositionFor({ position });
       if (!p) return null;
-      return { x: Number(p.x) - Number(p.y) * 0.5, y: Number(p.z) - (Number(p.x) + Number(p.y)) * 0.25 };
+      return { x: p.x - p.y * 0.5, y: p.z - (p.x + p.y) * 0.25 };
     };
     const projected = objects.map((item) => ({ item, point: project(item.position) })).filter((item) => item.point);
     if (!projected.length) return;
@@ -223,14 +254,15 @@
 
     const galaxyLabelBoxes = [];
     const labelCandidates = projected.slice().sort((a, b) => {
-      const score = (entry) => entry.item.isCenter ? -10000 : entry.item.id === selectedGalaxySystemId ? -9000 : entry.item.position.distance_ly;
+      const score = (entry) => entry.item.isCenter ? -10000 : entry.item.id === selectedGalaxySystemId ? -9000 : (distanceLyFor(entry.item) ?? Number.MAX_SAFE_INTEGER);
       return score(a) - score(b);
     });
     const labelableIds = new Set();
     labelCandidates.forEach(({ item, point }) => {
       if (labelableIds.size >= 15) return;
       const p = { x: offsetX + point.x * scale, y: offsetY - point.y * scale };
-      const label = item.isCenter ? focusedName : item.name + " · " + item.position.distance_ly.toFixed(1) + " ly";
+      const distance = distanceLyFor(item);
+      const label = item.isCenter ? focusedName : item.name + (distance === null ? "" : " · " + distance.toFixed(1) + " ly");
       if (addDeclutteredLabel(galaxySpatialWorld, label, p.x, p.y, "space-map-label galaxy-system-label", galaxyLabelBoxes, { fontSize: 11, gap: 8 })) {
         labelableIds.add(item.id);
       }
@@ -247,7 +279,7 @@
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: selected ? 15 : 11, class: "node-halo" }));
       const starRecord = stellarRecordFor(item);
       node.appendChild(element("circle", { cx: p.x, cy: p.y, r: isCenter ? 6 : 4.5, class: (isCenter ? "galaxy-center-point " : "galaxy-star-point ") + stellarNodeClass(starRecord) }));
-      node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center" : " · " + item.position.distance_ly.toFixed(2) + " ly")));
+      node.appendChild(element("title", {}, item.name + (isCenter ? " · neighborhood center" : (distanceLyFor(item) === null ? "" : " · " + distanceLyFor(item).toFixed(2) + " ly"))));
       const choose = () => { if (!isCenter) chooseGalaxySystem(item); };
       node.addEventListener("click", choose);
       node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
@@ -676,8 +708,8 @@
       } else {
         world.appendChild(element("circle", {
           cx: p.x, cy: p.y, r: radius,
-          fill: isStar ? "#e8c16e" : "#7ca9c7",
-          stroke: "#d7e6ef", "stroke-width": isStar ? "1.5" : "1"
+          fill: isStar ? stellarTypeColor({ stars: [item] }) : (item.kind === "moon" || item.is_moon ? "#bdc3c7" : planetColor(item)),
+          stroke: isStar ? "#fff0c1" : "#d7e6ef", "stroke-width": isStar ? "1.5" : "1"
         }));
       }
       const objectName = item.name || item.id;
