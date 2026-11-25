@@ -780,23 +780,8 @@
       addDeclutteredLabel(world, objectName, p.x, p.y, "space-map-label", systemLabelBoxes, { fontSize: isStar ? 12 : 11, gap: 8 });
     });
 
-    // The system overview intentionally omits moons. The separate planetary
-    // view renders them with their parent worlds and parent-centered orbit paths.
-    if (!isPlanetaryView) bodies.filter((moon) => {
-      if (!isMoonBody(moon)) return false;
-      const reference = moon.parent_id || moon.parent_body || orbitFor(moon)?.around;
-      return Boolean(reference && !["Primary Star", primaryStar?.id, primaryStar?.name].includes(reference));
-    }).forEach((moon) => {
-      const p = orbitDisplayPoint(moon) || screenPoint(moon);
-      if (!p) return;
-      const group = element("g", { class: "space-map-moon", style: "display:none" });
-      group.appendChild(element("circle", { cx: p.x, cy: p.y, r: 3.5, fill: "#aebbc5", stroke: "#e0e8ee", "stroke-width": ".8" }));
-      group.appendChild(element("title", {}, (moon.name || moon.id) + " · moon of " + (moon.parent_body || moon.parent_id || "parent world")));
-      const moonLabels = [];
-      addDeclutteredLabel(group, moon.name || moon.id, p.x, p.y, "space-map-label", moonLabels, { fontSize: 10, gap: 5 });
-      world.appendChild(group);
-      moonNodes.push(group);
-    });
+    // Moons are omitted from the system overview and rendered as ordinary
+    // parented bodies only in the separate planetary-system view.
     // Craft use the same coordinate frame as every other spatial object.
     craftWithLocalPositions.forEach((craft) => {
       const p = screenPoint(craft);
