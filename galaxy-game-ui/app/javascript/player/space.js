@@ -62,7 +62,13 @@
   // Preserve the original SystemRenderer body-category/temperature palette.
   // This colors the body itself; selection, atmosphere, and status remain overlays.
   function planetColor(body) {
-    const category = String(body?.body_category || body?.source_category || body?.category || body?.classification || "").toLowerCase().replace(/[ -]+/g, "_");
+    const rawCategory = String(body?.body_category || body?.source_category || body?.category || body?.classification || body?.type || "").toLowerCase().replace(/[ -]+/g, "_");
+    const category = rawCategory.includes("terrestrial") ? "terrestrial"
+      : rawCategory.includes("gas_giant") ? "gas_giant"
+        : rawCategory.includes("ice_giant") ? "ice_giant"
+          : rawCategory.includes("super_earth") ? "super_earth"
+            : rawCategory.includes("ocean_planet") ? "ocean_planet"
+              : rawCategory.includes("dwarf_planet") ? "dwarf_planet" : rawCategory;
     if (category === "terrestrial") {
       const temperature = Number(body.surface_temperature ?? body.surface_temperature_k ?? body.temperature_k ?? 250);
       if (temperature > 400) return "#d35400";
