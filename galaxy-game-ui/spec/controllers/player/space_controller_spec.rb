@@ -106,6 +106,15 @@ RSpec.describe Player::SpaceController, type: :controller do
       expect(craft[:current_position_ref]).to eq("VENUS")
       expect(craft[:destination]).to eq("Luna Base")
     end
+
+    it "retains a stationary craft current position even when no travel route is assigned" do
+      craft = described_class.allocate.send(:craft_fixtures).find { |item| item[:id] == "LUNA-CONSTRUCTION-01" }
+
+      expect(craft[:route]).to eq(["SOL"])
+      expect(craft[:route_stops]).to be_nil
+      expect(craft[:current_position_ref]).to eq("LUNA-BASE")
+      expect(craft[:current_position_label]).to eq("Docked at Luna Base")
+    end
   end
 
 end
