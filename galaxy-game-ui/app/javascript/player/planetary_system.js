@@ -42,6 +42,7 @@
     : stopObject;
   const stopPlanet = stopBody && isMoon(stopBody) ? parentOf(stopBody) : stopBody;
   const focus = currentPlanet || stopPlanet || null;
+  const activeLocalBody = currentBody || stopBody || null;
 
   function positionOf(item) {
     const point = item?.map_position || item?.display_position;
@@ -115,7 +116,7 @@
       world.appendChild(make("text", { x: x + 10, y: y + 4, class: "space-map-label" }, station.name || idOf(station)));
     });
 
-    if (currentBody && (currentBody === focus || moons.includes(currentBody))) {
+    if (activeLocalBody && (activeLocalBody === focus || moons.includes(activeLocalBody))) {
       const marker = { x: center.x + 42, y: center.y - 42 };
       world.appendChild(make("path", {
         d: "M " + marker.x + " " + (marker.y - 9) + " l 8 8 l -8 8 l -8 -8 Z",
