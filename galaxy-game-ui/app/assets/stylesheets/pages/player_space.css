@@ -258,3 +258,14 @@
 .planetary-system-canvas .legend-dot.moon { width:5px; height:5px; background:#aebbc5; }
 .planetary-system-note { position:absolute; right:.65rem; bottom:.6rem; max-width:48%; color:var(--gg-text-dim); font-size:.55rem; line-height:1.4; text-align:right; pointer-events:none; }
 @media (max-width:760px) { .planetary-system-canvas { height:280px; } .planetary-system-note { max-width:58%; } }
+
+
+/* Mission navigation overlays: route status is distinct from orbital geometry. */
+.space-mission-route-leg { pointer-events:none; }
+.space-mission-route-stop { pointer-events:none; }
+.space-current-craft-marker { filter:drop-shadow(0 0 4px rgba(255,191,102,.65)); }
+.space-route-block li.route-stop { padding:.28rem .35rem; border-left:2px solid #718493; border-radius:2px; }
+.space-route-block li.route-stop-completed { border-left-color:#36c99a; color:#9edbc4; }
+.space-route-block li.route-stop-current { border-left-color:#ffbf66; color:#ffe0a8; background:rgba(255,191,102,.07); }
+.space-route-block li.route-stop-upcoming { border-left-color:#8da3b3; color:#b8c7d2; }
+.space-network-route-leg { pointer-events:none; }
