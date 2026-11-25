@@ -974,11 +974,9 @@
       control.textContent = showOrbitReferences ? "Hide orbits" : "Show orbits";
     });
     renderSystem("system");
-    renderSystem("planetary");
   }));
   renderGalaxy();
   renderNetwork();
   renderSystem("system");
-  renderSystem("planetary");
   updateInspector();
 })();
