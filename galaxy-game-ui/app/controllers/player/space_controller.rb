@@ -211,8 +211,15 @@ class Player::SpaceController < ApplicationController
         id: "VENUS-SKIMMER-01", name: "Venus Gas Harvester 01", type: "Robotic atmospheric skimmer", role: "Independent autonomous mission",
         operation_id: "VENUS-GAS-LOOP", assignment_type: "Independent dispatch",
         status: "Operating", location_system_id: "SOL", location: "Venus atmosphere",
-        destination: "Luna Base", destination_system_id: "SOL", operation: "Recurring Luna–Venus gas delivery",
-        route: ["SOL"], local_route: ["LUNA-BASE", "VENUS", "LUNA-BASE"], map_position: { x: 29, y: 38 }, progress: 42, updated: "Prototype telemetry"
+        destination: "Luna Base", destination_system_id: "SOL", operation: "Recurring Venus atmospheric harvesting",
+        route: ["SOL"], local_route: ["LUNA-BASE", "VENUS", "LUNA-BASE"],
+        route_stops: [
+          { location_id: "LUNA-BASE", label: "Luna Base", status: "completed", activity: "Departure / previous turnaround" },
+          { location_id: "VENUS", label: "Venus atmosphere", status: "current", activity: "Atmospheric harvesting" },
+          { location_id: "LUNA-BASE", label: "Luna Base", status: "upcoming", activity: "Return, offload, service and refuel" }
+        ],
+        current_position_ref: "VENUS", current_position_label: "Venus atmospheric operating region",
+        map_position: { x: 29, y: 38 }, progress: 42, updated: "Prototype telemetry"
       },
       {
         id: "EDEN-SCOUT-01", name: "Eden Scout 01", type: "Survey craft", role: "Independent survey dispatch",
