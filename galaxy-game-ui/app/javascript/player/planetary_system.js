@@ -46,9 +46,18 @@
 
   function positionOf(item) {
     const point = item?.map_position || item?.display_position;
-    if (!point) return null;
-    const x = Number(point.x), y = Number(point.y);
-    return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
+    if (point) {
+      const x = Number(point.x), y = Number(point.y);
+      if (Number.isFinite(x) && Number.isFinite(y)) return { x, y };
+    }
+    const location = item?.spatial_location;
+    if (!location) return null;
+    const x = Number(location.x_coordinate), y = Number(location.y_coordinate), z = Number(location.z_coordinate ?? 0);
+    if (![x, y, z].every(Number.isFinite)) return null;
+    const explicitlyValid = location.position_valid === true || location.spatial_position_valid === true ||
+      item.position_valid === true || item.spatial_position_valid === true;
+    if (x === 0 && y === 0 && z === 0 && !explicitlyValid) return null;
+    return { x, y };
   }
 
   function draw() {
